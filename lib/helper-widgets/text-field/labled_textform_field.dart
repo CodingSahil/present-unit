@@ -23,12 +23,11 @@ class LabeledTextFormField extends StatelessWidget {
   final bool showBorder;
   final bool showRedTextColor;
   final bool isAmountField;
-  final bool isPrimaryBorder;
   final bool isOptionalFields;
   final bool isCancel;
   final void Function()? onClose;
 
-  LabeledTextFormField({
+  const LabeledTextFormField({
     super.key,
     required this.labelText,
     required this.controller,
@@ -50,7 +49,6 @@ class LabeledTextFormField extends StatelessWidget {
     this.textCapitalization = TextCapitalization.sentences,
     this.showRedTextColor = false,
     this.isAmountField = false,
-    this.isPrimaryBorder = false,
     this.isOptionalFields = false,
     this.isCancel = false,
     this.onClose,
@@ -97,7 +95,9 @@ class LabeledTextFormField extends StatelessWidget {
           decoration: InputDecoration(
             contentPadding: contentPadding,
             filled: !enable,
-            labelText: '$labelText ${isOptionalFields ? '(Optional)' : ''}',
+            labelText: labelText.isNotEmpty
+                ? '$labelText ${isOptionalFields ? '(Optional)' : ''}'
+                : null,
             hintText: hintText,
             errorText:
                 isError ? errorMessage ?? '$labelText is required' : null,
@@ -108,17 +108,19 @@ class LabeledTextFormField extends StatelessWidget {
             ),
             prefixText: isCurrencyBeforeText ? '₹ ' : null,
             prefixStyle: TextStyle(
-              color: showRedTextColor ? AppColors.red : AppColors.black,
+              color: showRedTextColor
+                  ? AppColors.red
+                  : AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
             ),
-            labelStyle: GoogleFonts.urbanist(
+            labelStyle: GoogleFonts.oswald(
               fontWeight: FontWeight.normal,
               fontSize: Dimens.textSize24,
-              color: AppColors.lightTextColor,
+              color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
             ),
-            hintStyle: GoogleFonts.urbanist(
+            hintStyle: GoogleFonts.oswald(
               fontWeight: FontWeight.normal,
               fontSize: Dimens.textSize24,
-              color: AppColors.lightTextColor,
+              color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
             ),
             suffixIcon: isCancel
                 ? GestureDetector(
@@ -133,42 +135,51 @@ class LabeledTextFormField extends StatelessWidget {
                 : null,
             floatingLabelBehavior: FloatingLabelBehavior.auto,
             focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(
+                Dimens.radius20,
+              ),
               borderSide: BorderSide(
                 color: showBorder
-                    ? isPrimaryBorder
-                        ? AppColors.primaryColor
-                        : AppColors.lightTextColor
+                    ? AppColors.primaryColor
                     : AppColors.transparent,
                 width: showBorder ? Dimens.width2 : 0,
               ),
             ),
             enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(
+                Dimens.radius20,
+              ),
               borderSide: BorderSide(
                 color: showBorder
                     ? isError
                         ? AppColors.red
-                        : isPrimaryBorder
-                            ? AppColors.primaryColor
-                            : AppColors.lightTextColor
+                        : AppColors.lightTextColor.withAlpha((255 * 0.5).toInt())
                     : AppColors.transparent,
                 width: showBorder ? Dimens.width2 : 0,
               ),
             ),
             disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(
+                Dimens.radius20,
+              ),
               borderSide: BorderSide(
-                color: isPrimaryBorder
-                    ? AppColors.primaryColor
-                    : AppColors.lightTextColor,
+                color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
                 width: Dimens.width2,
               ),
             ),
             errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(
+                Dimens.radius20,
+              ),
               borderSide: BorderSide(
                 color: AppColors.red,
                 width: Dimens.width2,
               ),
             ),
             focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(
+                Dimens.radius20,
+              ),
               borderSide: BorderSide(
                 color: AppColors.red,
                 width: Dimens.width2,

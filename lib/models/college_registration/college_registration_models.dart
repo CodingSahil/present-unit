@@ -1,0 +1,136 @@
+import 'package:equatable/equatable.dart';
+
+class College extends Equatable {
+  const College({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.location,
+    required this.noOfDepartments,
+    required this.noOfCourses,
+    required this.website,
+  });
+
+  final num id;
+  final String name;
+  final String email;
+  final String location;
+  final num noOfDepartments;
+  final num noOfCourses;
+  final String website;
+
+  factory College.fromJson(Map<String, dynamic> json) => College(
+        id: json['id'] as num,
+        name: json['name'] as String,
+        email: json['email'] as String,
+        location: json['location'] as String,
+        noOfDepartments: json['noOfDepartments'] as num,
+        noOfCourses: json['noOfCourses'] as num,
+        website: json['website'] as String,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'email': email,
+        'location': location,
+        'noOfDepartments': noOfDepartments,
+        'noOfCourses': noOfCourses,
+        'website': website,
+      };
+
+  College copyWith({
+    num? id,
+    String? name,
+    String? email,
+    String? location,
+    num? noOfDepartments,
+    num? noOfCourses,
+    String? website,
+  }) =>
+      College(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        email: email ?? this.email,
+        location: location ?? this.location,
+        noOfDepartments: noOfDepartments ?? this.noOfDepartments,
+        noOfCourses: noOfCourses ?? this.noOfCourses,
+        website: website ?? this.website,
+      );
+
+  @override
+  List<Object?> get props => [
+        id,
+        name,
+        email,
+        location,
+        noOfDepartments,
+        noOfCourses,
+        website,
+      ];
+}
+
+class Admin extends Equatable {
+  const Admin({
+    required this.id,
+    required this.email,
+    required this.password,
+    required this.mobileNumber,
+    this.fcmToken,
+    this.college,
+  });
+
+  final num id;
+  final String email;
+  final String password;
+  final String mobileNumber;
+  final String? fcmToken;
+  final College? college;
+
+  factory Admin.fromJson(Map<String, dynamic> json) => Admin(
+        id: json['id'] as num,
+        email: json['email'] as String,
+        password: json['password'] as String,
+        mobileNumber: json['mobileNumber'] as String,
+        fcmToken: json['fcmToken'] as String? ?? '',
+        college: json['college'] != null
+            ? College.fromJson(json['college'] as Map<String, dynamic>)
+            : null,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'email': email,
+        'password': password,
+        'mobileNumber': mobileNumber,
+        if (fcmToken != null && fcmToken!.isNotEmpty) 'fcmToken': fcmToken,
+        if (college != null) 'college': college!.toJson(),
+      };
+
+  Admin copyWith({
+    num? id,
+    String? email,
+    String? password,
+    String? mobileNumber,
+    String? fcmToken,
+    College? college,
+  }) =>
+      Admin(
+        id: id ?? this.id,
+        email: email ?? this.email,
+        password: password ?? this.password,
+        mobileNumber: mobileNumber ?? this.mobileNumber,
+        fcmToken: fcmToken ?? this.fcmToken,
+        college: college ?? this.college,
+      );
+
+  @override
+  List<Object?> get props => [
+        id,
+        email,
+        password,
+        mobileNumber,
+        fcmToken,
+        college,
+      ];
+}

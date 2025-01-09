@@ -5,9 +5,9 @@ import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
 
 class LabeledTextFormField extends StatelessWidget {
-  final String labelText;
+  final String? labelText;
   final String? errorMessage;
-  final String? hintText;
+  final String hintText;
   final TextEditingController controller;
   final TextInputType textInputType;
   final bool enable;
@@ -29,9 +29,9 @@ class LabeledTextFormField extends StatelessWidget {
 
   const LabeledTextFormField({
     super.key,
-    required this.labelText,
+    this.labelText,
     required this.controller,
-    this.hintText,
+    required this.hintText,
     this.textInputType = TextInputType.text,
     this.textInputAction = TextInputAction.done,
     this.contentPadding = const EdgeInsets.symmetric(
@@ -95,7 +95,7 @@ class LabeledTextFormField extends StatelessWidget {
           decoration: InputDecoration(
             contentPadding: contentPadding,
             filled: !enable,
-            labelText: labelText.isNotEmpty
+            labelText: labelText != null && labelText!.isNotEmpty
                 ? '$labelText ${isOptionalFields ? '(Optional)' : ''}'
                 : null,
             hintText: hintText,
@@ -139,9 +139,8 @@ class LabeledTextFormField extends StatelessWidget {
                 Dimens.radius20,
               ),
               borderSide: BorderSide(
-                color: showBorder
-                    ? AppColors.primaryColor
-                    : AppColors.transparent,
+                color:
+                    showBorder ? AppColors.primaryColor : AppColors.transparent,
                 width: showBorder ? Dimens.width2 : 0,
               ),
             ),
@@ -153,7 +152,8 @@ class LabeledTextFormField extends StatelessWidget {
                 color: showBorder
                     ? isError
                         ? AppColors.red
-                        : AppColors.lightTextColor.withAlpha((255 * 0.5).toInt())
+                        : AppColors.lightTextColor
+                            .withAlpha((255 * 0.5).toInt())
                     : AppColors.transparent,
                 width: showBorder ? Dimens.width2 : 0,
               ),

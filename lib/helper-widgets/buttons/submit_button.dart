@@ -7,19 +7,26 @@ class SubmitButtonHelper extends StatelessWidget {
     super.key,
     required this.child,
     required this.width,
+    this.height,
+    this.padding,
   });
 
   final Widget child;
   final double width;
+  final double? height;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
       width: width,
-      padding: EdgeInsets.symmetric(
-        vertical: Dimens.height18,
-      ),
+      height: height,
+      padding: padding != null
+          ? EdgeInsets.symmetric(
+              vertical: Dimens.height18,
+            )
+          : null,
       decoration: BoxDecoration(
         color: AppColors.primaryColor,
         borderRadius: BorderRadius.circular(

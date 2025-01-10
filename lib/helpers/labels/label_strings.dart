@@ -1,4 +1,6 @@
 class LabelStrings {
+  static const String require = "is required";
+
   /// login view
   static const String loginHere = "Login Here";
   static const String loginInstruction = "Welcome back you’ve been missed!";
@@ -11,6 +13,7 @@ class LabelStrings {
   static const String forgotPassword = "Forgot your password?";
   static const String signIn = "Sign In";
   static const String createNewAccount = "Create new account";
+  static const String userRegisteredSuccess = 'The user is registered successfully!!';
 
   /// registration view
   static const String createAccount = "Create Account";

@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:present_unit/controller/login_controller.dart';
 import 'package:present_unit/helper-widgets/buttons/submit_button.dart';
+import 'package:present_unit/helper-widgets/loader/loader.dart';
+import 'package:present_unit/helper-widgets/snackbar/snackbar.dart';
 import 'package:present_unit/helper-widgets/text-field/labled_textform_field.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
@@ -21,6 +25,8 @@ class _LoginViewState extends State<LoginView> {
   late TextEditingController passwordController;
   late LoginController loginController;
 
+  bool clickOnSave = false;
+
   @override
   void initState() {
     super.initState();
@@ -28,9 +34,11 @@ class _LoginViewState extends State<LoginView> {
     emailController = TextEditingController();
     passwordController = TextEditingController();
 
-    loginController.getData();
-
+    loginController.getAdminList();
   }
+
+  bool validateFields() =>
+      emailController.text.isNotEmpty && passwordController.text.isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +80,15 @@ class _LoginViewState extends State<LoginView> {
                   labelText: '',
                   hintText: LabelStrings.enterEmail,
                   controller: emailController,
+                  textInputType: TextInputType.emailAddress,
+                  isError: clickOnSave && emailController.text.isEmpty,
+                  errorMessage: '${LabelStrings.email} ${LabelStrings.require}',
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                  onFieldSubmitted: (value) {
+                    setState(() {});
+                  },
                 ),
               ],
             ),
@@ -80,14 +97,23 @@ class _LoginViewState extends State<LoginView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AppTextTheme.textSize16(
-                  label: LabelStrings.email,
+                  label: LabelStrings.password,
                   color: AppColors.black,
                 ),
                 SizedBox(height: Dimens.height8),
                 LabeledTextFormField(
                   labelText: '',
-                  hintText: LabelStrings.enterEmail,
+                  hintText: LabelStrings.enterPassword,
                   controller: passwordController,
+                  isError: clickOnSave && passwordController.text.isEmpty,
+                  errorMessage:
+                      '${LabelStrings.password} ${LabelStrings.require}',
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                  onFieldSubmitted: (value) {
+                    setState(() {});
+                  },
                 ),
               ],
             ),
@@ -102,22 +128,73 @@ class _LoginViewState extends State<LoginView> {
               ],
             ),
             SizedBox(height: Dimens.height60),
-            SubmitButtonHelper(
-              width: MediaQuery.sizeOf(context).width,
-              height: Dimens.height80,
-              child: AppTextTheme.textSize16(
-                label: LabelStrings.signIn,
-                color: AppColors.white,
-                fontWeight: FontWeight.w700,
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () async {
+                setState(() {
+                  clickOnSave = !validateFields();
+                });
+
+                if(validateFields()) {
+                  await loginController.getAdminList();
+                  if (loginController.adminList.isNotEmpty &&
+                      loginController.adminList.any(
+                        (element) =>
+                            (element.email.toLowerCase() ==
+                                    emailController.text.toLowerCase() ||
+                                element.mobileNumber == emailController.text) &&
+                            element.password == passwordController.text,
+                      )) {
+                    loginController.loader(true);
+                    showSuccessSnackBar(
+                      context: context,
+                      title: 'User is Available and successfully login!',
+                    );
+                    loginController.loader(false);
+                    emailController.clear();
+                    passwordController.clear();
+                  } else {
+                    showErrorSnackBar(
+                      context: context,
+                      title: 'User doesn\'t exist',
+                    );
+                  }
+                }
+              },
+              child: SubmitButtonHelper(
+                width: MediaQuery.sizeOf(context).width,
+                height: Dimens.height80,
+                child: Obx(
+                  () => loginController.loader.value
+                      ? SizedBox(
+                          height: Dimens.height24,
+                          width: Dimens.width24,
+                          child: Loader(
+                            color: AppColors.white,
+                          ),
+                        )
+                      : AppTextTheme.textSize16(
+                          label: LabelStrings.signIn,
+                          color: AppColors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                ),
               ),
             ),
             SizedBox(height: Dimens.height50),
             GestureDetector(
               behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Get.toNamed(
+              onTap: () async {
+                var result = await Get.toNamed(
                   Routes.registration,
                 );
+
+                if (result is bool && result == true) {
+                  showSuccessSnackBar(
+                    context: context,
+                    title: LabelStrings.userRegisteredSuccess,
+                  );
+                }
               },
               child: AppTextTheme.textSize16(
                 label: LabelStrings.createNewAccount,

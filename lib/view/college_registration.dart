@@ -6,8 +6,10 @@ import 'package:present_unit/helper-widgets/loader/loader.dart';
 import 'package:present_unit/helper-widgets/text-field/labled_textform_field.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
+import 'package:present_unit/helpers/extension/form_field_extension.dart';
 import 'package:present_unit/helpers/labels/label_strings.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
+import 'package:present_unit/models/college_registration/college_registration_models.dart';
 
 class CollegeRegistrationView extends StatefulWidget {
   const CollegeRegistrationView({
@@ -27,11 +29,12 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
   late TextEditingController emailController;
   late TextEditingController passwordController;
   late TextEditingController mobileNumberController;
-  late TextEditingController confirmPasswordController;
   late TextEditingController locationController;
   late TextEditingController noOfDepartmentController;
   late TextEditingController noOfCoursesController;
   late TextEditingController websiteController;
+
+  bool clickOnSave = false;
 
   @override
   void initState() {
@@ -39,14 +42,27 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
     collegeNameController = TextEditingController();
     emailController = TextEditingController();
     passwordController = TextEditingController();
-    confirmPasswordController = TextEditingController();
     mobileNumberController = TextEditingController();
     locationController = TextEditingController();
     noOfDepartmentController = TextEditingController();
     noOfCoursesController = TextEditingController();
     websiteController = TextEditingController();
+
+    collegeRegistrationController.getCollegeList();
+    collegeRegistrationController.getAdminList();
+
     super.initState();
   }
+
+  bool validateFields() =>
+      collegeNameController.text.isNotEmpty &&
+      emailController.text.isNotEmpty &&
+      passwordController.text.isNotEmpty &&
+      mobileNumberController.text.isNotEmpty &&
+      locationController.text.isNotEmpty &&
+      noOfDepartmentController.text.isNotEmpty &&
+      noOfCoursesController.text.isNotEmpty &&
+      websiteController.text.isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +108,16 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                 LabeledTextFormField(
                   hintText: LabelStrings.enterCollegeName,
                   controller: collegeNameController,
+                  isError: clickOnSave && collegeNameController.text.isEmpty,
+                  errorMessage:
+                      '${LabelStrings.collegeName} ${LabelStrings.require}',
+                  textInputType: TextInputType.text,
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                  onFieldSubmitted: (value) {
+                    setState(() {});
+                  },
                 ),
               ],
             ),
@@ -109,6 +135,16 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                 LabeledTextFormField(
                   hintText: LabelStrings.enterLocation,
                   controller: locationController,
+                  isError: clickOnSave && locationController.text.isEmpty,
+                  errorMessage:
+                      '${LabelStrings.location} ${LabelStrings.require}',
+                  textInputType: TextInputType.text,
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                  onFieldSubmitted: (value) {
+                    setState(() {});
+                  },
                 ),
               ],
             ),
@@ -126,6 +162,16 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                 LabeledTextFormField(
                   hintText: LabelStrings.enterNoOfDepartments,
                   controller: noOfDepartmentController,
+                  isError: clickOnSave && noOfDepartmentController.text.isEmpty,
+                  errorMessage:
+                      '${LabelStrings.noOfDepartments} ${LabelStrings.require}',
+                  textInputType: TextInputType.number,
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                  onFieldSubmitted: (value) {
+                    setState(() {});
+                  },
                 ),
               ],
             ),
@@ -143,6 +189,16 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                 LabeledTextFormField(
                   hintText: LabelStrings.enterNoOfCourses,
                   controller: noOfCoursesController,
+                  isError: clickOnSave && noOfCoursesController.text.isEmpty,
+                  errorMessage:
+                      '${LabelStrings.noOfCourses} ${LabelStrings.require}',
+                  textInputType: TextInputType.number,
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                  onFieldSubmitted: (value) {
+                    setState(() {});
+                  },
                 ),
               ],
             ),
@@ -160,6 +216,16 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                 LabeledTextFormField(
                   hintText: LabelStrings.enterWebsite,
                   controller: websiteController,
+                  isError: clickOnSave && websiteController.text.isEmpty,
+                  errorMessage:
+                      '${LabelStrings.website} ${LabelStrings.require}',
+                  textInputType: TextInputType.text,
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                  onFieldSubmitted: (value) {
+                    setState(() {});
+                  },
                 ),
               ],
             ),
@@ -177,6 +243,15 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                 LabeledTextFormField(
                   hintText: LabelStrings.enterEmail,
                   controller: emailController,
+                  isError: clickOnSave && emailController.text.isEmpty,
+                  errorMessage: '${LabelStrings.email} ${LabelStrings.require}',
+                  textInputType: TextInputType.emailAddress,
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                  onFieldSubmitted: (value) {
+                    setState(() {});
+                  },
                 ),
               ],
             ),
@@ -194,6 +269,16 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                 LabeledTextFormField(
                   hintText: LabelStrings.enterMobileNumber,
                   controller: mobileNumberController,
+                  isError: clickOnSave && mobileNumberController.text.isEmpty,
+                  errorMessage:
+                      '${LabelStrings.mobileNumber} ${LabelStrings.require}',
+                  textInputType: TextInputType.phone,
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                  onFieldSubmitted: (value) {
+                    setState(() {});
+                  },
                 ),
               ],
             ),
@@ -211,23 +296,16 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                 LabeledTextFormField(
                   hintText: LabelStrings.enterPassword,
                   controller: passwordController,
-                ),
-              ],
-            ),
-            SizedBox(height: Dimens.height36),
-
-            /// admin password text-form-field
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppTextTheme.textSize16(
-                  label: LabelStrings.confirmPassword,
-                  color: AppColors.black,
-                ),
-                SizedBox(height: Dimens.height8),
-                LabeledTextFormField(
-                  hintText: LabelStrings.enterConfirmPassword,
-                  controller: confirmPasswordController,
+                  isError: clickOnSave && passwordController.text.isEmpty,
+                  errorMessage:
+                      '${LabelStrings.password} ${LabelStrings.require}',
+                  textInputType: TextInputType.text,
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                  onFieldSubmitted: (value) {
+                    setState(() {});
+                  },
                 ),
               ],
             ),
@@ -235,15 +313,43 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
             GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () async {
-                collegeRegistrationController.loader(true);
-                await Future.delayed(
-                  const Duration(
-                    seconds: 3,
-                  ),
-                  () {
-                    collegeRegistrationController.loader(false);
-                  },
-                );
+                setState(() {
+                  clickOnSave = !validateFields();
+                });
+
+                if (validateFields()) {
+                  collegeRegistrationController.loader(true);
+                  Admin admin = Admin(
+                    id: collegeRegistrationController.adminList.length + 1,
+                    email: emailController.text.toLowerCase(),
+                    password: passwordController.text,
+                    mobileNumber: mobileNumberController.text,
+                  );
+                  College college = College(
+                    id: collegeRegistrationController.collegeList.length + 1,
+                    name: collegeNameController.text,
+                    email: emailController.text.toLowerCase(),
+                    location: locationController.text,
+                    noOfDepartments: noOfDepartmentController.convertToNum(),
+                    noOfCourses: noOfCoursesController.convertToNum(),
+                    websiteUrl: websiteController.text,
+                    admin: admin,
+                  );
+                  await collegeRegistrationController.writeCollegeObject(
+                    college: college,
+                  );
+                  college = college.copyWith(
+                    admin: null,
+                  );
+                  admin = admin.copyWith(college: college);
+                  await collegeRegistrationController.writeAdminObject(
+                    admin: admin,
+                  );
+                  collegeRegistrationController.loader(false);
+                  Get.back<bool>(
+                    result: true,
+                  );
+                }
               },
               child: SubmitButtonHelper(
                 width: MediaQuery.sizeOf(context).width,

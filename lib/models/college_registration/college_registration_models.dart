@@ -8,7 +8,8 @@ class College extends Equatable {
     required this.location,
     required this.noOfDepartments,
     required this.noOfCourses,
-    required this.website,
+    required this.websiteUrl,
+    this.admin,
   });
 
   final num id;
@@ -17,16 +18,22 @@ class College extends Equatable {
   final String location;
   final num noOfDepartments;
   final num noOfCourses;
-  final String website;
+  final String websiteUrl;
+  final Admin? admin;
 
   factory College.fromJson(Map<String, dynamic> json) => College(
         id: json['id'] as num,
         name: json['name'] as String,
-        email: json['email'] as String,
+        email: json['email'] as String? ?? '',
         location: json['location'] as String,
         noOfDepartments: json['noOfDepartments'] as num,
         noOfCourses: json['noOfCourses'] as num,
-        website: json['website'] as String,
+        websiteUrl: json['websiteUrl'] as String,
+        admin: json['admin'] != null
+            ? Admin.fromJson(
+                json['admin'] as Map<String, dynamic>,
+              )
+            : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -36,7 +43,8 @@ class College extends Equatable {
         'location': location,
         'noOfDepartments': noOfDepartments,
         'noOfCourses': noOfCourses,
-        'website': website,
+        'websiteUrl': websiteUrl,
+        if (admin != null) 'admin': admin?.toJson(),
       };
 
   College copyWith({
@@ -46,7 +54,8 @@ class College extends Equatable {
     String? location,
     num? noOfDepartments,
     num? noOfCourses,
-    String? website,
+    String? websiteUrl,
+    Admin? admin,
   }) =>
       College(
         id: id ?? this.id,
@@ -55,7 +64,8 @@ class College extends Equatable {
         location: location ?? this.location,
         noOfDepartments: noOfDepartments ?? this.noOfDepartments,
         noOfCourses: noOfCourses ?? this.noOfCourses,
-        website: website ?? this.website,
+        websiteUrl: websiteUrl ?? this.websiteUrl,
+        admin: admin ?? this.admin,
       );
 
   @override
@@ -66,7 +76,8 @@ class College extends Equatable {
         location,
         noOfDepartments,
         noOfCourses,
-        website,
+        websiteUrl,
+        admin,
       ];
 }
 

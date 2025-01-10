@@ -100,7 +100,7 @@ class LabeledTextFormField extends StatelessWidget {
                 : null,
             hintText: hintText,
             errorText:
-                isError ? errorMessage ?? '$labelText is required' : null,
+                isError ? errorMessage ?? '$hintText is required' : null,
             errorStyle: GoogleFonts.urbanist(
               fontWeight: FontWeight.normal,
               fontSize: Dimens.textSize24,

@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:present_unit/controller/college_registration_controller.dart';
@@ -57,6 +60,7 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
   bool validateFields() =>
       collegeNameController.text.isNotEmpty &&
       emailController.text.isNotEmpty &&
+      EmailValidator.validate(emailController.text) &&
       passwordController.text.isNotEmpty &&
       mobileNumberController.text.isNotEmpty &&
       locationController.text.isNotEmpty &&
@@ -243,8 +247,14 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                 LabeledTextFormField(
                   hintText: LabelStrings.enterEmail,
                   controller: emailController,
-                  isError: clickOnSave && emailController.text.isEmpty,
-                  errorMessage: '${LabelStrings.email} ${LabelStrings.require}',
+                  isError: clickOnSave &&
+                      (emailController.text.isEmpty ||
+                          (emailController.text.isNotEmpty &&
+                              !EmailValidator.validate(emailController.text))),
+                  errorMessage: (emailController.text.isNotEmpty &&
+                          !EmailValidator.validate(emailController.text))
+                      ? LabelStrings.emailIncorrect
+                      : '${LabelStrings.email} ${LabelStrings.require}',
                   textInputType: TextInputType.emailAddress,
                   onChanged: (value) {
                     setState(() {});
@@ -338,8 +348,14 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                   await collegeRegistrationController.writeCollegeObject(
                     college: college,
                   );
-                  college = college.copyWith(
-                    admin: null,
+                  college = College(
+                    id: college.id,
+                    name: college.name,
+                    email: college.email,
+                    location: college.location,
+                    noOfDepartments: college.noOfDepartments,
+                    noOfCourses: college.noOfCourses,
+                    websiteUrl: college.websiteUrl,
                   );
                   admin = admin.copyWith(college: college);
                   await collegeRegistrationController.writeAdminObject(

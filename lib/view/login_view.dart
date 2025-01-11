@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:present_unit/controller/login_controller.dart';
@@ -38,7 +37,9 @@ class _LoginViewState extends State<LoginView> {
   }
 
   bool validateFields() =>
-      emailController.text.isNotEmpty && passwordController.text.isNotEmpty;
+      emailController.text.isNotEmpty &&
+      EmailValidator.validate(emailController.text) &&
+      passwordController.text.isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -81,8 +82,14 @@ class _LoginViewState extends State<LoginView> {
                   hintText: LabelStrings.enterEmail,
                   controller: emailController,
                   textInputType: TextInputType.emailAddress,
-                  isError: clickOnSave && emailController.text.isEmpty,
-                  errorMessage: '${LabelStrings.email} ${LabelStrings.require}',
+                  isError: clickOnSave &&
+                      (emailController.text.isEmpty ||
+                          (emailController.text.isNotEmpty &&
+                              !EmailValidator.validate(emailController.text))),
+                  errorMessage: (emailController.text.isNotEmpty &&
+                          !EmailValidator.validate(emailController.text))
+                      ? LabelStrings.emailIncorrect
+                      : '${LabelStrings.email} ${LabelStrings.require}',
                   onChanged: (value) {
                     setState(() {});
                   },
@@ -135,7 +142,7 @@ class _LoginViewState extends State<LoginView> {
                   clickOnSave = !validateFields();
                 });
 
-                if(validateFields()) {
+                if (validateFields()) {
                   await loginController.getAdminList();
                   if (loginController.adminList.isNotEmpty &&
                       loginController.adminList.any(

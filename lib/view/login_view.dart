@@ -160,6 +160,7 @@ class _LoginViewState extends State<LoginView> {
                     loginController.loader(false);
                     emailController.clear();
                     passwordController.clear();
+                    Get.toNamed(Routes.adminDashboard);
                   } else {
                     showErrorSnackBar(
                       context: context,

@@ -1,5 +1,8 @@
 class LabelStrings {
   static const String require = "is required";
+  static const String add = "Add";
+  static const String update = "Update";
+  static const String submit = "Submit";
 
   /// login view
   static const String loginHere = "Login Here";
@@ -34,4 +37,22 @@ class LabelStrings {
   static const String enterWebsite = "Enter Website...";
   static const String mobileNumber = "Mobile Number";
   static const String enterMobileNumber = "Enter Mobile Number...";
+
+
+
+  static const String noData = "No Data";
+  static const String home = "Home";
+  static const String course = "Course";
+  static const String classList = "Class List";
+  static const String faculty = "Faculty";
+  static const String subject = "Subject";
+  static const String addCourse = "Add Course";
+  static const String editCourse = "Edit Course";
+
+
+  /// add-edit
+  static const String enterCourseName = "Enter Course Name";
+  static const String enterCourseDuration = "Enter Course Duration (in Years)";
+  static const String enterProperDuration = "Enter Proper Duration";
+
 }

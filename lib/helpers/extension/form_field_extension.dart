@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
 
 extension ConvertFromString on TextEditingController {
-  num convertToNum() => num.parse(text);
+  num convertToNum() => text.isNotEmpty ? num.parse(text) : 0;
 }

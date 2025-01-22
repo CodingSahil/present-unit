@@ -33,6 +33,7 @@ class SubmitButtonHelper extends StatelessWidget {
           Dimens.radius15,
         ),
       ),
+      /// preferred text size 16
       child: child,
     );
   }

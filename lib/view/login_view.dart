@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,9 +10,12 @@ import 'package:present_unit/helper-widgets/loader/loader.dart';
 import 'package:present_unit/helper-widgets/snackbar/snackbar.dart';
 import 'package:present_unit/helper-widgets/text-field/labled_textform_field.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
+import 'package:present_unit/helpers/database/storage_keys.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
 import 'package:present_unit/helpers/labels/label_strings.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
+import 'package:present_unit/main.dart';
+import 'package:present_unit/models/college_registration/college_registration_models.dart';
 import 'package:present_unit/routes/routes.dart';
 
 class LoginView extends StatefulWidget {
@@ -33,13 +39,27 @@ class _LoginViewState extends State<LoginView> {
     emailController = TextEditingController();
     passwordController = TextEditingController();
 
-    loginController.getAdminList();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) async {
+        await loginController.getAdminList();
+
+        var adminDetails =
+            await loginController.getStorage.read(StorageKeys.adminDetails);
+        log('adminDetails => $adminDetails');
+
+        if (adminDetails != null && adminDetails.isNotEmpty) {
+          Get.toNamed(Routes.adminDashboard);
+        }
+      },
+    );
   }
 
   bool validateFields() =>
       emailController.text.isNotEmpty &&
       EmailValidator.validate(emailController.text) &&
-      passwordController.text.isNotEmpty;
+      passwordController.text.isNotEmpty &&
+      passwordController.text.length >= 6 &&
+      passwordRegex.hasMatch(passwordController.text);
 
   @override
   Widget build(BuildContext context) {
@@ -112,9 +132,16 @@ class _LoginViewState extends State<LoginView> {
                   labelText: '',
                   hintText: LabelStrings.enterPassword,
                   controller: passwordController,
-                  isError: clickOnSave && passwordController.text.isEmpty,
-                  errorMessage:
-                      '${LabelStrings.password} ${LabelStrings.require}',
+                  isError: clickOnSave &&
+                      (passwordController.text.isEmpty ||
+                          passwordController.text.length < 6 ||
+                          !passwordRegex.hasMatch(passwordController.text)),
+                  isPasswordField: true,
+                  errorMessage: !passwordRegex.hasMatch(passwordController.text)
+                      ? 'Password must contain at least:- 1 uppercase letter,\n1 lowercase letter, 1 number, 1 special character'
+                      : passwordController.text.length < 6
+                          ? 'Password length must at least 6'
+                          : '${LabelStrings.password} ${LabelStrings.require}',
                   onChanged: (value) {
                     setState(() {});
                   },
@@ -152,12 +179,27 @@ class _LoginViewState extends State<LoginView> {
                                 element.mobileNumber == emailController.text) &&
                             element.password == passwordController.text,
                       )) {
-                    loginController.loader(true);
-                    showSuccessSnackBar(
-                      context: context,
-                      title: 'User is Available and successfully login!',
+                    Admin admin = loginController.adminList.singleWhere(
+                      (element) =>
+                          (element.email.toLowerCase() ==
+                                  emailController.text.toLowerCase() ||
+                              element.mobileNumber == emailController.text) &&
+                          element.password == passwordController.text,
                     );
-                    loginController.loader(false);
+
+                    loginController.submitLoader(true);
+                    await loginController.getStorage.write(
+                      StorageKeys.adminDetails,
+                      jsonEncode(
+                        admin.toJson(),
+                      ),
+                    );
+                    await Future.delayed(
+                      const Duration(
+                        seconds: 1,
+                      ),
+                    );
+                    loginController.submitLoader(false);
                     emailController.clear();
                     passwordController.clear();
                     Get.toNamed(Routes.adminDashboard);
@@ -173,7 +215,7 @@ class _LoginViewState extends State<LoginView> {
                 width: MediaQuery.sizeOf(context).width,
                 height: Dimens.height80,
                 child: Obx(
-                  () => loginController.loader.value
+                  () => loginController.submitLoader.value
                       ? SizedBox(
                           height: Dimens.height24,
                           width: Dimens.width24,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:present_unit/helpers/assets_path/assets_path.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
 
@@ -25,6 +27,7 @@ class LabeledTextFormField extends StatelessWidget {
   final bool isAmountField;
   final bool isOptionalFields;
   final bool isCancel;
+  final bool isPasswordField;
   final void Function()? onClose;
 
   const LabeledTextFormField({
@@ -51,11 +54,13 @@ class LabeledTextFormField extends StatelessWidget {
     this.isAmountField = false,
     this.isOptionalFields = false,
     this.isCancel = false,
+    this.isPasswordField = false,
     this.onClose,
   });
 
   @override
   Widget build(BuildContext context) {
+    bool isEyeOpen = false;
     return StatefulBuilder(
       builder: (context, setPasswordState) {
         return TextFormField(
@@ -69,6 +74,7 @@ class LabeledTextFormField extends StatelessWidget {
           cursorWidth: 1,
           keyboardType: textInputType,
           maxLines: maxLines,
+          obscureText: isPasswordField && !isEyeOpen,
           obscuringCharacter: '*',
           onEditingComplete: onEditingComplete,
           inputFormatters: isAmountField
@@ -84,10 +90,14 @@ class LabeledTextFormField extends StatelessWidget {
                       ? <TextInputFormatter>[
                           LengthLimitingTextInputFormatter(10),
                         ]
-                      : <TextInputFormatter>[
-                          UpperCaseTextFormatter(),
-                        ],
-          style: GoogleFonts.urbanist(
+                      : textInputType == TextInputType.url
+                          ? <TextInputFormatter>[
+                              NormalCaseTextFormatter(),
+                            ]
+                          : <TextInputFormatter>[
+                              UpperCaseTextFormatter(),
+                            ],
+          style: GoogleFonts.oswald(
             fontWeight: FontWeight.normal,
             fontSize: Dimens.textSize24,
             color: showRedTextColor ? AppColors.red : AppColors.black,
@@ -99,9 +109,8 @@ class LabeledTextFormField extends StatelessWidget {
                 ? '$labelText ${isOptionalFields ? '(Optional)' : ''}'
                 : null,
             hintText: hintText,
-            errorText:
-                isError ? errorMessage ?? '$hintText is required' : null,
-            errorStyle: GoogleFonts.urbanist(
+            errorText: isError ? errorMessage ?? '$hintText is required' : null,
+            errorStyle: GoogleFonts.oswald(
               fontWeight: FontWeight.normal,
               fontSize: Dimens.textSize24,
               color: AppColors.red,
@@ -115,12 +124,12 @@ class LabeledTextFormField extends StatelessWidget {
             labelStyle: GoogleFonts.oswald(
               fontWeight: FontWeight.normal,
               fontSize: Dimens.textSize24,
-              color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
+              color: AppColors.black,
             ),
             hintStyle: GoogleFonts.oswald(
               fontWeight: FontWeight.normal,
               fontSize: Dimens.textSize24,
-              color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
+              color: AppColors.black,
             ),
             suffixIcon: isCancel
                 ? GestureDetector(
@@ -132,7 +141,39 @@ class LabeledTextFormField extends StatelessWidget {
                       size: Dimens.height28,
                     ),
                   )
-                : null,
+                : isPasswordField
+                    ? Container(
+                        padding: EdgeInsets.symmetric(
+                          vertical: Dimens.height28,
+                          horizontal: Dimens.width36,
+                        ),
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () {
+                            setPasswordState(() => isEyeOpen = !isEyeOpen);
+                          },
+                          child: isEyeOpen
+                              ? SvgPicture.asset(
+                                  AssetsPaths.eyeOpenSVG,
+                                  colorFilter: ColorFilter.mode(
+                                    AppColors.black.withAlpha(
+                                      (255 * 0.75).toInt(),
+                                    ),
+                                    BlendMode.srcIn,
+                                  ),
+                                )
+                              : SvgPicture.asset(
+                                  AssetsPaths.eyeCloseSVG,
+                                  colorFilter: ColorFilter.mode(
+                                    AppColors.black.withAlpha(
+                                      (255 * 0.75).toInt(),
+                                    ),
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                        ),
+                      )
+                    : null,
             floatingLabelBehavior: FloatingLabelBehavior.auto,
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(
@@ -200,6 +241,19 @@ class UpperCaseTextFormatter extends TextInputFormatter {
   ) {
     return TextEditingValue(
       text: capitalize(newValue.text),
+      selection: newValue.selection,
+    );
+  }
+}
+
+class NormalCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    return TextEditingValue(
+      text: newValue.text,
       selection: newValue.selection,
     );
   }

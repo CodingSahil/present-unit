@@ -4,4 +4,5 @@ class Routes {
 
   /// Admin
   static const String adminDashboard = 'admin_dashboard.dart';
+  static const String addEditCourse = 'AddEditCourseView.dart';
 }

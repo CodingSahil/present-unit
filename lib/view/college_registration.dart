@@ -10,6 +10,7 @@ import 'package:present_unit/helpers/dimens/dimens.dart';
 import 'package:present_unit/helpers/extension/form_field_extension.dart';
 import 'package:present_unit/helpers/labels/label_strings.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
+import 'package:present_unit/main.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
 
 class CollegeRegistrationView extends StatefulWidget {
@@ -60,6 +61,8 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
       emailController.text.isNotEmpty &&
       EmailValidator.validate(emailController.text) &&
       passwordController.text.isNotEmpty &&
+      passwordController.text.length >= 6 &&
+      passwordRegex.hasMatch(passwordController.text) &&
       mobileNumberController.text.isNotEmpty &&
       locationController.text.isNotEmpty &&
       noOfDepartmentController.text.isNotEmpty &&
@@ -221,7 +224,7 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                   isError: clickOnSave && websiteController.text.isEmpty,
                   errorMessage:
                       '${LabelStrings.website} ${LabelStrings.require}',
-                  textInputType: TextInputType.text,
+                  textInputType: TextInputType.url,
                   onChanged: (value) {
                     setState(() {});
                   },
@@ -304,10 +307,17 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                 LabeledTextFormField(
                   hintText: LabelStrings.enterPassword,
                   controller: passwordController,
-                  isError: clickOnSave && passwordController.text.isEmpty,
-                  errorMessage:
-                      '${LabelStrings.password} ${LabelStrings.require}',
+                  isError: clickOnSave &&
+                      (passwordController.text.isEmpty ||
+                          passwordController.text.length < 6 ||
+                          !passwordRegex.hasMatch(passwordController.text)),
+                  errorMessage: !passwordRegex.hasMatch(passwordController.text)
+                      ? 'Password must contain at least:- 1 uppercase letter,\n1 lowercase letter, 1 number, 1 special character'
+                      : passwordController.text.length < 6
+                          ? 'Password length must at least 6'
+                          : '${LabelStrings.password} ${LabelStrings.require}',
                   textInputType: TextInputType.text,
+                  isPasswordField: true,
                   onChanged: (value) {
                     setState(() {});
                   },

@@ -36,6 +36,17 @@ class College extends Equatable {
             : null,
       );
 
+  factory College.empty() => const College(
+        id: -1000,
+        name: '',
+        email: '',
+        location: '',
+        noOfDepartments: 0,
+        noOfCourses: 0,
+        websiteUrl: '',
+        admin: null,
+      );
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
@@ -44,7 +55,7 @@ class College extends Equatable {
         'noOfDepartments': noOfDepartments,
         'noOfCourses': noOfCourses,
         'websiteUrl': websiteUrl,
-        if (admin != null) 'admin': admin?.toJson(),
+        if (admin != null && admin!.id != -1000) 'admin': admin?.toJson(),
       };
 
   College copyWith({
@@ -109,13 +120,22 @@ class Admin extends Equatable {
             : null,
       );
 
+  factory Admin.empty() => const Admin(
+    id: -1000,
+    email: '',
+    password: '',
+    mobileNumber: '',
+    fcmToken: null,
+    college: null,
+  );
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'email': email,
         'password': password,
         'mobileNumber': mobileNumber,
         if (fcmToken != null && fcmToken!.isNotEmpty) 'fcmToken': fcmToken,
-        if (college != null) 'college': college!.toJson(),
+        if (college != null && college!.id != -1000) 'college': college!.toJson(),
       };
 
   Admin copyWith({

@@ -14,15 +14,23 @@ import 'firebase_options.dart';
 // ios       1:92580548493:ios:a1c8d48e59cc503aaef7c4
 // macos     1:92580548493:ios:a1c8d48e59cc503aaef7c4
 
+bool isIOS = false;
+bool isAndroid = false;
+final RegExp passwordRegex = RegExp(
+  r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$',
+);
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
 
   /// todo add authentication
   final LocalAuthentication localAuthentication = LocalAuthentication();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  isIOS = GetPlatform.isIOS;
+  isAndroid = GetPlatform.isAndroid;
   runApp(const MyApp());
 }
 

@@ -96,6 +96,7 @@ class Admin extends Equatable {
   const Admin({
     required this.id,
     required this.email,
+    required this.name,
     required this.password,
     required this.mobileNumber,
     this.fcmToken,
@@ -103,6 +104,7 @@ class Admin extends Equatable {
   });
 
   final num id;
+  final String name;
   final String email;
   final String password;
   final String mobileNumber;
@@ -112,6 +114,7 @@ class Admin extends Equatable {
   factory Admin.fromJson(Map<String, dynamic> json) => Admin(
         id: json['id'] as num,
         email: json['email'] as String,
+        name: json['name'] as String,
         password: json['password'] as String,
         mobileNumber: json['mobileNumber'] as String,
         fcmToken: json['fcmToken'] as String? ?? '',
@@ -123,6 +126,7 @@ class Admin extends Equatable {
   factory Admin.empty() => const Admin(
     id: -1000,
     email: '',
+    name: '',
     password: '',
     mobileNumber: '',
     fcmToken: null,
@@ -131,15 +135,18 @@ class Admin extends Equatable {
 
   Map<String, dynamic> toJson() => {
         'id': id,
+        'name': name,
         'email': email,
         'password': password,
         'mobileNumber': mobileNumber,
         if (fcmToken != null && fcmToken!.isNotEmpty) 'fcmToken': fcmToken,
-        if (college != null && college!.id != -1000) 'college': college!.toJson(),
+        if (college != null && college!.id != -1000)
+          'college': college!.toJson(),
       };
 
   Admin copyWith({
     num? id,
+    String? name,
     String? email,
     String? password,
     String? mobileNumber,
@@ -149,6 +156,7 @@ class Admin extends Equatable {
       Admin(
         id: id ?? this.id,
         email: email ?? this.email,
+        name: name ?? this.name,
         password: password ?? this.password,
         mobileNumber: mobileNumber ?? this.mobileNumber,
         fcmToken: fcmToken ?? this.fcmToken,
@@ -159,6 +167,7 @@ class Admin extends Equatable {
   List<Object?> get props => [
         id,
         email,
+    name,
         password,
         mobileNumber,
         fcmToken,

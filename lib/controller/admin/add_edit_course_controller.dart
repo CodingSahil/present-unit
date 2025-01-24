@@ -35,7 +35,9 @@ class AddEditCourseController extends GetxController {
     try {
       var adminDetails = getStorage.read(StorageKeys.adminDetails);
       admin = adminDetails != null
-          ? Admin.fromJson(jsonDecode(adminDetails))
+          ? Admin.fromJson(
+              jsonDecode(adminDetails),
+            )
           : null;
     } catch (e) {
       showErrorSnackBar(
@@ -57,15 +59,26 @@ class AddEditCourseController extends GetxController {
   Future<void> writeData({
     required Course course,
   }) async {
-    await writeCollegeObject(
+    await writeAnObject(
       collection: CollectionStrings.course,
-      newDocumentName:
-          '${course.name}_${course.admin?.id ?? ''}_${course.admin?.email.split("@").first ?? ''}',
+      newDocumentName: course.documentID,
       newMap: course.toJson(),
     );
     courseList = await getListFromFirebase<Course>(
       collection: CollectionStrings.course,
       fromJson: Course.fromJson,
     );
+  }
+
+  Future<void> updateData({
+    required Course course,
+    required BuildContext context,
+  }) async {
+    await updateAnObject(
+      collection: CollectionStrings.course,
+      documentName: course.documentID,
+      newMap: course.toJson(),
+    );
+    getListOfCourse(context: context);
   }
 }

@@ -29,6 +29,7 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
   /// form fields
   late TextEditingController collegeNameController;
   late TextEditingController emailController;
+  late TextEditingController adminNameController;
   late TextEditingController passwordController;
   late TextEditingController mobileNumberController;
   late TextEditingController locationController;
@@ -43,6 +44,7 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
     collegeRegistrationController = Get.find<CollegeRegistrationController>();
     collegeNameController = TextEditingController();
     emailController = TextEditingController();
+    adminNameController = TextEditingController();
     passwordController = TextEditingController();
     mobileNumberController = TextEditingController();
     locationController = TextEditingController();
@@ -59,6 +61,7 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
   bool validateFields() =>
       collegeNameController.text.isNotEmpty &&
       emailController.text.isNotEmpty &&
+      adminNameController.text.isNotEmpty &&
       EmailValidator.validate(emailController.text) &&
       passwordController.text.isNotEmpty &&
       passwordController.text.length >= 6 &&
@@ -72,7 +75,7 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.scaffoldBgColor,
       body: Container(
         alignment: Alignment.center,
         height: MediaQuery.sizeOf(context).height,
@@ -236,6 +239,30 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
             ),
             SizedBox(height: Dimens.height36),
 
+            /// admin name text-form-field
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppTextTheme.textSize16(
+                  label: LabelStrings.name,
+                  color: AppColors.black,
+                ),
+                SizedBox(height: Dimens.height8),
+                LabeledTextFormField(
+                  hintText: LabelStrings.enterName,
+                  controller: adminNameController,
+                  isError: clickOnSave && adminNameController.text.isEmpty,
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                  onFieldSubmitted: (value) {
+                    setState(() {});
+                  },
+                ),
+              ],
+            ),
+            SizedBox(height: Dimens.height36),
+
             /// admin email text-form-field
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -339,18 +366,19 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                   collegeRegistrationController.loader(true);
                   Admin admin = Admin(
                     id: collegeRegistrationController.adminList.length + 1,
-                    email: emailController.text.toLowerCase(),
-                    password: passwordController.text,
-                    mobileNumber: mobileNumberController.text,
+                    name: adminNameController.text.trim(),
+                    email: emailController.text.toLowerCase().trim(),
+                    password: passwordController.text.trim(),
+                    mobileNumber: mobileNumberController.text.trim(),
                   );
                   College college = College(
                     id: collegeRegistrationController.collegeList.length + 1,
-                    name: collegeNameController.text,
-                    email: emailController.text.toLowerCase(),
-                    location: locationController.text,
+                    name: collegeNameController.text.trim(),
+                    email: emailController.text.toLowerCase().trim(),
+                    location: locationController.text.trim(),
                     noOfDepartments: noOfDepartmentController.convertToNum(),
                     noOfCourses: noOfCoursesController.convertToNum(),
-                    websiteUrl: websiteController.text,
+                    websiteUrl: websiteController.text.trim(),
                     admin: admin,
                   );
                   await collegeRegistrationController.writeCollegeObject(

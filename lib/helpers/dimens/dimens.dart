@@ -115,6 +115,9 @@ class Dimens {
   static final double radius5 = 5.r;
   static final double radius10 = 10.r;
   static final double radius15 = 15.r;
+  static final double radius16 = 16.r;
+  static final double radius17 = 17.r;
+  static final double radius18 = 18.r;
   static final double radius20 = 20.r;
   static final double radius25 = 25.r;
   static final double radius30 = 30.r;

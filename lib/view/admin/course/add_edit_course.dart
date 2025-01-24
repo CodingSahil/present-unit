@@ -15,6 +15,7 @@ import 'package:present_unit/helpers/labels/label_strings.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
 import 'package:present_unit/models/course/course_model.dart';
+import 'package:present_unit/models/navigation_models/admin/admin_navigation_models.dart';
 
 class AddEditCourseView extends StatefulWidget {
   const AddEditCourseView({
@@ -33,6 +34,8 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
   late TextEditingController courseNameController;
   late TextEditingController courseDurationController;
 
+  CourseNavigation? courseNavigation;
+
   bool isError = false;
 
   @override
@@ -49,6 +52,14 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
         );
       },
     );
+
+    if (widget.arguments != null && widget.arguments is CourseNavigation) {
+      courseNavigation = widget.arguments as CourseNavigation;
+      if (courseNavigation != null) {
+        courseNameController.text = courseNavigation!.name;
+        courseDurationController.text = courseNavigation!.duration;
+      }
+    }
   }
 
   @override
@@ -61,6 +72,7 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.scaffoldBgColor,
       appBar: CommonAppBarPreferred(
         label: widget.arguments != null
             ? LabelStrings.editCourse
@@ -114,24 +126,53 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
                   return;
                 }
                 addEditCourseController.submitLoader(true);
+
                 dynamic storedData = addEditCourseController.getStorage
                     .read(StorageKeys.adminDetails);
-                Admin admin =
-                    storedData != null && storedData.toString().isNotEmpty
-                        ? Admin.fromJson(jsonDecode(storedData.toString()))
-                        : Admin.empty();
-                admin = admin.copyWith(
-                  college: College.empty(),
-                );
-                Course course = Course(
-                  id: addEditCourseController.courseList.isNotEmpty
-                      ? addEditCourseController.courseList.length
-                      : 1,
-                  name: courseNameController.text,
-                  duration: courseDurationController.convertToNum(),
-                  admin: admin,
-                );
-                await addEditCourseController.writeData(course: course);
+                if (courseNavigation != null) {
+                  Admin? admin = courseNavigation!.admin;
+                  if (admin != null) {
+                    admin = admin.copyWith(
+                      college: College.empty(),
+                    );
+                  }
+                  Course course = Course(
+                    id: courseNavigation!.id,
+                    name: courseNameController.text
+                        .trim(),
+                    duration: courseDurationController.convertToNum(),
+                    documentID: courseNavigation!.documentID,
+                    admin: admin,
+                  );
+                  await addEditCourseController.updateData(
+                    course: course,
+                    context: context,
+                  );
+                } else {
+                  Admin admin =
+                      storedData != null && storedData.toString().isNotEmpty
+                          ? Admin.fromJson(
+                              jsonDecode(storedData.toString()),
+                            )
+                          : Admin.empty();
+                  admin = admin.copyWith(
+                    college: College.empty(),
+                  );
+                  Course course = Course(
+                    id: addEditCourseController.courseList.isNotEmpty
+                        ? addEditCourseController.courseList.length + 1
+                        : 1,
+                    name: courseNameController.text.trim(),
+                    duration: courseDurationController.convertToNum(),
+                    documentID:
+                        '${courseNameController.text.trim().replaceAll(RegExp(r'[.\s]'), '')}${admin.id != -1000 ? '_${admin.id}' : ''}_${admin.email.split("@").first.replaceAll(
+                              ".",
+                              "",
+                            )}',
+                    admin: admin,
+                  );
+                  await addEditCourseController.writeData(course: course);
+                }
                 addEditCourseController.submitLoader(false);
                 Get.back(
                   result: true,
@@ -144,7 +185,10 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
                   () => addEditCourseController.submitLoader.value
                       ? const ButtonLoader()
                       : AppTextTheme.textSize16(
-                          label: LabelStrings.add,
+                          label: courseNavigation != null &&
+                                  widget.arguments != null
+                              ? LabelStrings.update
+                              : LabelStrings.add,
                           color: AppColors.white,
                         ),
                 ),

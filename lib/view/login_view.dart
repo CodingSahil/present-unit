@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
-
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -42,14 +40,6 @@ class _LoginViewState extends State<LoginView> {
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
         await loginController.getAdminList();
-
-        var adminDetails =
-            await loginController.getStorage.read(StorageKeys.adminDetails);
-        log('adminDetails => $adminDetails');
-
-        if (adminDetails != null && adminDetails.isNotEmpty) {
-          Get.toNamed(Routes.adminDashboard);
-        }
       },
     );
   }
@@ -64,7 +54,7 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.scaffoldBgColor,
       body: Container(
         alignment: Alignment.center,
         height: MediaQuery.sizeOf(context).height,
@@ -174,17 +164,17 @@ class _LoginViewState extends State<LoginView> {
                   if (loginController.adminList.isNotEmpty &&
                       loginController.adminList.any(
                         (element) =>
-                            (element.email.toLowerCase() ==
-                                    emailController.text.toLowerCase() ||
-                                element.mobileNumber == emailController.text) &&
-                            element.password == passwordController.text,
+                            (element.email.toLowerCase().trim() ==
+                                    emailController.text.toLowerCase().trim() ||
+                                element.mobileNumber.trim() == emailController.text.trim()) &&
+                            element.password.trim() == passwordController.text.trim(),
                       )) {
                     Admin admin = loginController.adminList.singleWhere(
                       (element) =>
-                          (element.email.toLowerCase() ==
-                                  emailController.text.toLowerCase() ||
-                              element.mobileNumber == emailController.text) &&
-                          element.password == passwordController.text,
+                          (element.email.toLowerCase().trim() ==
+                              emailController.text.toLowerCase().trim() ||
+                              element.mobileNumber.trim() == emailController.text.trim()) &&
+                              element.password.trim() == passwordController.text.trim(),
                     );
 
                     loginController.submitLoader(true);
@@ -202,7 +192,7 @@ class _LoginViewState extends State<LoginView> {
                     loginController.submitLoader(false);
                     emailController.clear();
                     passwordController.clear();
-                    Get.toNamed(Routes.adminDashboard);
+                    Get.offAllNamed(Routes.adminDashboard);
                   } else {
                     showErrorSnackBar(
                       context: context,

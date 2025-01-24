@@ -8,8 +8,10 @@ class LabelStrings {
   static const String loginHere = "Login Here";
   static const String loginInstruction = "Welcome back you’ve been missed!";
   static const String email = "Email";
+  static const String name = "Name";
   static const String emailIncorrect = "Email is not acceptable";
   static const String enterEmail = "Enter email...";
+  static const String enterName = "Enter name...";
   static const String password = "Password";
   static const String confirmPassword = "Confirm Password";
   static const String enterPassword = "Enter password...";

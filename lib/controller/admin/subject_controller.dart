@@ -7,16 +7,14 @@ import 'package:present_unit/app-repository/firestore_method.dart';
 import 'package:present_unit/helper-widgets/snackbar/snackbar.dart';
 import 'package:present_unit/helpers/database/collection_string.dart';
 import 'package:present_unit/helpers/database/storage_keys.dart';
-import 'package:present_unit/helpers/database/update_state_keys.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
-import 'package:present_unit/models/course/course_model.dart';
+import 'package:present_unit/models/subject/subject_model.dart';
 
-class CourseController extends GetxController {
+class SubjectController extends GetxController {
   late GetStorage getStorage;
   RxBool loader = false.obs;
-  RxBool deleteLoader = false.obs;
-  List<Course> globalCourseList = [];
-  List<Course> courseList = [];
+  List<Subject> globalSubjectList = [];
+  List<Subject> subjectList = [];
 
   @override
   void onInit() {
@@ -24,17 +22,16 @@ class CourseController extends GetxController {
     getStorage = GetStorage();
   }
 
-  Future<void> getListOfCourse({
+  Future<void> getListOfSubject({
     required BuildContext context,
   }) async {
-    loader(true);
     Admin? admin;
     try {
       var adminDetails = getStorage.read(StorageKeys.adminDetails);
       admin = adminDetails != null
           ? Admin.fromJson(
-              jsonDecode(adminDetails),
-            )
+        jsonDecode(adminDetails),
+      )
           : null;
     } catch (e) {
       showErrorSnackBar(
@@ -42,31 +39,27 @@ class CourseController extends GetxController {
         title: 'Something went wrong',
       );
     }
-    globalCourseList = await getListFromFirebase<Course>(
-      collection: CollectionStrings.course,
-      fromJson: Course.fromJson,
+    globalSubjectList = await getListFromFirebase<Subject>(
+      collection: CollectionStrings.subject,
+      fromJson: Subject.fromJson,
     );
-    courseList = globalCourseList
+    subjectList = globalSubjectList
         .where(
           (element) => element.admin?.id == admin?.id,
-        )
+    )
         .toList();
-    loader(false);
   }
 
+
   Future<void> deleteData({
-    required Course course,
+    required Subject subject,
     required BuildContext context,
   }) async {
-    deleteLoader(true);
     await deleteAnObject(
-      collection: CollectionStrings.course,
-      documentName: course.documentID,
+      collection: CollectionStrings.subject,
+      documentName: subject.documentID,
     );
-    getListOfCourse(
-      context: context,
-    );
-    deleteLoader(false);
-    update([UpdateKeys.updateCourses]);
+    getListOfSubject(context: context);
   }
+
 }

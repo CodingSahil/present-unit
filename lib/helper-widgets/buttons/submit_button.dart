@@ -5,16 +5,18 @@ import 'package:present_unit/helpers/dimens/dimens.dart';
 class SubmitButtonHelper extends StatelessWidget {
   const SubmitButtonHelper({
     super.key,
-    required this.child,
     required this.width,
     this.height,
     this.padding,
+    this.margin,
+    required this.child,
   });
 
   final Widget child;
   final double width;
   final double? height;
   final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? margin;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +24,7 @@ class SubmitButtonHelper extends StatelessWidget {
       alignment: Alignment.center,
       width: width,
       height: height,
+      margin: margin,
       padding: padding != null
           ? EdgeInsets.symmetric(
               vertical: Dimens.height18,

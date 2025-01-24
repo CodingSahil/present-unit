@@ -23,7 +23,7 @@ Future<List<T>> getListFromFirebase<T>({
 
   log(
     convertListOfObject.length.toString(),
-    name: 'Length from get method',
+    name: 'Length from get method $collection',
   );
 
   return convertListOfObject;

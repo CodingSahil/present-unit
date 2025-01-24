@@ -10,10 +10,10 @@ import 'package:present_unit/helpers/database/storage_keys.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
 import 'package:present_unit/models/faculty/faculty_model.dart';
 
-class FacultyController extends GetxController {
-  RxBool loader = false.obs;
-
+class AddEditFacultyController extends GetxController {
   late GetStorage getStorage;
+  RxBool loader = false.obs;
+  RxBool submitLoader = false.obs;
   List<Faculty> globalFacultyList = [];
   List<Faculty> facultyList = [];
 
@@ -22,7 +22,6 @@ class FacultyController extends GetxController {
     super.onInit();
     getStorage = GetStorage();
   }
-
 
   Future<void> getListOfFaculty({
     required BuildContext context,
@@ -52,17 +51,27 @@ class FacultyController extends GetxController {
         .toList();
   }
 
-
-  Future<void> deleteFacultyData({
+  Future<void> writeData({
     required Faculty faculty,
     required BuildContext context,
   }) async {
-    await deleteAnObject(
+    await writeAnObject(
       collection: CollectionStrings.faculty,
-      documentName: faculty.documentID,
+      newDocumentName: faculty.documentID,
+      newMap: faculty.toJson(),
     );
     getListOfFaculty(context: context);
   }
 
-
+  Future<void> updateData({
+    required Faculty faculty,
+    required BuildContext context,
+  }) async {
+    await updateAnObject(
+      collection: CollectionStrings.faculty,
+      documentName: faculty.documentID,
+      newMap: faculty.toJson(),
+    );
+    getListOfFaculty(context: context);
+  }
 }

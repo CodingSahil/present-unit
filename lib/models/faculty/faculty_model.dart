@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
 import 'package:present_unit/models/course/course_model.dart';
+import 'package:present_unit/models/subject/subject_model.dart';
 
 class Faculty extends Equatable {
   const Faculty({
@@ -13,6 +14,7 @@ class Faculty extends Equatable {
     this.fcmToken,
     this.admin,
     this.courseList,
+    this.subjectList,
   });
 
   final String documentID;
@@ -24,6 +26,7 @@ class Faculty extends Equatable {
   final String? fcmToken;
   final Admin? admin;
   final List<Course>? courseList;
+  final List<Subject>? subjectList;
 
   factory Faculty.fromJson(Map<String, dynamic> json, String documentID) =>
       Faculty(
@@ -34,12 +37,27 @@ class Faculty extends Equatable {
         mobileNumber: json['mobileNumber'] as String,
         password: json['password'] as String,
         fcmToken: json['fcmToken'] as String?,
-        admin: json['admin'] != null ? Admin.fromJson(json['admin']) : null,
+        admin: json['admin'] != null
+            ? Admin.fromJson(
+                json['admin'] as Map<String, dynamic>,
+              )
+            : null,
         courseList: json['courseList'] != null
             ? (json['courseList'] as List<dynamic>?)
                     ?.map(
                       (course) => Course.fromJson(
                         course,
+                        '',
+                      ),
+                    )
+                    .toList() ??
+                []
+            : null,
+        subjectList: json['subjectList'] != null
+            ? (json['subjectList'] as List<dynamic>?)
+                    ?.map(
+                      (subject) => Subject.fromJson(
+                        subject,
                         '',
                       ),
                     )
@@ -58,6 +76,9 @@ class Faculty extends Equatable {
         if (admin != null && admin!.id != -1000) 'admin': admin!.toJson(),
         if (courseList != null && courseList!.isNotEmpty)
           'courseList': courseList!.map((course) => course.toJson()).toList(),
+        if (subjectList != null && subjectList!.isNotEmpty)
+          'subjectList':
+              subjectList!.map((subject) => subject.toJson()).toList(),
       };
 
   Faculty copyWith({
@@ -69,6 +90,7 @@ class Faculty extends Equatable {
     String? fcmToken,
     Admin? admin,
     List<Course>? courseList,
+    List<Subject>? subjectList,
   }) =>
       Faculty(
         documentID: documentID,
@@ -80,6 +102,7 @@ class Faculty extends Equatable {
         fcmToken: fcmToken ?? this.fcmToken,
         admin: admin ?? this.admin,
         courseList: courseList ?? this.courseList,
+        subjectList: subjectList ?? this.subjectList,
       );
 
   factory Faculty.empty() => const Faculty(
@@ -91,7 +114,8 @@ class Faculty extends Equatable {
         password: '',
         fcmToken: null,
         admin: null,
-        courseList: null,
+        courseList: [],
+        subjectList: [],
       );
 
   @override
@@ -105,5 +129,6 @@ class Faculty extends Equatable {
         fcmToken,
         admin,
         courseList,
+        subjectList,
       ];
 }

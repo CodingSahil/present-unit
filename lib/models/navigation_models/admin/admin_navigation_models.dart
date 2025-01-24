@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
 import 'package:present_unit/models/course/course_model.dart';
+import 'package:present_unit/models/subject/subject_model.dart';
 
 class CourseNavigation extends Equatable {
   const CourseNavigation({
@@ -82,5 +83,56 @@ class SubjectNavigation extends Equatable {
         credit,
         semester,
         subjectCode,
+      ];
+}
+
+class FacultyNavigation extends Equatable {
+  final String documentID;
+  final num id;
+  final String name;
+  final String email;
+  final String mobileNumber;
+  final String password;
+  final Admin admin;
+  final List<Course> course;
+  final List<Subject> subject;
+
+  const FacultyNavigation({
+    required this.documentID,
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.mobileNumber,
+    required this.password,
+    required this.admin,
+    required this.course,
+    required this.subject,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'documentID': documentID,
+      'id': id,
+      'name': name,
+      'email': email,
+      'mobileNumber': mobileNumber,
+      'password': password,
+      if (admin.id != -1000) 'admin': admin.toJson(),
+      if (course.isNotEmpty) 'course': course.map((e) => e.toJson()).toList(),
+      if (subject.isNotEmpty)
+        'subject': subject.map((e) => e.toJson()).toList(),
+    };
+  }
+
+  @override
+  List<Object?> get props => [
+        id,
+        name,
+        email,
+        mobileNumber,
+        password,
+        admin,
+        course,
+        subject,
       ];
 }

@@ -6,6 +6,7 @@ class Routes {
   /// Admin
   static const String adminDashboard = 'admin_dashboard.dart';
   static const String courseView = 'CourseView.dart';
+  static const String facultyView = 'FacultyView.dart';
   static const String subjectView = 'SubjectView.dart';
   static const String addEditCourse = 'AddEditCourseView.dart';
   static const String addEditFaculty = 'AddEditFacultyView.dart';

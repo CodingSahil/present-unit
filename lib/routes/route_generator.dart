@@ -4,6 +4,7 @@ import 'package:present_unit/view/admin/course/add_edit_course.dart';
 import 'package:present_unit/view/admin/course/course_view.dart';
 import 'package:present_unit/view/admin/dashboard/admin_dashboard_view.dart';
 import 'package:present_unit/view/admin/faculty/add_edit_faculty.dart';
+import 'package:present_unit/view/admin/faculty/faculty_view.dart';
 import 'package:present_unit/view/admin/subject/add_edit_subject.dart';
 import 'package:present_unit/view/admin/subject/subject_view.dart';
 import 'package:present_unit/view/college_registration.dart';
@@ -37,6 +38,11 @@ class RouteGenerator {
       case Routes.courseView:
         return MaterialPageRoute(
           builder: (context) => const CourseView(),
+        );
+
+      case Routes.facultyView:
+        return MaterialPageRoute(
+          builder: (context) => const FacultyView(),
         );
 
       case Routes.subjectView:

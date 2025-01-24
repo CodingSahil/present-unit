@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:present_unit/controller/admin/course_controller.dart';
+import 'package:present_unit/controller/admin/faculty_controller.dart';
 import 'package:present_unit/helper-widgets/buttons/submit_button.dart';
 import 'package:present_unit/helper-widgets/loader/loader.dart';
 import 'package:present_unit/helpers/assets_path/assets_path.dart';
@@ -31,6 +32,7 @@ class AdminDashboardView extends StatefulWidget {
 
 class _AdminDashboardViewState extends State<AdminDashboardView> {
   late CourseController courseController;
+  late FacultyController facultyController;
   late GetStorage getStorage;
   AdminBottomNavigationBarEnums selectTab = AdminBottomNavigationBarEnums.home;
   RxBool loader = false.obs;
@@ -44,12 +46,16 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
     super.initState();
 
     courseController = Get.find<CourseController>();
+    facultyController = Get.find<FacultyController>();
     getStorage = GetStorage();
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
         loader(true);
         await courseController.getListOfCourse(
+          context: context,
+        );
+        await facultyController.getListOfFaculty(
           context: context,
         );
         var adminDetails = getStorage.read(StorageKeys.adminDetails);
@@ -180,7 +186,8 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                                 height: Dimens.height34,
                                 width: Dimens.width34,
                                 colorFilter: ColorFilter.mode(
-                                  AppColors.black.withAlpha((255 * 0.4).toInt()),
+                                  AppColors.black
+                                      .withAlpha((255 * 0.4).toInt()),
                                   BlendMode.srcIn,
                                 ),
                               ),
@@ -203,24 +210,31 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                           thickness: 0.5,
                         ),
                         SizedBox(height: Dimens.height28),
-                        Row(
-                          children: [
-                            SvgPicture.asset(
-                              AssetsPaths.facultySVG,
-                              height: Dimens.height34,
-                              width: Dimens.width34,
-                              colorFilter: ColorFilter.mode(
-                                AppColors.black.withAlpha((255 * 0.4).toInt()),
-                                BlendMode.srcIn,
+                        GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () {
+                            Get.toNamed(Routes.facultyView);
+                          },
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(
+                                AssetsPaths.facultySVG,
+                                height: Dimens.height34,
+                                width: Dimens.width34,
+                                colorFilter: ColorFilter.mode(
+                                  AppColors.black
+                                      .withAlpha((255 * 0.4).toInt()),
+                                  BlendMode.srcIn,
+                                ),
                               ),
-                            ),
-                            SizedBox(width: Dimens.width24),
-                            AppTextTheme.textSize16(
-                              label: LabelStrings.faculty,
-                              color:
-                                  AppColors.black.withAlpha((255 * 0.4).toInt()),
-                            ),
-                          ],
+                              SizedBox(width: Dimens.width24),
+                              AppTextTheme.textSize16(
+                                label: LabelStrings.faculty,
+                                color: AppColors.black
+                                    .withAlpha((255 * 0.4).toInt()),
+                              ),
+                            ],
+                          ),
                         ),
                         SizedBox(height: Dimens.height28),
                         Divider(
@@ -245,8 +259,8 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                             SizedBox(width: Dimens.width24),
                             AppTextTheme.textSize16(
                               label: LabelStrings.classList,
-                              color:
-                                  AppColors.black.withAlpha((255 * 0.4).toInt()),
+                              color: AppColors.black
+                                  .withAlpha((255 * 0.4).toInt()),
                             ),
                           ],
                         ),
@@ -273,7 +287,8 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                                 height: Dimens.height34,
                                 width: Dimens.width34,
                                 colorFilter: ColorFilter.mode(
-                                  AppColors.black.withAlpha((255 * 0.4).toInt()),
+                                  AppColors.black
+                                      .withAlpha((255 * 0.4).toInt()),
                                   BlendMode.srcIn,
                                 ),
                               ),
@@ -431,6 +446,7 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
 
       case AdminBottomNavigationBarEnums.faculty:
         return FacultyHelperView(
+          facultyController: facultyController,
           isAppBarRequire: true,
           onRefresh: () async {
             // await courseController.getListOfCourse(

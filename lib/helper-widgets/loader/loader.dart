@@ -29,8 +29,10 @@ class ButtonLoader extends StatelessWidget {
     return SizedBox(
       height: Dimens.height24,
       width: Dimens.width24,
-      child: Loader(
-        color: AppColors.white,
+      child: Center(
+        child: Loader(
+          color: AppColors.white,
+        ),
       ),
     );
   }

@@ -136,3 +136,53 @@ class FacultyNavigation extends Equatable {
         subject,
       ];
 }
+class ClassListNavigation extends Equatable {
+  final String documentID;
+  final num id;
+  final String name;
+  final String email;
+  final String mobileNumber;
+  final String password;
+  final Admin admin;
+  final List<Course> course;
+  final List<Subject> subject;
+
+  const ClassListNavigation({
+    required this.documentID,
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.mobileNumber,
+    required this.password,
+    required this.admin,
+    required this.course,
+    required this.subject,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'documentID': documentID,
+      'id': id,
+      'name': name,
+      'email': email,
+      'mobileNumber': mobileNumber,
+      'password': password,
+      if (admin.id != -1000) 'admin': admin.toJson(),
+      if (course.isNotEmpty) 'course': course.map((e) => e.toJson()).toList(),
+      if (subject.isNotEmpty)
+        'subject': subject.map((e) => e.toJson()).toList(),
+    };
+  }
+
+  @override
+  List<Object?> get props => [
+        id,
+        name,
+        email,
+        mobileNumber,
+        password,
+        admin,
+        course,
+        subject,
+      ];
+}

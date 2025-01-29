@@ -84,8 +84,10 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
                   ? SizedBox(
                       width: Dimens.width24,
                       height: Dimens.height24,
-                      child: Loader(
-                        color: AppColors.black,
+                      child: Center(
+                        child: Loader(
+                          color: AppColors.black,
+                        ),
                       ),
                     )
                   : SizedBox(width: Dimens.width24,

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:present_unit/controller/college_registration_controller.dart';
 import 'package:present_unit/helper-widgets/buttons/submit_button.dart';
 import 'package:present_unit/helper-widgets/loader/loader.dart';
+import 'package:present_unit/helper-widgets/snackbar/snackbar.dart';
 import 'package:present_unit/helper-widgets/text-field/labled_textform_field.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
@@ -381,6 +382,38 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                     websiteUrl: websiteController.text.trim(),
                     admin: admin,
                   );
+
+                  /// validation for check the user is already registered or not
+                  if (collegeRegistrationController.collegeList.any(
+                    (element) =>
+                        element.name.trim().toLowerCase() ==
+                            college.name.trim().toLowerCase() &&
+                        element.email.trim().toLowerCase() ==
+                            college.email.trim().toLowerCase(),
+                  )) {
+                    showErrorSnackBar(
+                      context: context,
+                      title: 'College is already exist',
+                    );
+                    collegeRegistrationController.loader(false);
+                    return;
+                  }
+                  if (collegeRegistrationController.adminList.any(
+                    (element) =>
+                        element.name.trim().toLowerCase() ==
+                            admin.name.trim().toLowerCase() &&
+                        element.email.trim().toLowerCase() ==
+                            admin.email.trim().toLowerCase() &&
+                        element.mobileNumber.trim().toLowerCase() ==
+                            admin.mobileNumber.trim().toLowerCase(),
+                  )) {
+                    showErrorSnackBar(
+                      context: context,
+                      title: 'Admin is already exist',
+                    );
+                    collegeRegistrationController.loader(false);
+                    return;
+                  }
                   await collegeRegistrationController.writeCollegeObject(
                     college: college,
                   );
@@ -394,6 +427,7 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                     websiteUrl: college.websiteUrl,
                   );
                   admin = admin.copyWith(college: college);
+
                   await collegeRegistrationController.writeAdminObject(
                     admin: admin,
                   );
@@ -411,8 +445,10 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                       ? SizedBox(
                           height: Dimens.height24,
                           width: Dimens.width24,
-                          child: Loader(
-                            color: AppColors.white,
+                          child: Center(
+                            child: Loader(
+                              color: AppColors.white,
+                            ),
                           ),
                         )
                       : AppTextTheme.textSize16(

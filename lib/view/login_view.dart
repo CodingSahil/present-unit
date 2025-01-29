@@ -63,7 +63,7 @@ class _LoginViewState extends State<LoginView> {
           vertical: MediaQuery.sizeOf(context).height * 0.04,
           horizontal: MediaQuery.sizeOf(context).width * 0.09,
         ),
-        child: Column(
+        child: ListView(
           children: [
             SizedBox(
               height: MediaQuery.sizeOf(context).height * 0.175,
@@ -166,15 +166,19 @@ class _LoginViewState extends State<LoginView> {
                         (element) =>
                             (element.email.toLowerCase().trim() ==
                                     emailController.text.toLowerCase().trim() ||
-                                element.mobileNumber.trim() == emailController.text.trim()) &&
-                            element.password.trim() == passwordController.text.trim(),
+                                element.mobileNumber.trim() ==
+                                    emailController.text.trim()) &&
+                            element.password.trim() ==
+                                passwordController.text.trim(),
                       )) {
                     Admin admin = loginController.adminList.singleWhere(
                       (element) =>
                           (element.email.toLowerCase().trim() ==
-                              emailController.text.toLowerCase().trim() ||
-                              element.mobileNumber.trim() == emailController.text.trim()) &&
-                              element.password.trim() == passwordController.text.trim(),
+                                  emailController.text.toLowerCase().trim() ||
+                              element.mobileNumber.trim() ==
+                                  emailController.text.trim()) &&
+                          element.password.trim() ==
+                              passwordController.text.trim(),
                     );
 
                     loginController.submitLoader(true);
@@ -209,8 +213,10 @@ class _LoginViewState extends State<LoginView> {
                       ? SizedBox(
                           height: Dimens.height24,
                           width: Dimens.width24,
-                          child: Loader(
-                            color: AppColors.white,
+                          child: Center(
+                            child: Loader(
+                              color: AppColors.white,
+                            ),
                           ),
                         )
                       : AppTextTheme.textSize16(
@@ -228,7 +234,6 @@ class _LoginViewState extends State<LoginView> {
                 var result = await Get.toNamed(
                   Routes.registration,
                 );
-
                 if (result is bool && result == true) {
                   showSuccessSnackBar(
                     context: context,
@@ -239,6 +244,7 @@ class _LoginViewState extends State<LoginView> {
               child: AppTextTheme.textSize16(
                 label: LabelStrings.createNewAccount,
                 color: AppColors.black,
+                textAlign: TextAlign.center,
               ),
             ),
           ],

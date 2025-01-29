@@ -53,6 +53,10 @@ class Dimens {
   static final double height96 = 96.h;
   static final double height98 = 98.h;
   static final double height100 = 100.h;
+  static final double height125 = 125.h;
+  static final double height150 = 150.h;
+  static final double height175 = 175.h;
+  static final double height200 = 200.h;
 
 
   static final double width1 = 1.w;
@@ -107,6 +111,10 @@ class Dimens {
   static final double width96 = 96.w;
   static final double width98 = 98.w;
   static final double width100 = 100.w;
+  static final double width125 = 125.w;
+  static final double width150 = 150.w;
+  static final double width175 = 175.w;
+  static final double width200 = 200.w;
 
   static final double radius1 = 1.r;
   static final double radius2 = 2.r;

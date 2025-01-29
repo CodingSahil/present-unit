@@ -222,7 +222,7 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
               return GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () async {
-                  var result = await showCommonBottomSheetWithCheckBox(
+                  await showCommonBottomSheetWithCheckBox(
                     context: context,
                     title: 'Courses',
                     listOfItems: courseController.courseList
@@ -320,7 +320,7 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
               return GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () async {
-                  var result = await showCommonBottomSheetWithCheckBox(
+                  await showCommonBottomSheetWithCheckBox(
                     context: context,
                     title: 'Subjects',
                     listOfItems: subjectController.subjectList

@@ -7,4 +7,5 @@ class AssetsPaths {
   static const String drawerSVG = 'assets/svg/drawer_svg.svg';
   static const String classSVG = 'assets/svg/class_svg.svg';
   static const String subjectSVG = 'assets/svg/subject_svg.svg';
+  static const String sheetsSVG = 'assets/svg/sheets_svg.svg';
 }

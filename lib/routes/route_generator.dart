@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:present_unit/routes/routes.dart';
+import 'package:present_unit/view/admin/class-list/add_edit_class_list_view.dart';
+import 'package:present_unit/view/admin/class-list/class_list_view.dart';
 import 'package:present_unit/view/admin/course/add_edit_course.dart';
 import 'package:present_unit/view/admin/course/course_view.dart';
 import 'package:present_unit/view/admin/dashboard/admin_dashboard_view.dart';
@@ -50,6 +52,11 @@ class RouteGenerator {
           builder: (context) => const SubjectView(),
         );
 
+      case Routes.classListView:
+        return MaterialPageRoute(
+          builder: (context) => const ClassListView(),
+        );
+
       case Routes.addEditCourse:
         var arguments = settings.arguments;
         return MaterialPageRoute(
@@ -65,10 +72,19 @@ class RouteGenerator {
             arguments: arguments,
           ),
         );
+
       case Routes.addEditSubject:
         var arguments = settings.arguments;
         return MaterialPageRoute(
           builder: (context) => AddEditSubjectView(
+            arguments: arguments,
+          ),
+        );
+
+      case Routes.addEditClassList:
+        var arguments = settings.arguments;
+        return MaterialPageRoute(
+          builder: (context) => AddEditClassListView(
             arguments: arguments,
           ),
         );

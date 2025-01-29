@@ -245,24 +245,31 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                           thickness: 0.5,
                         ),
                         SizedBox(height: Dimens.height28),
-                        Row(
-                          children: [
-                            SvgPicture.asset(
-                              AssetsPaths.classSVG,
-                              height: Dimens.height34,
-                              width: Dimens.width34,
-                              colorFilter: ColorFilter.mode(
-                                AppColors.black.withAlpha((255 * 0.4).toInt()),
-                                BlendMode.srcIn,
+                        GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () {
+                            Get.toNamed(Routes.classListView);
+                          },
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(
+                                AssetsPaths.classSVG,
+                                height: Dimens.height34,
+                                width: Dimens.width34,
+                                colorFilter: ColorFilter.mode(
+                                  AppColors.black
+                                      .withAlpha((255 * 0.4).toInt()),
+                                  BlendMode.srcIn,
+                                ),
                               ),
-                            ),
-                            SizedBox(width: Dimens.width24),
-                            AppTextTheme.textSize16(
-                              label: LabelStrings.classList,
-                              color: AppColors.black
-                                  .withAlpha((255 * 0.4).toInt()),
-                            ),
-                          ],
+                              SizedBox(width: Dimens.width24),
+                              AppTextTheme.textSize16(
+                                label: LabelStrings.classList,
+                                color: AppColors.black
+                                    .withAlpha((255 * 0.4).toInt()),
+                              ),
+                            ],
+                          ),
                         ),
                         SizedBox(height: Dimens.height28),
                         Divider(
@@ -355,10 +362,25 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
         width: MediaQuery.sizeOf(context).width,
         padding: EdgeInsets.only(
           bottom: isIOS ? Dimens.height50 : 0,
+          top: Dimens.height36,
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.black.withAlpha(
+                (255 * 0.2).toInt(),
+              ),
+              blurStyle: BlurStyle.outer,
+              spreadRadius: 1,
+              blurRadius: 12,
+            ),
+          ],
         ),
         constraints: BoxConstraints(
           minHeight: MediaQuery.sizeOf(context).height * 0.08,
-          maxHeight: MediaQuery.sizeOf(context).height * 0.1,
+          maxHeight: MediaQuery.sizeOf(context).height * 0.1 +
+              (isIOS ? MediaQuery.sizeOf(context).height * 0.02 : 0),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -423,8 +445,10 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
       case AdminBottomNavigationBarEnums.home:
         return Obx(
           () => loader.value
-              ? Loader(
-                  color: AppColors.primaryColor,
+              ? Center(
+                  child: Loader(
+                    color: AppColors.primaryColor,
+                  ),
                 )
               : AdminDashboardHelperView(
                   selectTab: bottomNavigationBarEnums,

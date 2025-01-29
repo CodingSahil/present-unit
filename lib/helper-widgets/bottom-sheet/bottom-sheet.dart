@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
 import 'package:present_unit/helpers/labels/label_strings.dart';
@@ -15,7 +16,12 @@ Future<dynamic> showCommonBottomSheet({
   required BottomSheetSelectionModel? selectValue,
   required void Function(BottomSheetSelectionModel selectValue) onSubmit,
 }) async {
-  BottomSheetSelectionModel? selectValueLocal = selectValue;
+  BottomSheetSelectionModel? selectValueLocal = listOfItems.firstWhereOrNull(
+    (element) =>
+        element.id == selectValue?.id &&
+        element.name.trim().toLowerCase() ==
+            selectValue?.name.trim().toLowerCase(),
+  );
   log('list => ${listOfItems.length}');
   await showModalBottomSheet(
     context: context,
@@ -238,35 +244,35 @@ Future<dynamic> showCommonBottomSheetWithCheckBox({
                     ),
                   ),
                   // if (selectValueLocal != null && selectValueLocal!.isNotEmpty)
-                    GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        onSubmit(selectValueLocal!);
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryColor,
-                          borderRadius: BorderRadius.circular(
-                            Dimens.radius15,
-                          ),
-                        ),
-                        width: MediaQuery.sizeOf(context).width,
-                        margin: EdgeInsets.symmetric(
-                          horizontal: Dimens.width50,
-                          vertical: Dimens.height16,
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          vertical: Dimens.height16,
-                        ),
-                        child: AppTextTheme.textSize14(
-                          label: 'Submit',
-                          color: AppColors.white,
-                          fontWeight: FontWeight.w600,
+                  GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () {
+                      onSubmit(selectValueLocal!);
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryColor,
+                        borderRadius: BorderRadius.circular(
+                          Dimens.radius15,
                         ),
                       ),
+                      width: MediaQuery.sizeOf(context).width,
+                      margin: EdgeInsets.symmetric(
+                        horizontal: Dimens.width50,
+                        vertical: Dimens.height16,
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        vertical: Dimens.height16,
+                      ),
+                      child: AppTextTheme.textSize14(
+                        label: 'Submit',
+                        color: AppColors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
+                  ),
                   if (isIOS) SizedBox(height: Dimens.height24),
                 ],
               ),

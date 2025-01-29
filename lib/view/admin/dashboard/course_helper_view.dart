@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:present_unit/controller/admin/course_controller.dart';
@@ -52,6 +50,10 @@ class _CourseHelperViewState extends State<CourseHelperView> {
             Expanded(
               child: widget.courseController.courseList.isNotEmpty
                   ? ListView(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: Dimens.width8,
+                        vertical: Dimens.height24,
+                      ),
                       children: widget.courseController.courseList.map(
                         (course) {
                           return GestureDetector(
@@ -77,6 +79,7 @@ class _CourseHelperViewState extends State<CourseHelperView> {
                             child: CourseDetailsCard(
                               courseController: widget.courseController,
                               course: course,
+                              onRefresh: widget.onRefresh,
                             ),
                           );
                         },
@@ -95,15 +98,24 @@ class _CourseHelperViewState extends State<CourseHelperView> {
   }
 }
 
-class CourseDetailsCard extends StatelessWidget {
+class CourseDetailsCard extends StatefulWidget {
   const CourseDetailsCard({
     super.key,
     required this.courseController,
     required this.course,
+    required this.onRefresh,
   });
 
   final CourseController courseController;
   final Course course;
+  final Future<void> Function() onRefresh;
+
+  @override
+  State<CourseDetailsCard> createState() => _CourseDetailsCardState();
+}
+
+class _CourseDetailsCardState extends State<CourseDetailsCard> {
+  bool deleteLoader = false;
 
   @override
   Widget build(BuildContext context) {
@@ -134,16 +146,17 @@ class CourseDetailsCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AppTextTheme.textSize18(
-                  label: course.name,
+                AppTextTheme.textSize17(
+                  label: widget.course.name,
                   color: AppColors.black,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                 ),
                 SizedBox(height: Dimens.height4),
                 AppTextTheme.textSize12(
                   label:
-                      '${course.duration} ${course.duration >= 2 ? 'Years' : 'Year'}',
+                      'Duration : ${widget.course.duration} ${widget.course.duration >= 2 ? 'Years' : 'Year'}',
                   color: AppColors.black,
+                  fontWeight: FontWeight.w400,
                 ),
               ],
             ),
@@ -151,29 +164,36 @@ class CourseDetailsCard extends StatelessWidget {
           GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () async {
-              await courseController.deleteData(
-                course: course,
+              setState(() {
+                deleteLoader = true;
+              });
+              await widget.courseController.deleteData(
+                course: widget.course,
                 context: context,
               );
-              courseController.update([
+              widget.courseController.update([
                 UpdateKeys.updateCourses,
               ]);
+              widget.onRefresh();
+              setState(() {
+                deleteLoader = false;
+              });
             },
-            child: Obx(
-              () => courseController.deleteLoader.value
-                  ? SizedBox(
-                      height: Dimens.height24,
-                      width: Dimens.width24,
+            child: deleteLoader
+                ? SizedBox(
+                    height: Dimens.height20,
+                    width: Dimens.width20,
+                    child: Center(
                       child: Loader(
                         color: AppColors.red,
                       ),
-                    )
-                  : Icon(
-                      Icons.delete,
-                      color: AppColors.red,
-                      size: Dimens.height36,
                     ),
-            ),
+                  )
+                : Icon(
+                    Icons.delete,
+                    color: AppColors.red,
+                    size: Dimens.height32,
+                  ),
           ),
         ],
       ),

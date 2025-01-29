@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:present_unit/controller/admin/faculty_controller.dart';
 import 'package:present_unit/helper-widgets/app-bar/app_bar.dart';
+import 'package:present_unit/helper-widgets/loader/loader.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
+import 'package:present_unit/helpers/database/update_state_keys.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
 import 'package:present_unit/helpers/labels/label_strings.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
@@ -30,84 +32,101 @@ class FacultyHelperView extends StatefulWidget {
 class _FacultyHelperViewState extends State<FacultyHelperView> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (widget.isAppBarRequire)
-          CommonAppBar(
-            label: LabelStrings.faculty,
-            isBack: false,
-            onTap: () async {
-              var result = await Get.toNamed(Routes.addEditFaculty);
-              if (result is bool && result) {
-                await widget.onRefresh();
-              }
-            },
-          ),
-        Expanded(
-          child: widget.facultyController.facultyList.isNotEmpty
-              ? ListView(
-                  children: widget.facultyController.facultyList.map(
-                    (faculty) {
-                      return GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onTap: () async {
-                          FacultyNavigation facultyNavigation =
-                              FacultyNavigation(
-                            documentID: faculty.documentID,
-                            id: faculty.id,
-                            name: faculty.name,
-                            email: faculty.email,
-                            mobileNumber: faculty.mobileNumber,
-                            password: faculty.password,
-                            admin: faculty.admin != null
-                                ? faculty.admin!
-                                : Admin.empty(),
-                            course: faculty.courseList != null &&
-                                    faculty.courseList!.isNotEmpty
-                                ? faculty.courseList!
-                                : [],
-                            subject: faculty.subjectList != null &&
-                                    faculty.subjectList!.isNotEmpty
-                                ? faculty.subjectList!
-                                : [],
-                          );
+    return GetBuilder<FacultyController>(
+      id: UpdateKeys.updateFaculty,
+      builder: (FacultyController controller) => Column(
+        children: [
+          if (widget.isAppBarRequire)
+            CommonAppBar(
+              label: LabelStrings.faculty,
+              isBack: false,
+              onTap: () async {
+                var result = await Get.toNamed(Routes.addEditFaculty);
+                if (result is bool && result) {
+                  await widget.onRefresh();
+                }
+              },
+            ),
+          Expanded(
+            child: widget.facultyController.facultyList.isNotEmpty
+                ? ListView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Dimens.width8,
+                      vertical: Dimens.height24,
+                    ),
+                    children: widget.facultyController.facultyList.map(
+                      (faculty) {
+                        return GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () async {
+                            FacultyNavigation facultyNavigation =
+                                FacultyNavigation(
+                              documentID: faculty.documentID,
+                              id: faculty.id,
+                              name: faculty.name,
+                              email: faculty.email,
+                              mobileNumber: faculty.mobileNumber,
+                              password: faculty.password,
+                              admin: faculty.admin != null
+                                  ? faculty.admin!
+                                  : Admin.empty(),
+                              course: faculty.courseList != null &&
+                                      faculty.courseList!.isNotEmpty
+                                  ? faculty.courseList!
+                                  : [],
+                              subject: faculty.subjectList != null &&
+                                      faculty.subjectList!.isNotEmpty
+                                  ? faculty.subjectList!
+                                  : [],
+                            );
 
-                          var result = await Get.toNamed(
-                            Routes.addEditFaculty,
-                            arguments: facultyNavigation,
-                          );
-                          if (result is bool && result) {
-                            await widget.onRefresh();
-                          }
-                        },
-                        child: FacultyDetailsCard(
-                          facultyController: widget.facultyController,
-                          faculty: faculty,
-                        ),
-                      );
-                    },
-                  ).toList(),
-                )
-              : Center(
-                  child: AppTextTheme.textSize16(
-                    label: LabelStrings.noData,
+                            var result = await Get.toNamed(
+                              Routes.addEditFaculty,
+                              arguments: facultyNavigation,
+                            );
+                            if (result is bool && result) {
+                              await widget.onRefresh();
+                            }
+                          },
+                          child: FacultyDetailsCard(
+                            facultyController: widget.facultyController,
+                            faculty: faculty,
+                            onRefresh: widget.onRefresh,
+                          ),
+                        );
+                      },
+                    ).toList(),
+                  )
+                : Center(
+                    child: AppTextTheme.textSize16(
+                      label: LabelStrings.noData,
+                    ),
                   ),
-                ),
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 }
 
-class FacultyDetailsCard extends StatelessWidget {
+class FacultyDetailsCard extends StatefulWidget {
   const FacultyDetailsCard({
     super.key,
     required this.facultyController,
     required this.faculty,
+    required this.onRefresh,
   });
 
   final FacultyController facultyController;
   final Faculty faculty;
+  final Future<void> Function() onRefresh;
+
+  @override
+  State<FacultyDetailsCard> createState() => _FacultyDetailsCardState();
+}
+
+class _FacultyDetailsCardState extends State<FacultyDetailsCard> {
+  bool deleteLoader = false;
 
   @override
   Widget build(BuildContext context) {
@@ -132,41 +151,135 @@ class FacultyDetailsCard extends StatelessWidget {
           Dimens.radius15,
         ),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppTextTheme.textSize18(
-                  label: faculty.name,
-                  color: AppColors.black,
-                  fontWeight: FontWeight.w700,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppTextTheme.textSize18(
+                      label: widget.faculty.name,
+                      color: AppColors.black,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    SizedBox(height: Dimens.height4),
+                    AppTextTheme.textSize14(
+                      label: widget.faculty.email,
+                      color: AppColors.black,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    SizedBox(height: Dimens.height4),
+                    AppTextTheme.textSize14(
+                      label: widget.faculty.mobileNumber,
+                      color: AppColors.black,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ],
                 ),
-                SizedBox(height: Dimens.height4),
-                AppTextTheme.textSize12(
-                  label: 'Year',
-                  color: AppColors.black,
-                ),
-              ],
-            ),
+              ),
+              GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () async {
+                  setState(() {
+                    deleteLoader = true;
+                  });
+                  await widget.facultyController.deleteFacultyData(
+                    faculty: widget.faculty,
+                    context: context,
+                  );
+                  widget.facultyController.update([
+                    UpdateKeys.updateFaculty,
+                  ]);
+                  setState(() {
+                    deleteLoader = false;
+                  });
+                  widget.onRefresh();
+                },
+                child: deleteLoader
+                    ? SizedBox(
+                        height: Dimens.height20,
+                        width: Dimens.width20,
+                        child: Center(
+                          child: Loader(
+                            color: AppColors.red,
+                          ),
+                        ),
+                      )
+                    : Icon(
+                        Icons.delete,
+                        color: AppColors.red,
+                        size: Dimens.height32,
+                      ),
+              ),
+            ],
           ),
-          GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () async {
-              await facultyController.deleteFacultyData(
-                faculty: faculty,
-                context: context,
-              );
-              // courseController.update([
-              //   UpdateKeys.updateCourses,
-              // ]);
-            },
-            child: Icon(
-              Icons.delete,
-              color: AppColors.red,
-              size: Dimens.height36,
-            ),
+          SizedBox(height: Dimens.height18),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (widget.faculty.courseList != null &&
+                  widget.faculty.courseList!.isNotEmpty)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppTextTheme.textSize14(
+                      label: 'Courses',
+                      color: AppColors.black.withAlpha(
+                        (255 * 0.3).toInt(),
+                      ),
+                      fontWeight: FontWeight.w400,
+                    ),
+                    SizedBox(height: Dimens.height4),
+                    AppTextTheme.textSize14(
+                      label: widget.faculty.courseList!
+                          .map(
+                            (e) => e.name.trim(),
+                          )
+                          .join('\n'),
+                      maxLines: widget.faculty.courseList!.length,
+                      color: AppColors.black,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ],
+                ),
+              if (widget.faculty.subjectList != null &&
+                  widget.faculty.subjectList!.isNotEmpty)
+                Column(
+                  crossAxisAlignment: widget.faculty.courseList != null &&
+                          widget.faculty.courseList!.isNotEmpty
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
+                  children: [
+                    AppTextTheme.textSize14(
+                      label: 'Subjects',
+                      color: AppColors.black.withAlpha(
+                        (255 * 0.3).toInt(),
+                      ),
+                      fontWeight: FontWeight.w400,
+                    ),
+                    SizedBox(height: Dimens.height4),
+                    AppTextTheme.textSize14(
+                      label: widget.faculty.subjectList!
+                          .map(
+                            (e) => e.name.trim(),
+                          )
+                          .join('\n'),
+                      maxLines: widget.faculty.subjectList!.length,
+                      textAlign: widget.faculty.courseList != null &&
+                              widget.faculty.courseList!.isNotEmpty
+                          ? TextAlign.end
+                          : TextAlign.start,
+                      color: AppColors.black,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ],
+                ),
+            ],
           ),
         ],
       ),

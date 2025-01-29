@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
+import 'package:present_unit/controller/admin/add_edit_class_list_controller.dart';
 import 'package:present_unit/controller/admin/add_edit_course_controller.dart';
 import 'package:present_unit/controller/admin/add_edit_faculty_controller.dart';
 import 'package:present_unit/controller/admin/add_edit_subject_controller.dart';
 import 'package:present_unit/controller/admin/admin_dashboard_controller.dart';
+import 'package:present_unit/controller/admin/class_list_controller.dart';
 import 'package:present_unit/controller/admin/course_controller.dart';
 import 'package:present_unit/controller/admin/faculty_controller.dart';
 import 'package:present_unit/controller/admin/subject_controller.dart';
@@ -21,5 +23,7 @@ class StoreBinding extends Bindings {
     Get.lazyPut(() => AddEditFacultyController());
     Get.lazyPut(() => SubjectController());
     Get.lazyPut(() => AddEditSubjectController());
+    Get.lazyPut(() => ClassListController());
+    Get.lazyPut(() => AddEditClassListController());
   }
 }

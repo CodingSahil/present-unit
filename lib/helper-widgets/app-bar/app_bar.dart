@@ -4,7 +4,7 @@ import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
 
-PreferredSizeWidget CommonAppBarPreferred({
+PreferredSizeWidget commonAppBarPreferred({
   required String label,
   bool isBack = true,
   bool isAdd = true,

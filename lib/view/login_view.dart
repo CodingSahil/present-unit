@@ -10,11 +10,14 @@ import 'package:present_unit/helper-widgets/text-field/labled_textform_field.dar
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/database/storage_keys.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
+import 'package:present_unit/helpers/enum/common_enums.dart';
 import 'package:present_unit/helpers/labels/label_strings.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
 import 'package:present_unit/main.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
+import 'package:present_unit/models/navigation_models/common_models/authentication_classes.dart';
 import 'package:present_unit/routes/routes.dart';
+import 'package:present_unit/view/splash_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -188,6 +191,16 @@ class _LoginViewState extends State<LoginView> {
                         admin.toJson(),
                       ),
                     );
+                    await loginController.getStorage.write(
+                      StorageKeys.userType,
+                      UserType.admin.toString(),
+                    );
+
+                    userDetails = UserDetails(
+                      admin: admin,
+                      userType: UserType.admin,
+                    );
+
                     await Future.delayed(
                       const Duration(
                         seconds: 1,

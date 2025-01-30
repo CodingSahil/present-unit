@@ -42,7 +42,7 @@ class _SubjectViewState extends State<SubjectView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor,
-      appBar: CommonAppBarPreferred(
+      appBar: commonAppBarPreferred(
         label: 'Subject List',
         isBack: true,
         onTap: () async {

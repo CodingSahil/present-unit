@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -6,12 +5,11 @@ import 'package:get/get.dart';
 import 'package:present_unit/controller/admin/add_edit_course_controller.dart';
 import 'package:present_unit/controller/admin/add_edit_subject_controller.dart';
 import 'package:present_unit/helper-widgets/app-bar/app_bar.dart';
-import 'package:present_unit/helper-widgets/bottom-sheet/bottom-sheet.dart';
+import 'package:present_unit/helper-widgets/bottom-sheet/bottom_sheet.dart';
 import 'package:present_unit/helper-widgets/buttons/submit_button.dart';
 import 'package:present_unit/helper-widgets/loader/loader.dart';
 import 'package:present_unit/helper-widgets/text-field/labled_textform_field.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
-import 'package:present_unit/helpers/database/storage_keys.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
 import 'package:present_unit/helpers/extension/form_field_extension.dart';
 import 'package:present_unit/helpers/labels/label_strings.dart';
@@ -47,7 +45,6 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
   /// todo :- make feature of Material of Subject
 
   SubjectNavigation? subjectNavigation;
-  Admin? admin;
   Course? selectedCourse;
 
   bool isError = false;
@@ -67,13 +64,6 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
         await addEditCourseController.getListOfCourse(
           context: context,
         );
-        dynamic storedData =
-            addEditSubjectController.getStorage.read(StorageKeys.adminDetails);
-        admin = storedData != null && storedData.toString().isNotEmpty
-            ? Admin.fromJson(
-                jsonDecode(storedData.toString()),
-              )
-            : Admin.empty();
       },
     );
 
@@ -84,7 +74,6 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
         subjectCreditController.text = subjectNavigation!.credit.toString();
         semesterController.text = subjectNavigation!.semester.toString();
         subjectCodeController.text = subjectNavigation!.subjectCode;
-        admin = subjectNavigation!.admin;
         if (addEditCourseController.courseList.any(
           (element) => element.id == subjectNavigation!.course.id,
         )) {
@@ -100,7 +89,7 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor,
-      appBar: CommonAppBarPreferred(
+      appBar: commonAppBarPreferred(
         label: widget.arguments != null ? 'Edit Subject' : 'Add Subject',
       ),
       body: Padding(
@@ -243,7 +232,7 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
                     subjectCredit: subjectCreditController.convertToNum(),
                     semester: semesterController.convertToNum(),
                     subjectCode: subjectCodeController.text,
-                    isAdminFilled: admin != null,
+                    isAdminFilled: addEditSubjectController.admin != null,
                     isCourseFilled: selectedCourse != null,
                   );
                 });
@@ -254,8 +243,9 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
 
                 if (subjectNavigation != null) {
                   Course? course = selectedCourse;
-                  if (admin != null) {
-                    admin = admin!.copyWith(
+                  if (addEditSubjectController.admin != null) {
+                    addEditSubjectController.admin =
+                        addEditSubjectController.admin!.copyWith(
                       college: College.empty(),
                     );
                   }
@@ -267,15 +257,16 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
                     semester: semesterController.convertToNum(),
                     subjectCode: subjectCodeController.text.trim(),
                     course: course,
-                    admin: admin,
+                    admin: addEditSubjectController.admin,
                   );
-                  await addEditSubjectController.updateData(
+                  await addEditSubjectController.updateSubjectData(
                     context: context,
                     subject: subject,
                   );
                 } else {
-                  if (admin != null) {
-                    admin = admin!.copyWith(
+                  if (addEditSubjectController.admin != null) {
+                    addEditSubjectController.admin =
+                        addEditSubjectController.admin!.copyWith(
                       college: College.empty(),
                     );
                   }
@@ -283,17 +274,17 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
 
                   Subject subject = Subject(
                     documentID:
-                        '${subjectNameController.text.trim().toLowerCase().replaceAll(RegExp(r'[.\s]'), '')}${admin != null && admin!.id != -1000 ? '_${admin!.id}_${admin!.name.trim().toLowerCase().replaceAll(RegExp(r'[.\s]'), '')}' : 'temp${addEditSubjectController.globalSubjectList.length + 1}'}',
+                        '${subjectNameController.text.trim().toLowerCase().replaceAll(RegExp(r'[.\s]'), '')}${addEditSubjectController.admin != null && addEditSubjectController.admin!.id != -1000 ? '_${addEditSubjectController.admin!.id}_${addEditSubjectController.admin!.name.trim().toLowerCase().replaceAll(RegExp(r'[.\s]'), '')}' : 'temp${addEditSubjectController.globalSubjectList.length + 1}'}',
                     id: addEditSubjectController.globalSubjectList.length + 1,
                     name: subjectNameController.text.trim(),
                     credit: subjectCreditController.convertToNum(),
                     semester: semesterController.convertToNum(),
                     subjectCode: subjectCodeController.text.trim(),
                     course: course,
-                    admin: admin,
+                    admin: addEditSubjectController.admin,
                   );
                   if (course != null) {
-                    await addEditSubjectController.writeData(
+                    await addEditSubjectController.writeSubjectData(
                       subject: subject,
                     );
                   }

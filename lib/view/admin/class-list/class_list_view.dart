@@ -40,7 +40,7 @@ class _ClassListViewState extends State<ClassListView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor,
-      appBar: CommonAppBarPreferred(
+      appBar: commonAppBarPreferred(
         label: 'Class List',
         onTap: () async {
           var result = await Get.toNamed(Routes.addEditClassList);

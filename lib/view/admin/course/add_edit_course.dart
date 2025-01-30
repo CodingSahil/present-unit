@@ -73,7 +73,7 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor,
-      appBar: CommonAppBarPreferred(
+      appBar: commonAppBarPreferred(
         label: widget.arguments != null
             ? LabelStrings.editCourse
             : LabelStrings.addCourse,
@@ -138,13 +138,12 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
                   }
                   Course course = Course(
                     id: courseNavigation!.id,
-                    name: courseNameController.text
-                        .trim(),
+                    name: courseNameController.text.trim(),
                     duration: courseDurationController.convertToNum(),
                     documentID: courseNavigation!.documentID,
                     admin: admin,
                   );
-                  await addEditCourseController.updateData(
+                  await addEditCourseController.updateCourseData(
                     course: course,
                     context: context,
                   );
@@ -171,7 +170,9 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
                             )}',
                     admin: admin,
                   );
-                  await addEditCourseController.writeData(course: course);
+                  await addEditCourseController.writeCourseData(
+                    course: course,
+                  );
                 }
                 addEditCourseController.submitLoader(false);
                 Get.back(

@@ -8,7 +8,7 @@ import 'package:present_unit/controller/admin/add_edit_faculty_controller.dart';
 import 'package:present_unit/controller/admin/course_controller.dart';
 import 'package:present_unit/controller/admin/subject_controller.dart';
 import 'package:present_unit/helper-widgets/app-bar/app_bar.dart';
-import 'package:present_unit/helper-widgets/bottom-sheet/bottom-sheet.dart';
+import 'package:present_unit/helper-widgets/bottom-sheet/bottom_sheet.dart';
 import 'package:present_unit/helper-widgets/buttons/submit_button.dart';
 import 'package:present_unit/helper-widgets/loader/loader.dart';
 import 'package:present_unit/helper-widgets/text-field/labled_textform_field.dart';
@@ -139,7 +139,7 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor,
-      appBar: CommonAppBarPreferred(
+      appBar: commonAppBarPreferred(
         label: widget.arguments != null && facultyNavigation != null
             ? 'Edit Faculty'
             : 'Add Faculty',
@@ -442,7 +442,7 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                     courseList: selectedCourseList,
                     subjectList: selectedSubjectList,
                   );
-                  await addEditFacultyController.updateData(
+                  await addEditFacultyController.updateFacultyData(
                     context: context,
                     faculty: faculty,
                   );
@@ -465,7 +465,7 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                     courseList: selectedCourseList,
                     subjectList: selectedSubjectList,
                   );
-                  await addEditFacultyController.writeData(
+                  await addEditFacultyController.writeFacultyData(
                     faculty: faculty,
                     context: context,
                   );

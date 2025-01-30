@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -8,7 +9,11 @@ import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/database/storage_keys.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
+import 'package:present_unit/models/college_registration/college_registration_models.dart';
+import 'package:present_unit/models/navigation_models/common_models/authentication_classes.dart';
 import 'package:present_unit/routes/routes.dart';
+
+UserDetails? userDetails;
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -37,9 +42,27 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
         var adminDetails = await getStorage.read(
           StorageKeys.adminDetails,
         );
+        var userType = await getStorage.read(
+          StorageKeys.userType,
+        );
         log(
           '$adminDetails',
           name: 'adminDetails',
+        );
+        log(
+          '$userType && ${userType.runtimeType}',
+          name: 'userType',
+        );
+
+        userDetails = UserDetails(
+          admin: Admin.fromJson(
+            jsonDecode(
+              adminDetails,
+            ),
+          ),
+          userType: fetchUserType(
+            userTypeString: userType.toString(),
+          ),
         );
 
         await Future.delayed(
@@ -90,9 +113,10 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
                         ),
                       ),
                     )
-                  : SizedBox(width: Dimens.width24,
-                height: Dimens.height24,
-              ),
+                  : SizedBox(
+                      width: Dimens.width24,
+                      height: Dimens.height24,
+                    ),
             ),
           ],
         ),

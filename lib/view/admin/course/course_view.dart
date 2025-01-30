@@ -26,7 +26,7 @@ class _CourseViewState extends State<CourseView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor,
-      appBar: CommonAppBarPreferred(
+      appBar: commonAppBarPreferred(
         label: 'Course List',
         isBack: true,
         onTap: () async {

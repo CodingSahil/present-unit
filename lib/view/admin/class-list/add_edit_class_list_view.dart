@@ -12,7 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:present_unit/controller/admin/add_edit_class_list_controller.dart';
 import 'package:present_unit/controller/admin/course_controller.dart';
 import 'package:present_unit/helper-widgets/app-bar/app_bar.dart';
-import 'package:present_unit/helper-widgets/bottom-sheet/bottom-sheet.dart';
+import 'package:present_unit/helper-widgets/bottom-sheet/bottom_sheet.dart';
 import 'package:present_unit/helper-widgets/buttons/submit_button.dart';
 import 'package:present_unit/helper-widgets/loader/loader.dart';
 import 'package:present_unit/helper-widgets/snackbar/snackbar.dart';
@@ -145,7 +145,7 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor,
-      appBar: CommonAppBarPreferred(
+      appBar: commonAppBarPreferred(
         label: widget.arguments != null ? 'Edit Class' : 'Add Class',
         isAdd: false,
       ),

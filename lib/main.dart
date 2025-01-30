@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,9 +27,36 @@ Future<void> main() async {
 
   /// todo add authentication
   final LocalAuthentication localAuthentication = LocalAuthentication();
+  final bool canAuthenticateWithBiometrics =
+      await localAuthentication.canCheckBiometrics;
+  final bool canAuthenticate = canAuthenticateWithBiometrics ||
+      await localAuthentication.isDeviceSupported();
+  log('canAuthenticate => $canAuthenticate');
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // final List<BiometricType> availableBiometrics =
+  // await localAuthentication.getAvailableBiometrics();
+  //
+  // if (availableBiometrics.isNotEmpty) {
+  //   // Some biometrics are enrolled.
+  // }
+  //
+  // if (availableBiometrics.contains(BiometricType.strong) ||
+  //     availableBiometrics.contains(BiometricType.face)) {
+  //   // Specific types of biometrics are available.
+  //   // Use checks like this with caution!
+  // }
+  try {
+    await localAuthentication.authenticate(
+      localizedReason: 'Please authenticate to Open PresentUnit',
+      options: const AuthenticationOptions(
+        biometricOnly: true,
+      ),
+    );
+  } on PlatformException {
+    log('PlatformException error it is');
+  }
 
   isIOS = GetPlatform.isIOS;
   isAndroid = GetPlatform.isAndroid;

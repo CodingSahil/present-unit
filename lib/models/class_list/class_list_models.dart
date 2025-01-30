@@ -75,7 +75,7 @@ class ClassListModel extends Equatable {
         courseBatchYear: CourseBatchYear.empty(),
         admin: Admin.empty(),
         college: College.empty(),
-        studentList: [],
+        studentList: const [],
       );
 
   Map<String, dynamic> toJson() => {

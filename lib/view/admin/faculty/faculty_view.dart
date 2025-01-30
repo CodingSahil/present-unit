@@ -26,7 +26,7 @@ class _FacultyViewState extends State<FacultyView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor,
-      appBar: CommonAppBarPreferred(
+      appBar: commonAppBarPreferred(
         label: 'Faculty List',
         isBack: true,
         onTap: () async {

@@ -47,7 +47,7 @@ class SubjectNavigation extends Equatable {
   final num semester;
   final String subjectCode;
 
-  SubjectNavigation({
+  const SubjectNavigation({
     required this.documentID,
     required this.id,
     required this.name,

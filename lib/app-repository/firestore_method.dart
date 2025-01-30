@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:present_unit/helpers/extension/string_print.dart';
 
 Future<List<T>> getListFromFirebase<T>({
   required String collection,
@@ -20,11 +19,9 @@ Future<List<T>> getListFromFirebase<T>({
         ),
       )
       .toList();
-
-  log(
-    convertListOfObject.length.toString(),
-    name: 'Length from get method $collection',
-  );
+  convertListOfObject.length.toString().logOnString(
+        'Length from get method $collection',
+      );
 
   return convertListOfObject;
 }

@@ -70,9 +70,9 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
-        await courseController.getListOfCourse(context: context);
-        await subjectController.getListOfSubject(context: context);
-        await addEditFacultyController.getListOfFaculty(context: context);
+        await courseController.getListOfCourse();
+        await subjectController.getListOfSubject();
+        await addEditFacultyController.getListOfFaculty();
         var adminDetails = getStorage.read(StorageKeys.adminDetails);
         admin = Admin.fromJson(jsonDecode(adminDetails));
       },
@@ -443,7 +443,6 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                     subjectList: selectedSubjectList,
                   );
                   await addEditFacultyController.updateFacultyData(
-                    context: context,
                     faculty: faculty,
                   );
                 } else {
@@ -467,7 +466,6 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                   );
                   await addEditFacultyController.writeFacultyData(
                     faculty: faculty,
-                    context: context,
                   );
                 }
                 addEditFacultyController.submitLoader(false);

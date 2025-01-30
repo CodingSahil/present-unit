@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:present_unit/app-repository/firestore_method.dart';
 import 'package:present_unit/helpers/database/collection_string.dart';
@@ -11,9 +10,7 @@ class SubjectController extends GetxController {
   List<Subject> globalSubjectList = [];
   List<Subject> subjectList = [];
 
-  Future<void> getListOfSubject({
-    required BuildContext context,
-  }) async {
+  Future<void> getListOfSubject() async {
     Admin? admin;
     if (userDetails != null && userDetails!.admin != null) {
       admin = userDetails!.admin;
@@ -25,19 +22,17 @@ class SubjectController extends GetxController {
     subjectList = globalSubjectList
         .where(
           (element) => element.admin?.id == admin?.id,
-    )
+        )
         .toList();
   }
 
   Future<void> deleteData({
     required Subject subject,
-    required BuildContext context,
   }) async {
     await deleteAnObject(
       collection: CollectionStrings.subject,
       documentName: subject.documentID,
     );
-    getListOfSubject(context: context);
+    getListOfSubject();
   }
-
 }

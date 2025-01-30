@@ -29,9 +29,7 @@ class _ClassListViewState extends State<ClassListView> {
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
-        await classListController.getListOfClassList(
-          context: context,
-        );
+        await classListController.getListOfClassList();
       },
     );
   }
@@ -45,9 +43,7 @@ class _ClassListViewState extends State<ClassListView> {
         onTap: () async {
           var result = await Get.toNamed(Routes.addEditClassList);
           if (result is bool && result) {
-            await classListController.getListOfClassList(
-              context: context,
-            );
+            await classListController.getListOfClassList();
             classListController.update([UpdateKeys.updateSubject]);
           }
         },
@@ -87,9 +83,7 @@ class _ClassListViewState extends State<ClassListView> {
                           arguments: classListModel,
                         );
                         if (result is bool && result) {
-                          await classListController.getListOfClassList(
-                            context: context,
-                          );
+                          await classListController.getListOfClassList();
                           classListController
                               .update([UpdateKeys.updateSubject]);
                           setState(() {});
@@ -142,7 +136,8 @@ class _ClassListViewState extends State<ClassListView> {
                                   ],
                                   SizedBox(height: Dimens.height4),
                                   AppTextTheme.textSize12(
-                                    label: 'No. of Students : ${classList.studentList?.length ?? 0}',
+                                    label:
+                                        'No. of Students : ${classList.studentList?.length ?? 0}',
                                     color: AppColors.black,
                                   ),
                                 ],

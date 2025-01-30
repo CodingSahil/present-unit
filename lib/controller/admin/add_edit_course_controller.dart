@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:present_unit/app-repository/firestore_method.dart';
 import 'package:present_unit/helpers/database/collection_string.dart';
@@ -25,9 +24,7 @@ class AddEditCourseController extends GetxController {
   }) =>
       name.isNotEmpty && duration > 0 && duration <= 10;
 
-  Future<void> getListOfCourse({
-    required BuildContext context,
-  }) async {
+  Future<void> getListOfCourse() async {
     Admin? admin;
     if (userDetails != null && userDetails!.admin != null) {
       admin = userDetails!.admin;
@@ -51,21 +48,17 @@ class AddEditCourseController extends GetxController {
       newDocumentName: course.documentID,
       newMap: course.toJson(),
     );
-    courseList = await getListFromFirebase<Course>(
-      collection: CollectionStrings.course,
-      fromJson: Course.fromJson,
-    );
+    getListOfCourse();
   }
 
   Future<void> updateCourseData({
     required Course course,
-    required BuildContext context,
   }) async {
     await updateAnObject(
       collection: CollectionStrings.course,
       documentName: course.documentID,
       newMap: course.toJson(),
     );
-    getListOfCourse(context: context);
+    getListOfCourse();
   }
 }

@@ -1,9 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
+import 'package:present_unit/helpers/extension/string_print.dart';
 import 'package:present_unit/helpers/labels/label_strings.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
 import 'package:present_unit/main.dart';
@@ -22,7 +21,7 @@ Future<dynamic> showCommonBottomSheet({
         element.name.trim().toLowerCase() ==
             selectValue?.name.trim().toLowerCase(),
   );
-  log('list => ${listOfItems.length}');
+  listOfItems.length.toString().logOnString('list => ');
   await showModalBottomSheet(
     context: context,
     backgroundColor: AppColors.white,

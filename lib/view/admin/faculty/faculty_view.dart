@@ -32,9 +32,7 @@ class _FacultyViewState extends State<FacultyView> {
         onTap: () async {
           var result = await Get.toNamed(Routes.addEditFaculty);
           if (result is bool && result) {
-            await facultyController.getListOfFaculty(
-              context: context,
-            );
+            await facultyController.getListOfFaculty();
             setState(() {});
           }
         },
@@ -43,9 +41,7 @@ class _FacultyViewState extends State<FacultyView> {
         facultyController: facultyController,
         isAppBarRequire: false,
         onRefresh: () async {
-          await facultyController.getListOfFaculty(
-            context: context,
-          );
+          await facultyController.getListOfFaculty();
           setState(() {});
         },
       ),

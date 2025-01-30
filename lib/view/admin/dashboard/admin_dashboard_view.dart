@@ -1,16 +1,15 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:present_unit/controller/admin/class_list_controller.dart';
 import 'package:present_unit/controller/admin/course_controller.dart';
 import 'package:present_unit/controller/admin/faculty_controller.dart';
+import 'package:present_unit/controller/admin/subject_controller.dart';
 import 'package:present_unit/helper-widgets/buttons/submit_button.dart';
 import 'package:present_unit/helper-widgets/loader/loader.dart';
 import 'package:present_unit/helpers/assets_path/assets_path.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
-import 'package:present_unit/helpers/database/storage_keys.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
 import 'package:present_unit/helpers/enum/admin_enum.dart';
 import 'package:present_unit/helpers/labels/label_strings.dart';
@@ -20,6 +19,7 @@ import 'package:present_unit/models/college_registration/college_registration_mo
 import 'package:present_unit/routes/routes.dart';
 import 'package:present_unit/view/admin/dashboard/admin_dashboard_helper_view.dart';
 import 'package:present_unit/view/admin/dashboard/course_helper_view.dart';
+import 'package:present_unit/view/splash_view.dart';
 
 import 'faculty_helper_view.dart';
 
@@ -33,7 +33,8 @@ class AdminDashboardView extends StatefulWidget {
 class _AdminDashboardViewState extends State<AdminDashboardView> {
   late CourseController courseController;
   late FacultyController facultyController;
-  late GetStorage getStorage;
+  late ClassListController classListController;
+  late SubjectController subjectController;
   AdminBottomNavigationBarEnums selectTab = AdminBottomNavigationBarEnums.home;
   RxBool loader = false.obs;
   RxBool logoutLoader = false.obs;
@@ -47,24 +48,18 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
 
     courseController = Get.find<CourseController>();
     facultyController = Get.find<FacultyController>();
-    getStorage = GetStorage();
+    classListController = Get.find<ClassListController>();
+    subjectController = Get.find<SubjectController>();
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
         loader(true);
-        await courseController.getListOfCourse(
-          context: context,
-        );
-        await facultyController.getListOfFaculty(
-          context: context,
-        );
-        var adminDetails = getStorage.read(StorageKeys.adminDetails);
-        admin = Admin.fromJson(
-          jsonDecode(
-            adminDetails,
-          ),
-        );
-        isAdminDetailsFilled = adminDetails != null;
+        await courseController.getListOfCourse();
+        await facultyController.getListOfFaculty();
+        await classListController.getListOfClassList();
+        await subjectController.getListOfSubject();
+        admin = userDetails!.admin;
+        isAdminDetailsFilled = admin != null;
         loader(false);
       },
     );
@@ -107,9 +102,19 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBgColor,
-      body: viewForSelectedTab(
-        bottomNavigationBarEnums: selectTab,
+      backgroundColor: AppColors.white,
+      body: Obx(
+        () {
+          return loader.value
+              ? Center(
+                  child: Loader(
+                    color: AppColors.primaryColor,
+                  ),
+                )
+              : viewForSelectedTab(
+                  bottomNavigationBarEnums: selectTab,
+                );
+        },
       ),
       drawer: Drawer(
         backgroundColor: AppColors.white,
@@ -315,7 +320,7 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                     behavior: HitTestBehavior.translucent,
                     onTap: () async {
                       logoutLoader(true);
-                      getStorage.erase();
+                      GetStorage().erase();
                       await Future.delayed(
                         const Duration(
                           seconds: 1,
@@ -441,6 +446,24 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
   Widget viewForSelectedTab({
     required AdminBottomNavigationBarEnums bottomNavigationBarEnums,
   }) {
+    List<int> studentList = classListController.classList
+        .map(
+          (e) => e.studentList?.length ?? 0,
+        )
+        .toList();
+    num totalStudents = studentList.isNotEmpty
+        ? num.parse(
+            studentList
+                .reduce(
+                  (value, element) => value + element,
+                )
+                .toString(),
+          )
+        : 0;
+    num totalCourses = courseController.courseList.length;
+    num totalFaculty = facultyController.facultyList.length;
+    num totalSubject = subjectController.subjectList.length;
+    num totalClass = classListController.classList.length;
     switch (bottomNavigationBarEnums) {
       case AdminBottomNavigationBarEnums.home:
         return Obx(
@@ -453,6 +476,16 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
               : AdminDashboardHelperView(
                   selectTab: bottomNavigationBarEnums,
                   admin: admin,
+                  totalStudents: totalStudents,
+                  totalCourses: totalCourses,
+                  totalFaculty: totalFaculty,
+                  totalSubject: totalSubject,
+                  totalClass: totalClass,
+                  onSelectionOfNewTab: (passedValue) {
+                    setState(() {
+                      selectTab = passedValue;
+                    });
+                  },
                 ),
         );
 
@@ -461,9 +494,7 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
           courseController: courseController,
           isAppBarRequire: true,
           onRefresh: () async {
-            await courseController.getListOfCourse(
-              context: context,
-            );
+            await courseController.getListOfCourse();
             setState(() {});
           },
         );
@@ -484,6 +515,16 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
         return AdminDashboardHelperView(
           selectTab: bottomNavigationBarEnums,
           admin: admin,
+          totalStudents: totalStudents,
+          totalCourses: totalCourses,
+          totalFaculty: totalFaculty,
+          totalSubject: totalSubject,
+          totalClass: totalClass,
+          onSelectionOfNewTab: (passedValue) {
+            setState(() {
+              selectTab = passedValue;
+            });
+          },
         );
     }
   }

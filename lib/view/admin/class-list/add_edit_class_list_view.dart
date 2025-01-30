@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:csv/csv.dart';
@@ -68,12 +67,11 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
             jsonDecode(adminDetails),
           )
         : null;
-    log('admin => ${jsonEncode(admin?.toJson())}');
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
-        await courseController.getListOfCourse(context: context);
-        await addEditClassListController.getListOfClassList(context: context);
+        await courseController.getListOfCourse();
+        await addEditClassListController.getListOfClassList();
       },
     );
 
@@ -136,9 +134,6 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
         );
       }
     }
-    log('listOfCourseBatchYear => ${jsonEncode(listOfCourseBatchYear.map(
-          (e) => e.toJson(),
-        ).toList())}');
   }
 
   @override
@@ -368,14 +363,11 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
                                 : '';
                             File file = File(filePath);
                             String content = await file.readAsString();
-                            log('content => $content');
                             rowsAsListOfValues =
                                 const CsvToListConverter().convert(
                               content,
                               allowInvalid: false,
                             );
-                            log('rowsAsListOfValues => $rowsAsListOfValues');
-
                             studentList = rowsAsListOfValues.map(
                               (e) {
                                 int index = rowsAsListOfValues.indexOf(e);
@@ -397,9 +389,6 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
                               },
                             ).toList();
 
-                            log('studentList => ${jsonEncode(studentList.map(
-                                  (e) => e.toJson(),
-                                ).toList())}');
                           } else {
                             showErrorSnackBar(
                               context: context,
@@ -516,10 +505,8 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
                                 (admin?.college ?? College.empty()),
                             studentList: studentList,
                           );
-                          log('classListModel => ${jsonEncode(classListModelForUpdate?.toJson())}');
                           await addEditClassListController.updateClassListData(
                             classListModel: classListModel,
-                            context: context,
                           );
                         } else {
                           ClassListModel classListModel = ClassListModel(
@@ -541,10 +528,8 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
                                     College.empty(),
                             studentList: studentList,
                           );
-                          log('classListModel => ${jsonEncode(classListModel.toJson())}');
                           await addEditClassListController.writeClassListData(
                             classListModel: classListModel,
-                            context: context,
                           );
                         }
                         Get.back<bool>(

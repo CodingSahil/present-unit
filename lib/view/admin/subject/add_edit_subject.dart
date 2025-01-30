@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:present_unit/controller/admin/add_edit_course_controller.dart';
@@ -61,9 +59,7 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
-        await addEditCourseController.getListOfCourse(
-          context: context,
-        );
+        await addEditCourseController.getListOfCourse();
       },
     );
 
@@ -154,7 +150,7 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
               return GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () async {
-                  var result = await showCommonBottomSheet(
+                  await showCommonBottomSheet(
                     context: context,
                     title: 'Courses',
                     listOfItems: addEditCourseController.courseList
@@ -183,7 +179,6 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
                       });
                     },
                   );
-                  log('result => $result');
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -260,7 +255,6 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
                     admin: addEditSubjectController.admin,
                   );
                   await addEditSubjectController.updateSubjectData(
-                    context: context,
                     subject: subject,
                   );
                 } else {

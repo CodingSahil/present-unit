@@ -169,7 +169,6 @@ class _CourseDetailsCardState extends State<CourseDetailsCard> {
               });
               await widget.courseController.deleteData(
                 course: widget.course,
-                context: context,
               );
               widget.courseController.update([
                 UpdateKeys.updateCourses,

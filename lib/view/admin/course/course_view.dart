@@ -32,9 +32,7 @@ class _CourseViewState extends State<CourseView> {
         onTap: () async {
           var result = await Get.toNamed(Routes.addEditCourse);
           if (result is bool && result) {
-            await courseController.getListOfCourse(
-              context: context,
-            );
+            await courseController.getListOfCourse();
             setState(() {});
           }
         },
@@ -43,9 +41,7 @@ class _CourseViewState extends State<CourseView> {
         courseController: courseController,
         isAppBarRequire: false,
         onRefresh: () async {
-          await courseController.getListOfCourse(
-            context: context,
-          );
+          await courseController.getListOfCourse();
           setState(() {});
         },
       ),

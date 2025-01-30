@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:present_unit/app-repository/firestore_method.dart';
 import 'package:present_unit/helpers/database/collection_string.dart';
@@ -12,9 +11,7 @@ class AddEditFacultyController extends GetxController {
   List<Faculty> globalFacultyList = [];
   List<Faculty> facultyList = [];
 
-  Future<void> getListOfFaculty({
-    required BuildContext context,
-  }) async {
+  Future<void> getListOfFaculty() async {
     Admin? admin;
     if (userDetails != null && userDetails!.admin != null) {
       admin = userDetails!.admin;
@@ -32,25 +29,23 @@ class AddEditFacultyController extends GetxController {
 
   Future<void> writeFacultyData({
     required Faculty faculty,
-    required BuildContext context,
   }) async {
     await writeAnObject(
       collection: CollectionStrings.faculty,
       newDocumentName: faculty.documentID,
       newMap: faculty.toJson(),
     );
-    getListOfFaculty(context: context);
+    getListOfFaculty();
   }
 
   Future<void> updateFacultyData({
     required Faculty faculty,
-    required BuildContext context,
   }) async {
     await updateAnObject(
       collection: CollectionStrings.faculty,
       documentName: faculty.documentID,
       newMap: faculty.toJson(),
     );
-    getListOfFaculty(context: context);
+    getListOfFaculty();
   }
 }

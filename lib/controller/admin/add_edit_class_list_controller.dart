@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:present_unit/app-repository/firestore_method.dart';
 import 'package:present_unit/helpers/database/collection_string.dart';
@@ -13,9 +12,7 @@ class AddEditClassListController extends GetxController {
   List<ClassListModel> classList = [];
   Admin? admin;
 
-  Future<void> getListOfClassList({
-    required BuildContext context,
-  }) async {
+  Future<void> getListOfClassList() async {
     if (userDetails != null && userDetails!.admin != null) {
       admin = userDetails!.admin;
     }
@@ -32,7 +29,6 @@ class AddEditClassListController extends GetxController {
 
   Future<void> writeClassListData({
     required ClassListModel classListModel,
-    required BuildContext context,
   }) async {
     submitLoader(true);
     await writeAnObject(
@@ -40,15 +36,12 @@ class AddEditClassListController extends GetxController {
       newDocumentName: classListModel.documentID,
       newMap: classListModel.toJson(),
     );
-    getListOfClassList(
-      context: context,
-    );
+    getListOfClassList();
     submitLoader(false);
   }
 
   Future<void> updateClassListData({
     required ClassListModel classListModel,
-    required BuildContext context,
   }) async {
     submitLoader(true);
     await updateAnObject(
@@ -56,9 +49,7 @@ class AddEditClassListController extends GetxController {
       documentName: classListModel.documentID,
       newMap: classListModel.toJson(),
     );
-    getListOfClassList(
-      context: context,
-    );
+    getListOfClassList();
     submitLoader(false);
   }
 }

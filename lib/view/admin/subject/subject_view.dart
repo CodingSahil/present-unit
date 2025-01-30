@@ -31,9 +31,7 @@ class _SubjectViewState extends State<SubjectView> {
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
-        await subjectController.getListOfSubject(
-          context: context,
-        );
+        await subjectController.getListOfSubject();
       },
     );
   }
@@ -48,9 +46,7 @@ class _SubjectViewState extends State<SubjectView> {
         onTap: () async {
           var result = await Get.toNamed(Routes.addEditSubject);
           if (result is bool && result) {
-            await subjectController.getListOfSubject(
-              context: context,
-            );
+            await subjectController.getListOfSubject();
             setState(() {});
           }
         },
@@ -90,9 +86,7 @@ class _SubjectViewState extends State<SubjectView> {
                           arguments: subjectNavigation,
                         );
                         if (result is bool && result) {
-                          await subjectController.getListOfSubject(
-                            context: context,
-                          );
+                          await subjectController.getListOfSubject();
                           setState(() {});
                         }
                       },
@@ -136,11 +130,11 @@ class _SubjectViewState extends State<SubjectView> {
                                       color: AppColors.black,
                                     ),
                                   ],
-                                    SizedBox(height: Dimens.height4),
-                                    AppTextTheme.textSize12(
-                                      label: 'Subject Credit : ${subject.credit}',
-                                      color: AppColors.black,
-                                    ),
+                                  SizedBox(height: Dimens.height4),
+                                  AppTextTheme.textSize12(
+                                    label: 'Subject Credit : ${subject.credit}',
+                                    color: AppColors.black,
+                                  ),
                                   SizedBox(height: Dimens.height4),
                                   AppTextTheme.textSize12(
                                     label: 'Semester : ${subject.semester}',
@@ -157,7 +151,6 @@ class _SubjectViewState extends State<SubjectView> {
                                 });
                                 await subjectController.deleteData(
                                   subject: subject,
-                                  context: context,
                                 );
                                 setState(() {
                                   deleteLoader = false;

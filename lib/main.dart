@@ -1,11 +1,11 @@
-import 'dart:developer';
-
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:present_unit/helpers/extension/string_print.dart';
 import 'package:present_unit/routes/route_generator.dart';
 
 import 'binding/store_bindings.dart';
@@ -18,6 +18,7 @@ import 'firebase_options.dart';
 
 bool isIOS = false;
 bool isAndroid = false;
+bool isDebugMode = false;
 final RegExp passwordRegex = RegExp(
   r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$',
 );
@@ -31,7 +32,7 @@ Future<void> main() async {
       await localAuthentication.canCheckBiometrics;
   final bool canAuthenticate = canAuthenticateWithBiometrics ||
       await localAuthentication.isDeviceSupported();
-  log('canAuthenticate => $canAuthenticate');
+  canAuthenticate.toString().logOnString('canAuthenticate =>');
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -55,11 +56,12 @@ Future<void> main() async {
       ),
     );
   } on PlatformException {
-    log('PlatformException error it is');
+    'PlatformException error it is'.logOnString('PlatformException');
   }
 
   isIOS = GetPlatform.isIOS;
   isAndroid = GetPlatform.isAndroid;
+  isDebugMode = kDebugMode;
   runApp(const MyApp());
 }
 

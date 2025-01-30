@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:present_unit/app-repository/firestore_method.dart';
 import 'package:present_unit/helpers/database/collection_string.dart';
@@ -29,9 +28,7 @@ class AddEditSubjectController extends GetxController {
       isAdminFilled &&
       isCourseFilled;
 
-  Future<void> getListOfSubject({
-    required BuildContext context,
-  }) async {
+  Future<void> getListOfSubject() async {
     if (userDetails != null && userDetails!.admin != null) {
       admin = userDetails!.admin;
     }
@@ -54,21 +51,17 @@ class AddEditSubjectController extends GetxController {
       newDocumentName: subject.documentID,
       newMap: subject.toJson(),
     );
-    subjectList = await getListFromFirebase<Subject>(
-      collection: CollectionStrings.subject,
-      fromJson: Subject.fromJson,
-    );
+    getListOfSubject();
   }
 
   Future<void> updateSubjectData({
     required Subject subject,
-    required BuildContext context,
   }) async {
     await updateAnObject(
       collection: CollectionStrings.subject,
       documentName: subject.documentID,
       newMap: subject.toJson(),
     );
-    getListOfSubject(context: context);
+    getListOfSubject();
   }
 }

@@ -48,7 +48,6 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
         await addEditCourseController.getListOfCourse(
-          context: context,
         );
       },
     );
@@ -145,7 +144,6 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
                   );
                   await addEditCourseController.updateCourseData(
                     course: course,
-                    context: context,
                   );
                 } else {
                   Admin admin =

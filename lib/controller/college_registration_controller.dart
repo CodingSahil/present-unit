@@ -1,9 +1,8 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:present_unit/helpers/database/collection_string.dart';
+import 'package:present_unit/helpers/extension/string_print.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
 
 class CollegeRegistrationController extends GetxController {
@@ -25,8 +24,7 @@ class CollegeRegistrationController extends GetxController {
           ),
         )
         .toList();
-
-    log('collegeList.length => ${collegeList.length}');
+    collegeList.length.toString().logOnString('collegeList.length =>');
 
     loader(false);
   }
@@ -45,7 +43,7 @@ class CollegeRegistrationController extends GetxController {
         )
         .toList();
 
-    log('adminList.length => ${adminList.length}');
+    adminList.length.toString().logOnString('adminList.length =>');
 
     loader(false);
   }

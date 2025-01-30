@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,6 +7,7 @@ import 'package:present_unit/helper-widgets/loader/loader.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/database/storage_keys.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
+import 'package:present_unit/helpers/extension/string_print.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
 import 'package:present_unit/models/navigation_models/common_models/authentication_classes.dart';
@@ -45,14 +45,8 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
         var userType = await getStorage.read(
           StorageKeys.userType,
         );
-        log(
-          '$adminDetails',
-          name: 'adminDetails',
-        );
-        log(
-          '$userType && ${userType.runtimeType}',
-          name: 'userType',
-        );
+        adminDetails.toString().logOnString('adminDetails');
+        '$userType && ${userType.runtimeType}'.logOnString('userType');
 
         userDetails = UserDetails(
           admin: Admin.fromJson(

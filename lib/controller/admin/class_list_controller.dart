@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:present_unit/app-repository/firestore_method.dart';
 import 'package:present_unit/helpers/database/collection_string.dart';
+import 'package:present_unit/helpers/extension/string_print.dart';
 import 'package:present_unit/models/class_list/class_list_models.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
 import 'package:present_unit/view/splash_view.dart';
@@ -13,9 +15,7 @@ class ClassListController extends GetxController {
   Admin? admin;
 
 
-  Future<void> getListOfClassList({
-    required BuildContext context,
-  }) async {
+  Future<void> getListOfClassList() async {
     loader(true);
     if (userDetails != null && userDetails!.admin != null) {
       admin = userDetails!.admin;
@@ -24,11 +24,21 @@ class ClassListController extends GetxController {
       collection: CollectionStrings.classList,
       fromJson: ClassListModel.fromJson,
     );
+
     classList = globalClassList
         .where(
           (element) => element.admin?.id == admin?.id,
-        )
+    )
         .toList();
+    if (globalClassList.isNotEmpty) {
+      jsonEncode(
+        globalClassList
+            .map(
+              (e) => e.toJson(),
+        )
+            .toList(),
+      ).logOnString('classList');
+    }
     loader(false);
   }
 }

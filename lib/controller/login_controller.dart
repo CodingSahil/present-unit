@@ -1,9 +1,8 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:present_unit/helpers/database/collection_string.dart';
+import 'package:present_unit/helpers/extension/string_print.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
 
 class LoginController extends GetxController {
@@ -28,13 +27,13 @@ class LoginController extends GetxController {
 
     adminList = collectedObject.docs
         .map(
-          (e) => Admin.fromJson(
+          (e) =>
+          Admin.fromJson(
             e.data() as Map<String, dynamic>,
           ),
-        )
+    )
         .toList();
-
-    log('adminList.length => ${adminList.length}');
+    adminList.length.toString().logOnString('adminList.length =>',);
 
     loader(false);
   }

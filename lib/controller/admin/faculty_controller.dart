@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:present_unit/app-repository/firestore_method.dart';
 import 'package:present_unit/helpers/database/collection_string.dart';
@@ -11,9 +10,7 @@ class FacultyController extends GetxController {
   List<Faculty> globalFacultyList = [];
   List<Faculty> facultyList = [];
 
-  Future<void> getListOfFaculty({
-    required BuildContext context,
-  }) async {
+  Future<void> getListOfFaculty() async {
     Admin? admin;
     if (userDetails != null && userDetails!.admin != null) {
       admin = userDetails!.admin;
@@ -31,12 +28,11 @@ class FacultyController extends GetxController {
 
   Future<void> deleteFacultyData({
     required Faculty faculty,
-    required BuildContext context,
   }) async {
     await deleteAnObject(
       collection: CollectionStrings.faculty,
       documentName: faculty.documentID,
     );
-    getListOfFaculty(context: context);
+    getListOfFaculty();
   }
 }

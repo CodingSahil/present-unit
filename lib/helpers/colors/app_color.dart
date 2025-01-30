@@ -7,6 +7,11 @@ class AppColors {
   static Color scaffoldBgColor = const Color(0xfff3f3f3);
   static Color red = const Color(0xffff0000);
   static Color green = const Color(0xff2bbc30);
+  static Color darkGreen = const Color(0xff56dd00);
+  static Color skyBlue = const Color(0xff00c4c2);
+  static Color customLogoOrange = const Color(0xffffad00);
+  static Color customPurple = const Color(0xffad5fd6);
+  static Color lightBackgroundForCard = const Color(0xfff4f4f4);
   static Color lightTextColor = AppColors.black.withAlpha(
     (255 * 0.6).toInt(),
   );

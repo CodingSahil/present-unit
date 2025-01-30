@@ -189,7 +189,6 @@ class _FacultyDetailsCardState extends State<FacultyDetailsCard> {
                   });
                   await widget.facultyController.deleteFacultyData(
                     faculty: widget.faculty,
-                    context: context,
                   );
                   widget.facultyController.update([
                     UpdateKeys.updateFaculty,

@@ -9,7 +9,9 @@ class AddEditClassListController extends GetxController {
   RxBool loader = false.obs;
   RxBool submitLoader = false.obs;
   List<ClassListModel> globalClassList = [];
+  List<Student> globalStudentList = [];
   List<ClassListModel> classList = [];
+  List<Student> studentList = [];
   Admin? admin;
 
   Future<void> getListOfClassList() async {
@@ -27,6 +29,21 @@ class AddEditClassListController extends GetxController {
         .toList();
   }
 
+  Future<void> getListOfStudentList() async {
+    if (userDetails != null && userDetails!.admin != null) {
+      admin = userDetails!.admin;
+    }
+    globalStudentList = await getListFromFirebase<Student>(
+      collection: CollectionStrings.students,
+      fromJson: Student.fromJsonWithDocumentID,
+    );
+    studentList = globalStudentList
+        .where(
+          (element) => element.admin?.id == admin?.id,
+        )
+        .toList();
+  }
+
   Future<void> writeClassListData({
     required ClassListModel classListModel,
   }) async {
@@ -36,7 +53,25 @@ class AddEditClassListController extends GetxController {
       newDocumentName: classListModel.documentID,
       newMap: classListModel.toJson(),
     );
+    await writeStudentListData(
+      classListModel: classListModel,
+    );
     getListOfClassList();
+    submitLoader(false);
+  }
+
+  Future<void> writeStudentListData({
+    required ClassListModel classListModel,
+  }) async {
+    submitLoader(true);
+    await writeAnObject(
+      collection: CollectionStrings.students,
+      newDocumentName: classListModel.documentID,
+      newMap: Student.toJsonWithList(
+        classListModel.studentList ?? [],
+      ),
+    );
+    getListOfStudentList();
     submitLoader(false);
   }
 
@@ -49,7 +84,25 @@ class AddEditClassListController extends GetxController {
       documentName: classListModel.documentID,
       newMap: classListModel.toJson(),
     );
+    await updateStudentListData(
+      classListModel: classListModel,
+    );
     getListOfClassList();
+    submitLoader(false);
+  }
+
+  Future<void> updateStudentListData({
+    required ClassListModel classListModel,
+  }) async {
+    submitLoader(true);
+    await updateAnObject(
+      collection: CollectionStrings.students,
+      documentName: classListModel.documentID,
+      newMap: Student.toJsonWithList(
+        classListModel.studentList ?? [],
+      ),
+    );
+    getListOfStudentList();
     submitLoader(false);
   }
 }

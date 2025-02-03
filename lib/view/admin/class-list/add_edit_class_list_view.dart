@@ -20,6 +20,7 @@ import 'package:present_unit/helpers/assets_path/assets_path.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/database/storage_keys.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
+import 'package:present_unit/helpers/labels/label_strings.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
 import 'package:present_unit/models/class_list/class_list_models.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
@@ -116,9 +117,7 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
       selectedCourse != null &&
       selectedCourse!.id != -1000 &&
       selectedCourseBatchYear != null &&
-      filePicker != null &&
-      studentList.isNotEmpty &&
-      rowsAsListOfValues.isNotEmpty;
+      studentList.isNotEmpty;
 
   void generateListForCourseBatchYear() {
     listOfCourseBatchYear.clear();
@@ -339,149 +338,321 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
                       ],
                     ),
                   SizedBox(height: Dimens.height30),
-                  StatefulBuilder(
-                    builder: (context, setInnerState) {
-                      return GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onTap: () async {
-                          await Permission.storage.request();
-                          // if (await Permission.storage.isGranted) {
-                          filePicker = await FilePicker.platform.pickFiles(
-                            allowMultiple: false,
-                            withData: true,
-                            type: FileType.custom,
-                            allowedExtensions: [
-                              "csv",
-                            ],
-                          );
-                          // }
-
-                          if (filePicker != null) {
-                            String filePath = filePicker!.paths.first != null &&
-                                    filePicker!.paths.first!.isNotEmpty
-                                ? filePicker!.paths.first!
-                                : '';
-                            File file = File(filePath);
-                            String content = await file.readAsString();
-                            rowsAsListOfValues =
-                                const CsvToListConverter().convert(
-                              content,
-                              allowInvalid: false,
-                            );
-                            studentList = rowsAsListOfValues.map(
-                              (e) {
-                                int index = rowsAsListOfValues.indexOf(e);
-                                num id = index + 1;
-                                String name = e[0].toString();
-                                String mobileNumber = e[1].toString();
-                                String email = e[2].toString();
-                                String password = e[3].toString();
-                                return Student(
-                                  id: id,
-                                  name: name,
-                                  mobileNumber: mobileNumber,
-                                  email: email,
-                                  password: password,
-                                  course: Course.empty(),
-                                  admin: Admin.empty(),
-                                  college: College.empty(),
-                                );
-                              },
-                            ).toList();
-
-                          } else {
-                            showErrorSnackBar(
-                              context: context,
-                              title: 'Something went wrong',
-                            );
-                          }
-                          setInnerState(() {});
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
+                  if (classListModelForUpdate != null && studentList.isNotEmpty)
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.sizeOf(context).width,
                           height: MediaQuery.sizeOf(context).height * 0.35,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                              Dimens.radius35,
-                            ),
-                            border: Border.all(
-                              width: 2.5,
-                              color: AppColors.black.withAlpha(
-                                (255 * 0.15).toInt(),
-                              ),
-                            ),
-                          ),
-                          child: rowsAsListOfValues.isNotEmpty
-                              ? Stack(
-                                  alignment: Alignment.center,
-                                  fit: StackFit.expand,
-                                  children: [
-                                    Positioned(
-                                      top: Dimens.height30,
-                                      right: Dimens.width30,
-                                      child: GestureDetector(
-                                        behavior: HitTestBehavior.translucent,
-                                        onTap: () {
-                                          setInnerState(() {
-                                            rowsAsListOfValues.clear();
-                                          });
-                                        },
-                                        child: Icon(
-                                          Icons.cancel,
-                                          color: AppColors.red,
-                                          size: Dimens.height40,
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: Dimens.height150,
-                                        horizontal: Dimens.width150,
-                                      ),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          SvgPicture.asset(
-                                            AssetsPaths.sheetsSVG,
-                                            height: Dimens.height175,
-                                            width: Dimens.width175,
+                          child: studentList.isNotEmpty
+                              ? ListView(
+                                  children: studentList
+                                      .map(
+                                        (student) => Container(
+                                          margin: EdgeInsets.only(
+                                            top: Dimens.height8,
+                                            bottom: Dimens.height12,
                                           ),
-                                          if (filePicker != null) ...[
-                                            SizedBox(height: Dimens.height12),
-                                            AppTextTheme.textSize14(
-                                              label:
-                                                  filePicker!.names.first ?? '',
-                                              maxLines: 3,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.black,
+                                          padding: EdgeInsets.symmetric(
+                                            vertical: Dimens.height8,
+                                            horizontal: Dimens.width18,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.white,
+                                            border: Border.all(
+                                              color: AppColors.black.withAlpha(
+                                                (255 * 0.1).toInt(),
+                                              ),
                                             ),
-                                          ],
-                                        ],
-                                      ),
-                                    ),
-                                  ],
+                                            borderRadius: BorderRadius.circular(
+                                              Dimens.radius15,
+                                            ),
+                                          ),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Expanded(
+                                                child: GestureDetector(
+                                                  behavior: HitTestBehavior.translucent,
+                                                  onTap: () async {
+                                                    await showAddEditStudentBottomSheet(
+                                                      context: context,
+                                                      title: 'Edit Student',
+                                                      listOfItems:
+                                                      studentList,
+                                                      selectValue: student,
+                                                      onSubmit: (selectValue) {
+                                                        setState(() {
+                                                          int index = studentList.indexOf(student);
+                                                          studentList[index] = selectValue;
+                                                        });
+                                                      },
+                                                    );
+                                                  },
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      AppTextTheme.textSize18(
+                                                        label: student.name,
+                                                        color:
+                                                            AppColors.black,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                      SizedBox(
+                                                        height:
+                                                            Dimens.height4,
+                                                      ),
+                                                      AppTextTheme.textSize14(
+                                                        label: student.email,
+                                                        color:
+                                                            AppColors.black,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                      SizedBox(
+                                                        height:
+                                                            Dimens.height4,
+                                                      ),
+                                                      AppTextTheme.textSize14(
+                                                        label: student
+                                                            .mobileNumber,
+                                                        color:
+                                                            AppColors.black,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              GestureDetector(
+                                                behavior: HitTestBehavior
+                                                    .translucent,
+                                                onTap: () async {
+                                                  studentList.removeWhere(
+                                                    (element) =>
+                                                        element.id ==
+                                                        student.id,
+                                                  );
+                                                  setState(() {});
+                                                },
+                                                child: Icon(
+                                                  Icons.delete,
+                                                  color: AppColors.red,
+                                                  size: Dimens.height32,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
                                 )
-                              : AppTextTheme.textSize14(
-                                  label:
-                                      'Upload CSV by clicking inside the Box',
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.black.withAlpha(
-                                    (255 * 0.5).toInt(),
+                              : Center(
+                                  child: AppTextTheme.textSize12(
+                                    label: LabelStrings.noData,
+                                    color: AppColors.lightTextColor,
                                   ),
                                 ),
                         ),
-                      );
-                    },
-                  ),
-                  SizedBox(height: Dimens.height12),
-                  AppTextTheme.textSize13(
-                    label:
-                        'Note :- Please upload a CSV file containing the data in the following format: name, mobile number, email, and password, with no titles - just the data itself.',
-                    maxLines: 3,
-                    color: AppColors.black,
-                  ),
+                        SizedBox(height: Dimens.height20),
+                        if (studentList.isNotEmpty)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              GestureDetector(
+                                behavior: HitTestBehavior.translucent,
+                                onTap: () async {
+                                  await showAddEditStudentBottomSheet(
+                                    context: context,
+                                    title: 'Add Student',
+                                    listOfItems:
+                                        addEditClassListController.studentList,
+                                    selectValue: null,
+                                    onSubmit: (selectValue) {
+                                      setState(() {
+                                        studentList.add(selectValue);
+                                      });
+                                    },
+                                  );
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: Dimens.width28,
+                                    vertical: Dimens.height16,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryColor,
+                                    borderRadius: BorderRadius.circular(
+                                      Dimens.radius18,
+                                    ),
+                                  ),
+                                  child: AppTextTheme.textSize14(
+                                    label: 'Add More',
+                                    color: AppColors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                      ],
+                    )
+                  else
+                    StatefulBuilder(
+                      builder: (context, setInnerState) {
+                        return GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () async {
+                            await Permission.storage.request();
+                            // if (await Permission.storage.isGranted) {
+                            filePicker = await FilePicker.platform.pickFiles(
+                              allowMultiple: false,
+                              withData: true,
+                              type: FileType.custom,
+                              allowedExtensions: [
+                                "csv",
+                              ],
+                            );
+                            // }
+
+                            if (filePicker != null) {
+                              String filePath =
+                                  filePicker!.paths.first != null &&
+                                          filePicker!.paths.first!.isNotEmpty
+                                      ? filePicker!.paths.first!
+                                      : '';
+                              File file = File(filePath);
+                              String content = await file.readAsString();
+                              rowsAsListOfValues =
+                                  const CsvToListConverter().convert(
+                                content,
+                                allowInvalid: false,
+                              );
+                              studentList = rowsAsListOfValues.map(
+                                (e) {
+                                  int index = rowsAsListOfValues.indexOf(e);
+                                  num id = index + 1;
+                                  String name = e[0].toString();
+                                  String mobileNumber = e[1].toString();
+                                  String email = e[2].toString();
+                                  String password = e[3].toString();
+                                  return Student(
+                                    id: id,
+                                    name: name,
+                                    mobileNumber: mobileNumber,
+                                    email: email,
+                                    password: password,
+                                    course: Course.empty(),
+                                    admin: Admin.empty(),
+                                    college: College.empty(),
+                                  );
+                                },
+                              ).toList();
+                            } else {
+                              showErrorSnackBar(
+                                context: context,
+                                title: 'Something went wrong',
+                              );
+                            }
+                            setInnerState(() {});
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            height: MediaQuery.sizeOf(context).height * 0.35,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                Dimens.radius35,
+                              ),
+                              border: Border.all(
+                                width: 2.5,
+                                color: AppColors.black.withAlpha(
+                                  (255 * 0.15).toInt(),
+                                ),
+                              ),
+                            ),
+                            child: rowsAsListOfValues.isNotEmpty
+                                ? Stack(
+                                    alignment: Alignment.center,
+                                    fit: StackFit.expand,
+                                    children: [
+                                      Positioned(
+                                        top: Dimens.height30,
+                                        right: Dimens.width30,
+                                        child: GestureDetector(
+                                          behavior: HitTestBehavior.translucent,
+                                          onTap: () {
+                                            setInnerState(() {
+                                              rowsAsListOfValues.clear();
+                                            });
+                                          },
+                                          child: Icon(
+                                            Icons.cancel,
+                                            color: AppColors.red,
+                                            size: Dimens.height40,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: Dimens.height150,
+                                          horizontal: Dimens.width150,
+                                        ),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            SvgPicture.asset(
+                                              AssetsPaths.sheetsSVG,
+                                              height: Dimens.height175,
+                                              width: Dimens.width175,
+                                            ),
+                                            if (filePicker != null) ...[
+                                              SizedBox(height: Dimens.height12),
+                                              AppTextTheme.textSize14(
+                                                label:
+                                                    filePicker!.names.first ??
+                                                        '',
+                                                maxLines: 3,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppColors.black,
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : AppTextTheme.textSize14(
+                                    label:
+                                        'Upload CSV by clicking inside the Box',
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.black.withAlpha(
+                                      (255 * 0.5).toInt(),
+                                    ),
+                                  ),
+                          ),
+                        );
+                      },
+                    ),
+                  if (classListModelForUpdate == null &&
+                      studentList.isEmpty) ...[
+                    SizedBox(height: Dimens.height12),
+                    AppTextTheme.textSize13(
+                      label:
+                          'Note :- Please upload a CSV file containing the data in the following format: name, mobile number, email, and password, with no titles - just the data itself.',
+                      maxLines: 3,
+                      color: AppColors.black,
+                    ),
+                  ],
                   SizedBox(height: Dimens.height50),
                   GestureDetector(
                     behavior: HitTestBehavior.translucent,
@@ -511,10 +682,13 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
                         } else {
                           ClassListModel classListModel = ClassListModel(
                             documentID:
-                                '${selectedCourse?.name.replaceAll(RegExp(r'[.\s]'), '')}${addEditClassListController.admin != null ? '_${addEditClassListController.admin!.id}_${addEditClassListController.admin!.name.replaceAll(RegExp(r'[.\s]'), '')}' : 'temp_${addEditClassListController.globalClassList.length + 1}'}',
+                                '${selectedCourse?.name.replaceAll(RegExp(r'[.\s]'), '')}${selectedCourseBatchYear != null ? '_${selectedCourseBatchYear!.admissionYear.toString()}-${selectedCourseBatchYear!.passingYear.toString()}' : '_000'}${addEditClassListController.admin != null ? '_${addEditClassListController.admin!.id}_${addEditClassListController.admin!.name.replaceAll(RegExp(r'[.\s]'), '')}' : 'temp_${addEditClassListController.globalClassList.length + 1}'}',
                             id: addEditClassListController
-                                    .globalClassList.length +
-                                1,
+                                    .globalClassList.isNotEmpty
+                                ? addEditClassListController
+                                        .globalClassList.length +
+                                    1
+                                : 1,
                             name:
                                 '${selectedCourse?.name} ${selectedCourseBatchYear?.admissionYear}-${selectedCourseBatchYear?.passingYear}',
                             division: classDivisionController.text,

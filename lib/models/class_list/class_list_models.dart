@@ -231,6 +231,35 @@ class Student extends Equatable {
     );
   }
 
+  factory Student.fromJsonWithDocumentID(
+    Map<String, dynamic> json,
+    String documentID,
+  ) {
+    return Student(
+      id: json['id'] as num,
+      name: json['name'] as String,
+      mobileNumber: json['mobileNumber'] as String,
+      email: json['email'] as String,
+      password: json['password'] as String?,
+      course: json['course'] != null
+          ? Course.fromJson(
+              json['course'] as Map<String, dynamic>,
+              '',
+            )
+          : null,
+      admin: json['admin'] != null
+          ? Admin.fromJson(
+              json['admin'] as Map<String, dynamic>,
+            )
+          : null,
+      college: json['college'] != null
+          ? College.fromJson(
+              json['college'] as Map<String, dynamic>,
+            )
+          : null,
+    );
+  }
+
   factory Student.empty() => Student(
         id: -1000,
         name: '',
@@ -252,6 +281,14 @@ class Student extends Equatable {
         if (admin != null && admin!.id != -1000) 'admin': admin!.toJson(),
         if (college != null && college!.id != -1000)
           'college': college!.toJson(),
+      };
+
+  static Map<String, dynamic> toJsonWithList(List<Student> listOfStudent) => {
+        'studentList': listOfStudent
+            .map(
+              (e) => e.toJson(),
+            )
+            .toList(),
       };
 
   Student copyWith({

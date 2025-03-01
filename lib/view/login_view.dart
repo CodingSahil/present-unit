@@ -35,7 +35,6 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   void initState() {
-    super.initState();
     loginController = Get.find<LoginController>();
     emailController = TextEditingController();
     passwordController = TextEditingController();
@@ -45,6 +44,13 @@ class _LoginViewState extends State<LoginView> {
         await loginController.getAdminList();
       },
     );
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    loginController.submitLoader(false);
+    super.dispose();
   }
 
   bool validateFields() =>
@@ -74,12 +80,13 @@ class _LoginViewState extends State<LoginView> {
             AppTextTheme.textSize30(
               label: LabelStrings.loginHere,
               color: AppColors.primaryColor,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w800,
             ),
-            SizedBox(height: Dimens.height42),
+            SizedBox(height: Dimens.height20),
             AppTextTheme.textSize18(
               label: LabelStrings.loginInstruction,
               color: AppColors.black,
+              fontWeight: FontWeight.w400,
             ),
             SizedBox(height: Dimens.height56),
             Column(
@@ -131,7 +138,7 @@ class _LoginViewState extends State<LoginView> {
                           !passwordRegex.hasMatch(passwordController.text)),
                   isPasswordField: true,
                   errorMessage: !passwordRegex.hasMatch(passwordController.text)
-                      ? 'Password must contain at least:- 1 uppercase letter,\n1 lowercase letter, 1 number, 1 special character'
+                      ? 'Password must contain at least:- 1 uppercase letter,1 lowercase letter, 1 number, 1 special character'
                       : passwordController.text.length < 6
                           ? 'Password length must at least 6'
                           : '${LabelStrings.password} ${LabelStrings.require}',
@@ -163,6 +170,7 @@ class _LoginViewState extends State<LoginView> {
                 });
 
                 if (validateFields()) {
+                  loginController.submitLoader(true);
                   await loginController.getAdminList();
                   if (loginController.adminList.isNotEmpty &&
                       loginController.adminList.any(
@@ -216,6 +224,7 @@ class _LoginViewState extends State<LoginView> {
                       title: 'User doesn\'t exist',
                     );
                   }
+                  loginController.submitLoader(false);
                 }
               },
               child: SubmitButtonHelper(

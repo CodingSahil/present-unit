@@ -4,6 +4,7 @@ class AppColors {
   static Color primaryColor = const Color(0xff1f41bb);
   static Color black = const Color(0xff000000);
   static Color white = const Color(0xffffffff);
+  static Color bottomNavigationBarColor = const Color(0xffe8e8e8);
   static Color scaffoldBgColor = const Color(0xfff3f3f3);
   static Color red = const Color(0xffff0000);
   static Color green = const Color(0xff2bbc30);

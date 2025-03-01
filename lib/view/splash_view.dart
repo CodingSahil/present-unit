@@ -45,30 +45,35 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
         var userType = await getStorage.read(
           StorageKeys.userType,
         );
+
         adminDetails.toString().logOnString('adminDetails');
         '$userType && ${userType.runtimeType}'.logOnString('userType');
-
-        userDetails = UserDetails(
-          admin: Admin.fromJson(
-            jsonDecode(
-              adminDetails,
+        if (adminDetails != null) {
+          userDetails = UserDetails(
+            admin: Admin.fromJson(
+              jsonDecode(
+                adminDetails,
+              ),
             ),
-          ),
-          userType: fetchUserType(
-            userTypeString: userType.toString(),
-          ),
-        );
+            userType: fetchUserType(
+              userTypeString: userType.toString(),
+            ),
+          );
 
-        await Future.delayed(
-          const Duration(
-            milliseconds: 1500,
-          ),
-        );
-        loader(false);
+          await Future.delayed(
+            const Duration(
+              milliseconds: 1500,
+            ),
+          );
+          loader(false);
 
-        if (adminDetails != null && adminDetails.isNotEmpty) {
-          Get.offAllNamed(Routes.adminDashboard);
+          if (adminDetails != null && adminDetails.isNotEmpty) {
+            Get.offAllNamed(Routes.adminDashboard);
+          } else {
+            Get.offAllNamed(Routes.login);
+          }
         } else {
+          loader(false);
           Get.offAllNamed(Routes.login);
         }
       },
@@ -87,6 +92,7 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
             AppTextTheme.textSize28(
               label: 'PresentUnit',
               color: AppColors.black,
+              fontWeight: FontWeight.w700,
             ),
             AppTextTheme.textSize12(
               label: 'The Mobile App for Class Operation',

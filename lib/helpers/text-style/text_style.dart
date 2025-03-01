@@ -16,7 +16,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 1,
@@ -37,7 +37,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 2,
@@ -58,7 +58,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 3,
@@ -79,7 +79,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 4,
@@ -100,7 +100,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 5,
@@ -121,7 +121,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 6,
@@ -142,7 +142,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 7,
@@ -163,7 +163,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 8,
@@ -184,7 +184,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 9,
@@ -205,7 +205,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 10,
@@ -226,7 +226,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 11,
@@ -247,7 +247,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 12,
@@ -268,7 +268,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 13,
@@ -289,7 +289,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 14,
@@ -310,7 +310,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 15,
@@ -331,7 +331,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 16,
@@ -352,7 +352,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 17,
@@ -373,7 +373,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 18,
@@ -394,7 +394,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 19,
@@ -415,7 +415,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 20,
@@ -436,7 +436,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 21,
@@ -457,7 +457,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 22,
@@ -478,7 +478,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 23,
@@ -499,7 +499,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 24,
@@ -520,7 +520,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 25,
@@ -541,7 +541,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 26,
@@ -562,7 +562,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 27,
@@ -583,7 +583,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 28,
@@ -604,7 +604,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 29,
@@ -625,7 +625,7 @@ class AppTextTheme {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: GoogleFonts.oswald(
+      style: GoogleFonts.firaSans(
         color: color ?? AppColors.black,
         fontWeight: fontWeight,
         fontSize: 30,

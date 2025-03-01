@@ -6,6 +6,7 @@ import 'package:present_unit/controller/admin/add_edit_course_controller.dart';
 import 'package:present_unit/helper-widgets/app-bar/app_bar.dart';
 import 'package:present_unit/helper-widgets/buttons/submit_button.dart';
 import 'package:present_unit/helper-widgets/loader/loader.dart';
+import 'package:present_unit/helper-widgets/snackbar/snackbar.dart';
 import 'package:present_unit/helper-widgets/text-field/labled_textform_field.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/database/storage_keys.dart';
@@ -47,8 +48,7 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
-        await addEditCourseController.getListOfCourse(
-        );
+        await addEditCourseController.getListOfCourse();
       },
     );
 
@@ -82,7 +82,7 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
           vertical: Dimens.height60,
           horizontal: Dimens.width40,
         ),
-        child: Column(
+        child: ListView(
           children: [
             LabeledTextFormField(
               controller: courseNameController,
@@ -111,7 +111,7 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
                 decimal: true,
               ),
             ),
-            const Spacer(),
+            SizedBox(height: Dimens.height60),
             GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () async {
@@ -142,6 +142,18 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
                     documentID: courseNavigation!.documentID,
                     admin: admin,
                   );
+
+                  if (addEditCourseController.globalCourseList.any(
+                    (element) =>
+                        element.name.toLowerCase() == course.name.toLowerCase(),
+                  )) {
+                    showErrorSnackBar(
+                      context: context,
+                      title: 'Course is already exist!',
+                    );
+                    addEditCourseController.submitLoader(false);
+                    return;
+                  }
                   await addEditCourseController.updateCourseData(
                     course: course,
                   );
@@ -156,8 +168,8 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
                     college: College.empty(),
                   );
                   Course course = Course(
-                    id: addEditCourseController.courseList.isNotEmpty
-                        ? addEditCourseController.courseList.length + 1
+                    id: addEditCourseController.globalCourseList.isNotEmpty
+                        ? addEditCourseController.globalCourseList.length + 1
                         : 1,
                     name: courseNameController.text.trim(),
                     duration: courseDurationController.convertToNum(),
@@ -168,6 +180,19 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
                             )}',
                     admin: admin,
                   );
+
+                  if (addEditCourseController.globalCourseList.any(
+                    (element) =>
+                        element.name.toLowerCase() == course.name.toLowerCase(),
+                  )) {
+                    showErrorSnackBar(
+                      context: context,
+                      title: 'Course is already exist!',
+                    );
+                    addEditCourseController.submitLoader(false);
+                    return;
+                  }
+
                   await addEditCourseController.writeCourseData(
                     course: course,
                   );

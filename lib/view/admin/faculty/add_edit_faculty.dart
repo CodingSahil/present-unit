@@ -11,6 +11,7 @@ import 'package:present_unit/helper-widgets/app-bar/app_bar.dart';
 import 'package:present_unit/helper-widgets/bottom-sheet/bottom_sheet.dart';
 import 'package:present_unit/helper-widgets/buttons/submit_button.dart';
 import 'package:present_unit/helper-widgets/loader/loader.dart';
+import 'package:present_unit/helper-widgets/snackbar/snackbar.dart';
 import 'package:present_unit/helper-widgets/text-field/labled_textform_field.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/database/storage_keys.dart';
@@ -149,7 +150,7 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
           vertical: Dimens.height60,
           horizontal: Dimens.width40,
         ),
-        child: Column(
+        child: ListView(
           children: [
             LabeledTextFormField(
               controller: facultyNameController,
@@ -260,6 +261,16 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                                 )
                                 .toList()
                             : null;
+                        subjectController
+                            .getListOfSubjectAccordingToSelectedCourse(
+                          courseIDs: selectedCourseList
+                                  ?.map(
+                                    (e) => e.id,
+                                  )
+                                  .toList() ??
+                              [],
+                        );
+                        selectedSubjectList = [];
                       });
                     },
                   );
@@ -413,7 +424,7 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                 ),
               );
             }),
-            const Spacer(),
+            SizedBox(height: Dimens.height60),
             GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () async {
@@ -464,12 +475,34 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                     courseList: selectedCourseList,
                     subjectList: selectedSubjectList,
                   );
+                  if (addEditFacultyController.facultyList.any(
+                    (element) =>
+                        element.email.toLowerCase() ==
+                        faculty.email.toLowerCase(),
+                  )) {
+                    showErrorSnackBar(
+                      context: context,
+                      title: 'Faculty\'s Email ID is already exist',
+                    );
+                    addEditFacultyController.submitLoader(false);
+                    return;
+                  }
+                  if (addEditFacultyController.globalFacultyList.any(
+                    (element) => element.mobileNumber == faculty.mobileNumber,
+                  )) {
+                    showErrorSnackBar(
+                      context: context,
+                      title: 'Faculty\'s Mobile Number is already exist',
+                    );
+                    addEditFacultyController.submitLoader(false);
+                    return;
+                  }
                   await addEditFacultyController.writeFacultyData(
                     faculty: faculty,
                   );
                 }
                 addEditFacultyController.submitLoader(false);
-                Get.back(
+                Get.back<bool>(
                   result: true,
                 );
               },

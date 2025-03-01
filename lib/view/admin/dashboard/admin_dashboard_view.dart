@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -17,11 +19,10 @@ import 'package:present_unit/helpers/text-style/text_style.dart';
 import 'package:present_unit/main.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
 import 'package:present_unit/routes/routes.dart';
+import 'package:present_unit/view/admin/course/course_view.dart';
 import 'package:present_unit/view/admin/dashboard/admin_dashboard_helper_view.dart';
-import 'package:present_unit/view/admin/dashboard/course_helper_view.dart';
+import 'package:present_unit/view/admin/faculty/faculty_view.dart';
 import 'package:present_unit/view/splash_view.dart';
-
-import 'faculty_helper_view.dart';
 
 class AdminDashboardView extends StatefulWidget {
   const AdminDashboardView({super.key});
@@ -42,6 +43,11 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
 
   Admin? admin;
 
+  /// bottom navigation
+  List<Widget> listOfNavigationWidgets = [];
+  int selectedIndex = 0;
+  late Widget selectedTab;
+
   @override
   void initState() {
     super.initState();
@@ -50,6 +56,19 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
     facultyController = Get.find<FacultyController>();
     classListController = Get.find<ClassListController>();
     subjectController = Get.find<SubjectController>();
+
+    listOfNavigationWidgets = [
+      iconAndTitleHelper(
+        bottomNavigationBarEnums: AdminBottomNavigationBarEnums.home,
+      ),
+      iconAndTitleHelper(
+        bottomNavigationBarEnums: AdminBottomNavigationBarEnums.course,
+      ),
+      iconAndTitleHelper(
+        bottomNavigationBarEnums: AdminBottomNavigationBarEnums.faculty,
+      ),
+    ];
+    selectedTab = listOfNavigationWidgets.first;
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
@@ -122,10 +141,8 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
           padding: EdgeInsets.only(
             left: Dimens.width30,
             right: Dimens.width30,
-            top: MediaQuery.sizeOf(context).height * 0.04 +
-                (isIOS ? MediaQuery.sizeOf(context).height * 0.035 : 0),
-            bottom: MediaQuery.sizeOf(context).height * 0.02 +
-                (isIOS ? MediaQuery.sizeOf(context).height * 0.01 : 0),
+            top: MediaQuery.sizeOf(context).height * 0.04 + (isIOS ? MediaQuery.sizeOf(context).height * 0.035 : 0),
+            bottom: MediaQuery.sizeOf(context).height * 0.02 + (isIOS ? MediaQuery.sizeOf(context).height * 0.01 : 0),
           ),
           child: StatefulBuilder(
             builder: (context, setDrawerState) {
@@ -180,6 +197,7 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                         GestureDetector(
                           behavior: HitTestBehavior.translucent,
                           onTap: () {
+                            Navigator.pop(context);
                             Get.toNamed(
                               Routes.courseView,
                             );
@@ -191,8 +209,7 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                                 height: Dimens.height34,
                                 width: Dimens.width34,
                                 colorFilter: ColorFilter.mode(
-                                  AppColors.black
-                                      .withAlpha((255 * 0.4).toInt()),
+                                  AppColors.black.withAlpha((255 * 0.4).toInt()),
                                   BlendMode.srcIn,
                                 ),
                               ),
@@ -218,6 +235,7 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                         GestureDetector(
                           behavior: HitTestBehavior.translucent,
                           onTap: () {
+                            Navigator.pop(context);
                             Get.toNamed(Routes.facultyView);
                           },
                           child: Row(
@@ -227,16 +245,14 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                                 height: Dimens.height34,
                                 width: Dimens.width34,
                                 colorFilter: ColorFilter.mode(
-                                  AppColors.black
-                                      .withAlpha((255 * 0.4).toInt()),
+                                  AppColors.black.withAlpha((255 * 0.4).toInt()),
                                   BlendMode.srcIn,
                                 ),
                               ),
                               SizedBox(width: Dimens.width24),
                               AppTextTheme.textSize16(
                                 label: LabelStrings.faculty,
-                                color: AppColors.black
-                                    .withAlpha((255 * 0.4).toInt()),
+                                color: AppColors.black.withAlpha((255 * 0.4).toInt()),
                               ),
                             ],
                           ),
@@ -253,6 +269,7 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                         GestureDetector(
                           behavior: HitTestBehavior.translucent,
                           onTap: () {
+                            Navigator.pop(context);
                             Get.toNamed(Routes.classListView);
                           },
                           child: Row(
@@ -262,16 +279,14 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                                 height: Dimens.height34,
                                 width: Dimens.width34,
                                 colorFilter: ColorFilter.mode(
-                                  AppColors.black
-                                      .withAlpha((255 * 0.4).toInt()),
+                                  AppColors.black.withAlpha((255 * 0.4).toInt()),
                                   BlendMode.srcIn,
                                 ),
                               ),
                               SizedBox(width: Dimens.width24),
                               AppTextTheme.textSize16(
                                 label: LabelStrings.classList,
-                                color: AppColors.black
-                                    .withAlpha((255 * 0.4).toInt()),
+                                color: AppColors.black.withAlpha((255 * 0.4).toInt()),
                               ),
                             ],
                           ),
@@ -288,6 +303,7 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                         GestureDetector(
                           behavior: HitTestBehavior.translucent,
                           onTap: () {
+                            Navigator.pop(context);
                             Get.toNamed(
                               Routes.subjectView,
                             );
@@ -299,20 +315,51 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                                 height: Dimens.height34,
                                 width: Dimens.width34,
                                 colorFilter: ColorFilter.mode(
-                                  AppColors.black
-                                      .withAlpha((255 * 0.4).toInt()),
+                                  AppColors.black.withAlpha((255 * 0.4).toInt()),
                                   BlendMode.srcIn,
                                 ),
                               ),
                               SizedBox(width: Dimens.width24),
                               AppTextTheme.textSize16(
                                 label: LabelStrings.subject,
-                                color: AppColors.black
-                                    .withAlpha((255 * 0.4).toInt()),
+                                color: AppColors.black.withAlpha((255 * 0.4).toInt()),
                               ),
                             ],
                           ),
                         ),
+                        // SizedBox(height: Dimens.height28),
+                        // Divider(
+                        //   color: AppColors.black.withAlpha(
+                        //     (255 * 0.4).toInt(),
+                        //   ),
+                        //   height: 1,
+                        //   thickness: 0.5,
+                        // ),
+                        // SizedBox(height: Dimens.height28),
+                        // GestureDetector(
+                        //   behavior: HitTestBehavior.translucent,
+                        //   onTap: () async {},
+                        //   child: Row(
+                        //     children: [
+                        //       SvgPicture.asset(
+                        //         AssetsPaths.settingSVG,
+                        //         height: Dimens.height34,
+                        //         width: Dimens.width34,
+                        //         colorFilter: ColorFilter.mode(
+                        //           AppColors.black
+                        //               .withAlpha((255 * 0.4).toInt()),
+                        //           BlendMode.srcIn,
+                        //         ),
+                        //       ),
+                        //       SizedBox(width: Dimens.width24),
+                        //       AppTextTheme.textSize16(
+                        //         label: 'Settings',
+                        //         color: AppColors.black
+                        //             .withAlpha((255 * 0.4).toInt()),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -366,8 +413,8 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
       bottomNavigationBar: Container(
         width: MediaQuery.sizeOf(context).width,
         padding: EdgeInsets.only(
-          bottom: isIOS ? Dimens.height50 : 0,
-          top: Dimens.height36,
+          bottom: isIOS ? Dimens.height18 : 0,
+          top: Dimens.height18,
         ),
         decoration: BoxDecoration(
           color: AppColors.white,
@@ -384,22 +431,59 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
         ),
         constraints: BoxConstraints(
           minHeight: MediaQuery.sizeOf(context).height * 0.08,
-          maxHeight: MediaQuery.sizeOf(context).height * 0.1 +
-              (isIOS ? MediaQuery.sizeOf(context).height * 0.02 : 0),
+          maxHeight: MediaQuery.sizeOf(context).height * 0.11 + (isIOS ? MediaQuery.sizeOf(context).height * 0.02 : 0),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            iconAndTitleHelper(
-              bottomNavigationBarEnums: AdminBottomNavigationBarEnums.home,
-            ),
-            iconAndTitleHelper(
-              bottomNavigationBarEnums: AdminBottomNavigationBarEnums.course,
-            ),
-            iconAndTitleHelper(
-              bottomNavigationBarEnums: AdminBottomNavigationBarEnums.faculty,
-            ),
-          ],
+          children: listOfNavigationWidgets.map(
+            (e) {
+              int index = listOfNavigationWidgets.indexOf(e);
+              return GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                },
+                child: e,
+              );
+            },
+          ).toList(),
+          // children: [
+          //   GestureDetector(
+          //     behavior: HitTestBehavior.translucent,
+          //     onTap: () {
+          //       setState(() {
+          //         selectTab = AdminBottomNavigationBarEnums.home;
+          //       });
+          //     },
+          //     child: iconAndTitleHelper(
+          //       bottomNavigationBarEnums: AdminBottomNavigationBarEnums.home,
+          //     ),
+          //   ),
+          //   GestureDetector(
+          //     behavior: HitTestBehavior.translucent,
+          //     onTap: () {
+          //       setState(() {
+          //         selectTab = AdminBottomNavigationBarEnums.course;
+          //       });
+          //     },
+          //     child: iconAndTitleHelper(
+          //       bottomNavigationBarEnums: AdminBottomNavigationBarEnums.course,
+          //     ),
+          //   ),
+          //   GestureDetector(
+          //     behavior: HitTestBehavior.translucent,
+          //     onTap: () {
+          //       setState(() {
+          //         selectTab = AdminBottomNavigationBarEnums.faculty;
+          //       });
+          //     },
+          //     child: iconAndTitleHelper(
+          //       bottomNavigationBarEnums: AdminBottomNavigationBarEnums.faculty,
+          //     ),
+          //   ),
+          // ],
         ),
       ),
     );
@@ -415,30 +499,32 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
           selectTab = bottomNavigationBarEnums;
         });
       },
-      child: Column(
-        children: [
-          SvgPicture.asset(
-            iconForBottomNavigationBarEnums(
-              bottomNavigationBarEnums: bottomNavigationBarEnums,
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          vertical: Dimens.height16,
+          horizontal: Dimens.width24,
+        ),
+        child: Column(
+          children: [
+            SvgPicture.asset(
+              iconForBottomNavigationBarEnums(
+                bottomNavigationBarEnums: bottomNavigationBarEnums,
+              ),
+              height: Dimens.height40,
+              width: Dimens.width40,
+              colorFilter: ColorFilter.mode(
+                selectTab == bottomNavigationBarEnums ? AppColors.primaryColor : AppColors.unselectedColor,
+                BlendMode.srcIn,
+              ),
             ),
-            height: Dimens.height40,
-            width: Dimens.width40,
-            colorFilter: ColorFilter.mode(
-              selectTab == bottomNavigationBarEnums
-                  ? AppColors.primaryColor
-                  : AppColors.unselectedColor,
-              BlendMode.srcIn,
+            AppTextTheme.textSize14(
+              label: titleForBottomNavigationBarEnums(
+                bottomNavigationBarEnums: bottomNavigationBarEnums,
+              ),
+              color: selectTab == bottomNavigationBarEnums ? AppColors.primaryColor : AppColors.unselectedColor,
             ),
-          ),
-          AppTextTheme.textSize14(
-            label: titleForBottomNavigationBarEnums(
-              bottomNavigationBarEnums: bottomNavigationBarEnums,
-            ),
-            color: selectTab == bottomNavigationBarEnums
-                ? AppColors.primaryColor
-                : AppColors.unselectedColor,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -490,25 +576,13 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
         );
 
       case AdminBottomNavigationBarEnums.course:
-        return CourseHelperView(
-          courseController: courseController,
-          isAppBarRequire: true,
-          onRefresh: () async {
-            await courseController.getListOfCourse();
-            setState(() {});
-          },
+        return const CourseView(
+          isInDashboard: true,
         );
 
       case AdminBottomNavigationBarEnums.faculty:
-        return FacultyHelperView(
-          facultyController: facultyController,
-          isAppBarRequire: true,
-          onRefresh: () async {
-            // await courseController.getListOfCourse(
-            //   context: context,
-            // );
-            setState(() {});
-          },
+        return const FacultyView(
+          isInDashboard: true,
         );
 
       default:

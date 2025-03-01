@@ -377,18 +377,22 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
                                             children: [
                                               Expanded(
                                                 child: GestureDetector(
-                                                  behavior: HitTestBehavior.translucent,
+                                                  behavior: HitTestBehavior
+                                                      .translucent,
                                                   onTap: () async {
                                                     await showAddEditStudentBottomSheet(
                                                       context: context,
                                                       title: 'Edit Student',
-                                                      listOfItems:
-                                                      studentList,
+                                                      listOfItems: studentList,
                                                       selectValue: student,
                                                       onSubmit: (selectValue) {
                                                         setState(() {
-                                                          int index = studentList.indexOf(student);
-                                                          studentList[index] = selectValue;
+                                                          int index =
+                                                              studentList
+                                                                  .indexOf(
+                                                                      student);
+                                                          studentList[index] =
+                                                              selectValue;
                                                         });
                                                       },
                                                     );
@@ -400,31 +404,26 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
                                                     children: [
                                                       AppTextTheme.textSize18(
                                                         label: student.name,
-                                                        color:
-                                                            AppColors.black,
+                                                        color: AppColors.black,
                                                         fontWeight:
                                                             FontWeight.w600,
                                                       ),
                                                       SizedBox(
-                                                        height:
-                                                            Dimens.height4,
+                                                        height: Dimens.height4,
                                                       ),
                                                       AppTextTheme.textSize14(
                                                         label: student.email,
-                                                        color:
-                                                            AppColors.black,
+                                                        color: AppColors.black,
                                                         fontWeight:
                                                             FontWeight.w400,
                                                       ),
                                                       SizedBox(
-                                                        height:
-                                                            Dimens.height4,
+                                                        height: Dimens.height4,
                                                       ),
                                                       AppTextTheme.textSize14(
                                                         label: student
                                                             .mobileNumber,
-                                                        color:
-                                                            AppColors.black,
+                                                        color: AppColors.black,
                                                         fontWeight:
                                                             FontWeight.w400,
                                                       ),
@@ -433,8 +432,8 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
                                                 ),
                                               ),
                                               GestureDetector(
-                                                behavior: HitTestBehavior
-                                                    .translucent,
+                                                behavior:
+                                                    HitTestBehavior.translucent,
                                                 onTap: () async {
                                                   studentList.removeWhere(
                                                     (element) =>
@@ -524,44 +523,52 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
                             // }
 
                             if (filePicker != null) {
-                              String filePath =
-                                  filePicker!.paths.first != null &&
-                                          filePicker!.paths.first!.isNotEmpty
-                                      ? filePicker!.paths.first!
-                                      : '';
-                              File file = File(filePath);
-                              String content = await file.readAsString();
-                              rowsAsListOfValues =
-                                  const CsvToListConverter().convert(
-                                content,
-                                allowInvalid: false,
-                              );
-                              studentList = rowsAsListOfValues.map(
-                                (e) {
-                                  int index = rowsAsListOfValues.indexOf(e);
-                                  num id = index + 1;
-                                  String name = e[0].toString();
-                                  String mobileNumber = e[1].toString();
-                                  String email = e[2].toString();
-                                  String password = e[3].toString();
-                                  return Student(
-                                    id: id,
-                                    name: name,
-                                    mobileNumber: mobileNumber,
-                                    email: email,
-                                    password: password,
-                                    course: Course.empty(),
-                                    admin: Admin.empty(),
-                                    college: College.empty(),
-                                  );
-                                },
-                              ).toList();
+                              try {
+                                String filePath =
+                                    filePicker!.paths.first != null &&
+                                            filePicker!.paths.first!.isNotEmpty
+                                        ? filePicker!.paths.first!
+                                        : '';
+                                File file = File(filePath);
+                                String content = await file.readAsString();
+                                rowsAsListOfValues =
+                                    const CsvToListConverter().convert(
+                                  content,
+                                  allowInvalid: false,
+                                );
+                                studentList = rowsAsListOfValues.map(
+                                  (e) {
+                                    int index = rowsAsListOfValues.indexOf(e);
+                                    num id = index + 1;
+                                    String name = e[0].toString();
+                                    String mobileNumber = e[1].toString();
+                                    String email = e[2].toString();
+                                    String password = e[3].toString();
+                                    return Student(
+                                      id: id,
+                                      name: name,
+                                      mobileNumber: mobileNumber,
+                                      email: email,
+                                      password: password,
+                                      course: Course.empty(),
+                                      admin: Admin.empty(),
+                                      college: College.empty(),
+                                    );
+                                  },
+                                ).toList();
+                              } catch (e) {
+                                showErrorSnackBar(
+                                  context: context,
+                                  title: 'Something went wrong in CSV file',
+                                );
+                              }
                             } else {
                               showErrorSnackBar(
                                 context: context,
                                 title: 'Something went wrong',
                               );
                             }
+
                             setInnerState(() {});
                           },
                           child: Container(
@@ -653,7 +660,7 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
                       color: AppColors.black,
                     ),
                   ],
-                  SizedBox(height: Dimens.height50),
+                  SizedBox(height: Dimens.height60),
                   GestureDetector(
                     behavior: HitTestBehavior.translucent,
                     onTap: () async {

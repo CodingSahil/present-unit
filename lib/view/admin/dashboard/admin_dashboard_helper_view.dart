@@ -58,115 +58,118 @@ class _AdminDashboardHelperViewState extends State<AdminDashboardHelperView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        AppBar(
-          backgroundColor: AppColors.primaryColor,
-          automaticallyImplyLeading: false,
-          centerTitle: false,
-          title: AppTextTheme.textSize16(
-            label: 'Welcome ${widget.admin?.name}',
-            color: AppColors.white,
-          ),
-          actions: [
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Scaffold.of(context).openDrawer();
-              },
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: Dimens.width22,
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      appBar: AppBar(
+        backgroundColor: AppColors.primaryColor,
+        automaticallyImplyLeading: false,
+        centerTitle: false,
+        title: AppTextTheme.textSize16(
+          label: 'Welcome ${widget.admin?.name}',
+          color: AppColors.white,
+        ),
+        actions: [
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              Scaffold.of(context).openDrawer();
+            },
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: Dimens.width22,
+              ),
+              child: SvgPicture.asset(
+                AssetsPaths.drawerSVG,
+                colorFilter: ColorFilter.mode(
+                  AppColors.white,
+                  BlendMode.srcIn,
                 ),
-                child: SvgPicture.asset(
-                  AssetsPaths.drawerSVG,
-                  colorFilter: ColorFilter.mode(
-                    AppColors.white,
-                    BlendMode.srcIn,
+                height: Dimens.height40,
+                width: Dimens.width40,
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          SizedBox(height: Dimens.height20),
+          Expanded(
+            child: GridView.count(
+              crossAxisCount: 2,
+              padding: EdgeInsets.symmetric(
+                horizontal: Dimens.width24,
+              ),
+              hitTestBehavior: HitTestBehavior.translucent,
+              childAspectRatio: 4 / 2,
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                CommonDashboardCard(
+                  title: 'Total Students',
+                  total: widget.totalStudents.toString(),
+                  svgPicturePath: AssetsPaths.studentSVG,
+                ),
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    widget.onSelectionOfNewTab(
+                      AdminBottomNavigationBarEnums.course,
+                    );
+                  },
+                  child: CommonDashboardCard(
+                    title: 'Total Courses',
+                    total: widget.totalCourses.toString(),
+                    svgPicturePath: AssetsPaths.courseSVG,
+                    svgPictureColor: AppColors.darkGreen,
                   ),
-                  height: Dimens.height40,
-                  width: Dimens.width40,
                 ),
-              ),
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    widget.onSelectionOfNewTab(
+                      AdminBottomNavigationBarEnums.faculty,
+                    );
+                  },
+                  child: CommonDashboardCard(
+                    title: 'Total Faculty',
+                    total: widget.totalFaculty.toString(),
+                    svgPicturePath: AssetsPaths.facultySVG,
+                    svgPictureColor: AppColors.skyBlue,
+                  ),
+                ),
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    Get.toNamed(
+                      Routes.subjectView,
+                    );
+                  },
+                  child: CommonDashboardCard(
+                    title: 'Total Subjects',
+                    total: widget.totalSubject.toString(),
+                    svgPicturePath: AssetsPaths.subjectSVG,
+                    svgPictureColor: AppColors.customPurple,
+                  ),
+                ),
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    Get.toNamed(
+                      Routes.classListView,
+                    );
+                  },
+                  child: CommonDashboardCard(
+                    title: 'Total Classes',
+                    total: widget.totalClass.toString(),
+                    svgPicturePath: AssetsPaths.classSVG,
+                    svgPictureColor: AppColors.customLogoOrange,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-        SizedBox(height: Dimens.height20),
-        Expanded(
-          child: GridView.count(
-            crossAxisCount: 2,
-            padding: EdgeInsets.symmetric(
-              horizontal: Dimens.width24,
-            ),
-            hitTestBehavior: HitTestBehavior.translucent,
-            childAspectRatio: 4 / 2,
-            physics: const AlwaysScrollableScrollPhysics(),
-            children: [
-              CommonDashboardCard(
-                title: 'Total Students',
-                total: widget.totalStudents.toString(),
-                svgPicturePath: AssetsPaths.studentSVG,
-              ),
-              GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  widget.onSelectionOfNewTab(
-                    AdminBottomNavigationBarEnums.course,
-                  );
-                },
-                child: CommonDashboardCard(
-                  title: 'Total Courses',
-                  total: widget.totalCourses.toString(),
-                  svgPicturePath: AssetsPaths.courseSVG,
-                  svgPictureColor: AppColors.darkGreen,
-                ),
-              ),
-              GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  widget.onSelectionOfNewTab(
-                    AdminBottomNavigationBarEnums.faculty,
-                  );
-                },
-                child: CommonDashboardCard(
-                  title: 'Total Faculty',
-                  total: widget.totalFaculty.toString(),
-                  svgPicturePath: AssetsPaths.facultySVG,
-                  svgPictureColor: AppColors.skyBlue,
-                ),
-              ),
-              GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  Get.toNamed(
-                    Routes.subjectView,
-                  );
-                },
-                child: CommonDashboardCard(
-                  title: 'Total Subjects',
-                  total: widget.totalSubject.toString(),
-                  svgPicturePath: AssetsPaths.subjectSVG,
-                  svgPictureColor: AppColors.customPurple,
-                ),
-              ),
-              GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  Get.toNamed(
-                    Routes.classListView,
-                  );
-                },
-                child: CommonDashboardCard(
-                  title: 'Total Classes',
-                  total: widget.totalClass.toString(),
-                  svgPicturePath: AssetsPaths.classSVG,
-                  svgPictureColor: AppColors.customLogoOrange,
-                ),
-              ),
-            ],
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

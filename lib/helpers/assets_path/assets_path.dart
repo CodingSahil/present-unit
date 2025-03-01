@@ -9,4 +9,6 @@ class AssetsPaths {
   static const String subjectSVG = 'assets/svg/subject_svg.svg';
   static const String sheetsSVG = 'assets/svg/sheets_svg.svg';
   static const String studentSVG = 'assets/svg/student_svg.svg';
+  static const String settingSVG = 'assets/svg/setting_svg.svg';
+  static const String swipeRightSVG = 'assets/svg/right-arrow-for_delete.svg';
 }

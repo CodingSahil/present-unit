@@ -340,7 +340,7 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                           passwordController.text.length < 6 ||
                           !passwordRegex.hasMatch(passwordController.text)),
                   errorMessage: !passwordRegex.hasMatch(passwordController.text)
-                      ? 'Password must contain at least:- 1 uppercase letter,\n1 lowercase letter, 1 number, 1 special character'
+                      ? 'Password must contain at least:- 1 uppercase letter,1 lowercase letter, 1 number, 1 special character'
                       : passwordController.text.length < 6
                           ? 'Password length must at least 6'
                           : '${LabelStrings.password} ${LabelStrings.require}',
@@ -460,10 +460,16 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
               ),
             ),
             SizedBox(height: Dimens.height50),
-            AppTextTheme.textSize16(
-              label: '${LabelStrings.alreadyAccount}?',
-              color: AppColors.black,
-              textAlign: TextAlign.center,
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                Get.back();
+              },
+              child: AppTextTheme.textSize16(
+                label: '${LabelStrings.alreadyAccount}?',
+                color: AppColors.black,
+                textAlign: TextAlign.center,
+              ),
             ),
           ],
         ),

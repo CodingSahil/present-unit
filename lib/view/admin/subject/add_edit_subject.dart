@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:present_unit/controller/admin/add_edit_course_controller.dart';
@@ -10,6 +12,7 @@ import 'package:present_unit/helper-widgets/text-field/labled_textform_field.dar
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
 import 'package:present_unit/helpers/extension/form_field_extension.dart';
+import 'package:present_unit/helpers/extension/string_print.dart';
 import 'package:present_unit/helpers/labels/label_strings.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
@@ -93,7 +96,7 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
           vertical: Dimens.height60,
           horizontal: Dimens.width40,
         ),
-        child: Column(
+        child: ListView(
           children: [
             LabeledTextFormField(
               controller: subjectNameController,
@@ -217,7 +220,7 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
                 ),
               );
             }),
-            const Spacer(),
+            SizedBox(height: Dimens.height60),
             GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () async {
@@ -230,6 +233,7 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
                     isAdminFilled: addEditSubjectController.admin != null,
                     isCourseFilled: selectedCourse != null,
                   );
+                  isError.toString().logOnString('isError');
                 });
                 if (isError) {
                   return;
@@ -264,6 +268,7 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
                       college: College.empty(),
                     );
                   }
+                  log('message');
                   Course? course = selectedCourse;
 
                   Subject subject = Subject(

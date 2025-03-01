@@ -14,7 +14,6 @@ class ClassListController extends GetxController {
   List<ClassListModel> classList = [];
   Admin? admin;
 
-
   Future<void> getListOfClassList() async {
     loader(true);
     if (userDetails != null && userDetails!.admin != null) {
@@ -28,17 +27,26 @@ class ClassListController extends GetxController {
     classList = globalClassList
         .where(
           (element) => element.admin?.id == admin?.id,
-    )
+        )
         .toList();
     if (globalClassList.isNotEmpty) {
       jsonEncode(
         globalClassList
             .map(
               (e) => e.toJson(),
-        )
+            )
             .toList(),
       ).logOnString('classList');
     }
     loader(false);
+  }
+
+  Future<void> deleteClassListObject({
+    required String documentName,
+  }) async {
+    await deleteAnObject(
+      collection: CollectionStrings.classList,
+      documentName: documentName,
+    );
   }
 }

@@ -26,6 +26,22 @@ class SubjectController extends GetxController {
         .toList();
   }
 
+  void getListOfSubjectAccordingToSelectedCourse({
+    required List<num> courseIDs,
+  }) {
+    Admin? admin;
+    if (userDetails != null && userDetails!.admin != null) {
+      admin = userDetails!.admin;
+    }
+
+    subjectList = globalSubjectList
+        .where(
+          (element) =>
+              element.admin?.id == admin?.id && courseIDs.any((elementInner) => element.course?.id == elementInner,),
+        )
+        .toList();
+  }
+
   Future<void> deleteData({
     required Subject subject,
   }) async {

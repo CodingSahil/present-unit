@@ -6,30 +6,7 @@ import 'package:present_unit/helpers/assets_path/assets_path.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
 
-class LabeledTextFormField extends StatelessWidget {
-  final String? labelText;
-  final String? errorMessage;
-  final String hintText;
-  final TextEditingController controller;
-  final TextInputType textInputType;
-  final bool enable;
-  final bool isError;
-  final ValueChanged<String>? onChanged;
-  final ValueChanged<String>? onFieldSubmitted;
-  final TextInputAction textInputAction;
-  final VoidCallback? onEditingComplete;
-  final EdgeInsetsGeometry? contentPadding;
-  final int? maxLines;
-  final TextCapitalization textCapitalization;
-  final bool isCurrencyBeforeText;
-  final bool showBorder;
-  final bool showRedTextColor;
-  final bool isAmountField;
-  final bool isOptionalFields;
-  final bool isCancel;
-  final bool isPasswordField;
-  final void Function()? onClose;
-
+class LabeledTextFormField extends StatefulWidget {
   const LabeledTextFormField({
     super.key,
     this.labelText,
@@ -58,177 +35,211 @@ class LabeledTextFormField extends StatelessWidget {
     this.onClose,
   });
 
+  final String? labelText;
+  final String? errorMessage;
+  final String hintText;
+  final TextEditingController controller;
+  final TextInputType textInputType;
+  final bool enable;
+  final bool isError;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onFieldSubmitted;
+  final TextInputAction textInputAction;
+  final VoidCallback? onEditingComplete;
+  final EdgeInsetsGeometry? contentPadding;
+  final int? maxLines;
+  final TextCapitalization textCapitalization;
+  final bool isCurrencyBeforeText;
+  final bool showBorder;
+  final bool showRedTextColor;
+  final bool isAmountField;
+  final bool isOptionalFields;
+  final bool isCancel;
+  final bool isPasswordField;
+  final void Function()? onClose;
+
+  @override
+  State<LabeledTextFormField> createState() => _LabeledTextFormFieldState();
+}
+
+class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
+  bool isEyeOpen = false;
+
   @override
   Widget build(BuildContext context) {
-    bool isEyeOpen = false;
-    return StatefulBuilder(
-      builder: (context, setPasswordState) {
-        return TextFormField(
-          textCapitalization: textCapitalization,
-          textInputAction: textInputAction,
-          onChanged: onChanged,
-          onFieldSubmitted: onFieldSubmitted,
-          enabled: enable,
-          controller: controller,
-          cursorColor: AppColors.black,
-          cursorWidth: 1,
-          keyboardType: textInputType,
-          maxLines: maxLines,
-          obscureText: isPasswordField && !isEyeOpen,
-          obscuringCharacter: '*',
-          onEditingComplete: onEditingComplete,
-          inputFormatters: isAmountField
+    return TextFormField(
+      textCapitalization: widget.textCapitalization,
+      textInputAction: widget.textInputAction,
+      onChanged: widget.onChanged,
+      onFieldSubmitted: widget.onFieldSubmitted,
+      enabled: widget.enable,
+      controller: widget.controller,
+      cursorColor: AppColors.black,
+      cursorWidth: 1,
+      keyboardType: widget.textInputType,
+      maxLines: widget.maxLines,
+      obscureText: widget.isPasswordField && !isEyeOpen,
+      obscuringCharacter: '*',
+      onEditingComplete: widget.onEditingComplete,
+      inputFormatters: widget.isAmountField
+          ? <TextInputFormatter>[
+              LengthLimitingTextInputFormatter(8),
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+            ]
+          : widget.textInputType == TextInputType.emailAddress
               ? <TextInputFormatter>[
-                  LengthLimitingTextInputFormatter(8),
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                  AllLowerCaseCaseTextFormatter(),
                 ]
-              : textInputType == TextInputType.emailAddress
+              : widget.textInputType == TextInputType.phone
                   ? <TextInputFormatter>[
-                      AllLowerCaseCaseTextFormatter(),
+                      LengthLimitingTextInputFormatter(10),
                     ]
-                  : textInputType == TextInputType.phone
+                  : widget.textInputType == TextInputType.url
                       ? <TextInputFormatter>[
-                          LengthLimitingTextInputFormatter(10),
+                          NormalCaseTextFormatter(),
                         ]
-                      : textInputType == TextInputType.url
-                          ? <TextInputFormatter>[
-                              NormalCaseTextFormatter(),
-                            ]
-                          : <TextInputFormatter>[
-                              UpperCaseTextFormatter(),
-                            ],
-          style: GoogleFonts.oswald(
-            fontWeight: FontWeight.normal,
-            fontSize: Dimens.textSize24,
-            color: showRedTextColor ? AppColors.red : AppColors.black,
-          ),
-          decoration: InputDecoration(
-            contentPadding: contentPadding,
-            filled: !enable,
-            labelText: labelText != null && labelText!.isNotEmpty
-                ? '$labelText ${isOptionalFields ? '(Optional)' : ''}'
-                : null,
-            hintText: hintText,
-            errorText: isError ? errorMessage ?? '$hintText is required' : null,
-            errorStyle: GoogleFonts.oswald(
-              fontWeight: FontWeight.normal,
-              fontSize: Dimens.textSize24,
-              color: AppColors.red,
-            ),
-            prefixText: isCurrencyBeforeText ? '₹ ' : null,
-            prefixStyle: TextStyle(
-              color: showRedTextColor
-                  ? AppColors.red
-                  : AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
-            ),
-            labelStyle: GoogleFonts.oswald(
-              fontWeight: FontWeight.normal,
-              fontSize: Dimens.textSize24,
-              color: AppColors.black,
-            ),
-            hintStyle: GoogleFonts.oswald(
-              fontWeight: FontWeight.normal,
-              fontSize: Dimens.textSize24,
-              color: AppColors.black,
-            ),
-            suffixIcon: isCancel
-                ? GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: onClose,
-                    child: Icon(
-                      Icons.cancel,
-                      color: AppColors.red,
-                      size: Dimens.height28,
+                      : <TextInputFormatter>[
+                          UpperCaseTextFormatter(),
+                        ],
+      style: GoogleFonts.firaSans(
+        fontWeight: FontWeight.normal,
+        fontSize: Dimens.textSize24,
+        color: widget.showRedTextColor ? AppColors.red : AppColors.black,
+      ),
+      decoration: InputDecoration(
+        contentPadding: widget.contentPadding,
+        filled: !widget.enable,
+        labelText: widget.labelText != null && widget.labelText!.isNotEmpty
+            ? '${widget.labelText} ${widget.isOptionalFields ? '(Optional)' : ''}'
+            : null,
+        hintText: widget.hintText,
+        errorText: widget.isError
+            ? widget.errorMessage ?? '${widget.hintText} is required'
+            : null,
+        errorMaxLines: 5,
+        errorStyle: GoogleFonts.firaSans(
+          fontWeight: FontWeight.normal,
+          fontSize: Dimens.textSize24,
+          color: AppColors.red,
+        ),
+        prefixText: widget.isCurrencyBeforeText ? '₹ ' : null,
+        prefixStyle: TextStyle(
+          color: widget.showRedTextColor
+              ? AppColors.red
+              : AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
+        ),
+        labelStyle: GoogleFonts.firaSans(
+          fontWeight: FontWeight.normal,
+          fontSize: Dimens.textSize24,
+          color: AppColors.black,
+        ),
+        hintStyle: GoogleFonts.firaSans(
+          fontWeight: FontWeight.normal,
+          fontSize: Dimens.textSize24,
+          color: AppColors.black,
+        ),
+        suffixIcon: widget.isCancel
+            ? GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: widget.onClose,
+                child: Icon(
+                  Icons.cancel,
+                  color: AppColors.red,
+                  size: Dimens.height28,
+                ),
+              )
+            : widget.isPasswordField
+                ? Container(
+                    height: Dimens.height40,
+                    width: Dimens.width40,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Dimens.width20,
+                      vertical: Dimens.height20,
+                    ),
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        setState(() => isEyeOpen = !isEyeOpen);
+                      },
+                      child: isEyeOpen
+                          ? SvgPicture.asset(
+                              AssetsPaths.eyeOpenSVG,
+                              height: Dimens.height30,
+                              width: Dimens.width30,
+                              colorFilter: ColorFilter.mode(
+                                AppColors.black.withAlpha(
+                                  (255 * 0.75).toInt(),
+                                ),
+                                BlendMode.srcIn,
+                              ),
+                            )
+                          : SvgPicture.asset(
+                              AssetsPaths.eyeCloseSVG,
+                              height: Dimens.height30,
+                              width: Dimens.width30,
+                              colorFilter: ColorFilter.mode(
+                                AppColors.black.withAlpha(
+                                  (255 * 0.75).toInt(),
+                                ),
+                                BlendMode.srcIn,
+                              ),
+                            ),
                     ),
                   )
-                : isPasswordField
-                    ? Container(
-                        padding: EdgeInsets.symmetric(
-                          vertical: Dimens.height28,
-                          horizontal: Dimens.width36,
-                        ),
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () {
-                            setPasswordState(() => isEyeOpen = !isEyeOpen);
-                          },
-                          child: isEyeOpen
-                              ? SvgPicture.asset(
-                                  AssetsPaths.eyeOpenSVG,
-                                  colorFilter: ColorFilter.mode(
-                                    AppColors.black.withAlpha(
-                                      (255 * 0.75).toInt(),
-                                    ),
-                                    BlendMode.srcIn,
-                                  ),
-                                )
-                              : SvgPicture.asset(
-                                  AssetsPaths.eyeCloseSVG,
-                                  colorFilter: ColorFilter.mode(
-                                    AppColors.black.withAlpha(
-                                      (255 * 0.75).toInt(),
-                                    ),
-                                    BlendMode.srcIn,
-                                  ),
-                                ),
-                        ),
-                      )
-                    : null,
-            floatingLabelBehavior: FloatingLabelBehavior.auto,
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(
-                Dimens.radius20,
-              ),
-              borderSide: BorderSide(
-                color:
-                    showBorder ? AppColors.primaryColor : AppColors.transparent,
-                width: showBorder ? Dimens.width2 : 0,
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(
-                Dimens.radius20,
-              ),
-              borderSide: BorderSide(
-                color: showBorder
-                    ? isError
-                        ? AppColors.red
-                        : AppColors.lightTextColor
-                            .withAlpha((255 * 0.5).toInt())
-                    : AppColors.transparent,
-                width: showBorder ? Dimens.width2 : 0,
-              ),
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(
-                Dimens.radius20,
-              ),
-              borderSide: BorderSide(
-                color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
-                width: Dimens.width2,
-              ),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(
-                Dimens.radius20,
-              ),
-              borderSide: BorderSide(
-                color: AppColors.red,
-                width: Dimens.width2,
-              ),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(
-                Dimens.radius20,
-              ),
-              borderSide: BorderSide(
-                color: AppColors.red,
-                width: Dimens.width2,
-              ),
-            ),
+                : null,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(
+            Dimens.radius20,
           ),
-        );
-      },
+          borderSide: BorderSide(
+            color: widget.showBorder
+                ? AppColors.primaryColor
+                : AppColors.transparent,
+            width: widget.showBorder ? Dimens.width1 : 0,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(
+            Dimens.radius20,
+          ),
+          borderSide: BorderSide(
+            color: widget.showBorder
+                ? widget.isError
+                    ? AppColors.red
+                    : AppColors.lightTextColor.withAlpha((255 * 0.5).toInt())
+                : AppColors.transparent,
+            width: widget.showBorder ? Dimens.width1 : 0,
+          ),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(
+            Dimens.radius20,
+          ),
+          borderSide: BorderSide(
+            color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
+            width: Dimens.width1,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(
+            Dimens.radius20,
+          ),
+          borderSide: BorderSide(
+            color: AppColors.red,
+            width: Dimens.width1,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(
+            Dimens.radius20,
+          ),
+          borderSide: BorderSide(
+            color: AppColors.red,
+            width: Dimens.width1,
+          ),
+        ),
+      ),
     );
   }
 }

@@ -10,6 +10,7 @@ import 'package:present_unit/helpers/dimens/dimens.dart';
 import 'package:present_unit/helpers/extension/string_print.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
+import 'package:present_unit/models/faculty/faculty_model.dart';
 import 'package:present_unit/models/navigation_models/common_models/authentication_classes.dart';
 import 'package:present_unit/routes/routes.dart';
 
@@ -42,6 +43,9 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
         var adminDetails = await getStorage.read(
           StorageKeys.adminDetails,
         );
+        var facultyDetails = await getStorage.read(
+          StorageKeys.facultyDetails,
+        );
         var userType = await getStorage.read(
           StorageKeys.userType,
         );
@@ -55,6 +59,7 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
                 adminDetails,
               ),
             ),
+            faculty: null,
             userType: fetchUserType(
               userTypeString: userType.toString(),
             ),
@@ -69,6 +74,30 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
 
           if (adminDetails != null && adminDetails.isNotEmpty) {
             Get.offAllNamed(Routes.adminDashboard);
+          } else {
+            Get.offAllNamed(Routes.login);
+          }
+        } else if (facultyDetails != null) {
+          userDetails = UserDetails(
+            admin: null,
+            faculty: Faculty.fromJson(
+              jsonDecode(facultyDetails),
+              '',
+            ),
+            userType: fetchUserType(
+              userTypeString: userType.toString(),
+            ),
+          );
+
+          await Future.delayed(
+            const Duration(
+              milliseconds: 1500,
+            ),
+          );
+          loader(false);
+
+          if (facultyDetails != null && facultyDetails.isNotEmpty && userDetails != null) {
+            Get.offAllNamed(Routes.facultyDashboard);
           } else {
             Get.offAllNamed(Routes.login);
           }

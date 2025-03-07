@@ -114,7 +114,15 @@ class Dimens {
   static final double width125 = 125.w;
   static final double width150 = 150.w;
   static final double width175 = 175.w;
+  static final double width180 = 180.w;
+  static final double width185 = 185.w;
+  static final double width190 = 190.w;
+  static final double width195 = 195.w;
   static final double width200 = 200.w;
+  static final double width225 = 225.w;
+  static final double width250 = 250.w;
+  static final double width275 = 275.w;
+  static final double width300 = 300.w;
 
   static final double radius1 = 1.r;
   static final double radius2 = 2.r;

@@ -27,12 +27,12 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   /// todo add authentication
-  final LocalAuthentication localAuthentication = LocalAuthentication();
-  final bool canAuthenticateWithBiometrics =
-      await localAuthentication.canCheckBiometrics;
-  final bool canAuthenticate = canAuthenticateWithBiometrics ||
-      await localAuthentication.isDeviceSupported();
-  canAuthenticate.toString().logOnString('canAuthenticate =>');
+  // final LocalAuthentication localAuthentication = LocalAuthentication();
+  // final bool canAuthenticateWithBiometrics =
+  //     await localAuthentication.canCheckBiometrics;
+  // final bool canAuthenticate = canAuthenticateWithBiometrics ||
+  //     await localAuthentication.isDeviceSupported();
+  // canAuthenticate.toString().logOnString('canAuthenticate =>');
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -48,16 +48,16 @@ Future<void> main() async {
   //   // Specific types of biometrics are available.
   //   // Use checks like this with caution!
   // }
-  try {
-    await localAuthentication.authenticate(
-      localizedReason: 'Please authenticate to Open PresentUnit',
-      options: const AuthenticationOptions(
-        biometricOnly: true,
-      ),
-    );
-  } on PlatformException {
-    'PlatformException error it is'.logOnString('PlatformException');
-  }
+  // try {
+  //   await localAuthentication.authenticate(
+  //     localizedReason: 'Please authenticate to Open PresentUnit',
+  //     options: const AuthenticationOptions(
+  //       biometricOnly: true,
+  //     ),
+  //   );
+  // } on PlatformException {
+  //   'PlatformException error it is'.logOnString('PlatformException');
+  // }
 
   isIOS = GetPlatform.isIOS;
   isAndroid = GetPlatform.isAndroid;

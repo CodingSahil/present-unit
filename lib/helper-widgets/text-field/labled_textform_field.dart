@@ -32,6 +32,7 @@ class LabeledTextFormField extends StatefulWidget {
     this.isOptionalFields = false,
     this.isCancel = false,
     this.isPasswordField = false,
+    this.focusNode,
     this.onClose,
   });
 
@@ -56,6 +57,7 @@ class LabeledTextFormField extends StatefulWidget {
   final bool isOptionalFields;
   final bool isCancel;
   final bool isPasswordField;
+  final FocusNode? focusNode;
   final void Function()? onClose;
 
   @override
@@ -71,6 +73,7 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
       textCapitalization: widget.textCapitalization,
       textInputAction: widget.textInputAction,
       onChanged: widget.onChanged,
+      focusNode: widget.focusNode,
       onFieldSubmitted: widget.onFieldSubmitted,
       enabled: widget.enable,
       controller: widget.controller,

@@ -13,8 +13,8 @@ import 'package:present_unit/helpers/dimens/dimens.dart';
 import 'package:present_unit/helpers/enum/common_enums.dart';
 import 'package:present_unit/helpers/labels/label_strings.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
-import 'package:present_unit/main.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
+import 'package:present_unit/models/faculty/faculty_model.dart';
 import 'package:present_unit/models/navigation_models/common_models/authentication_classes.dart';
 import 'package:present_unit/routes/routes.dart';
 import 'package:present_unit/view/splash_view.dart';
@@ -42,6 +42,7 @@ class _LoginViewState extends State<LoginView> {
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
         await loginController.getAdminList();
+        await loginController.getFacultyList();
       },
     );
     super.initState();
@@ -50,15 +51,11 @@ class _LoginViewState extends State<LoginView> {
   @override
   void dispose() {
     loginController.submitLoader(false);
+    loginController.loader(false);
     super.dispose();
   }
 
-  bool validateFields() =>
-      emailController.text.isNotEmpty &&
-      EmailValidator.validate(emailController.text) &&
-      passwordController.text.isNotEmpty &&
-      passwordController.text.length >= 6 &&
-      passwordRegex.hasMatch(passwordController.text);
+  bool validateFields() => emailController.text.isNotEmpty && EmailValidator.validate(emailController.text) && passwordController.text.isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -102,14 +99,8 @@ class _LoginViewState extends State<LoginView> {
                   hintText: LabelStrings.enterEmail,
                   controller: emailController,
                   textInputType: TextInputType.emailAddress,
-                  isError: clickOnSave &&
-                      (emailController.text.isEmpty ||
-                          (emailController.text.isNotEmpty &&
-                              !EmailValidator.validate(emailController.text))),
-                  errorMessage: (emailController.text.isNotEmpty &&
-                          !EmailValidator.validate(emailController.text))
-                      ? LabelStrings.emailIncorrect
-                      : '${LabelStrings.email} ${LabelStrings.require}',
+                  isError: clickOnSave && (emailController.text.isEmpty || (emailController.text.isNotEmpty && !EmailValidator.validate(emailController.text))),
+                  errorMessage: (emailController.text.isNotEmpty && !EmailValidator.validate(emailController.text)) ? LabelStrings.emailIncorrect : '${LabelStrings.email} ${LabelStrings.require}',
                   onChanged: (value) {
                     setState(() {});
                   },
@@ -132,16 +123,8 @@ class _LoginViewState extends State<LoginView> {
                   labelText: '',
                   hintText: LabelStrings.enterPassword,
                   controller: passwordController,
-                  isError: clickOnSave &&
-                      (passwordController.text.isEmpty ||
-                          passwordController.text.length < 6 ||
-                          !passwordRegex.hasMatch(passwordController.text)),
+                  isError: clickOnSave && passwordController.text.isEmpty,
                   isPasswordField: true,
-                  errorMessage: !passwordRegex.hasMatch(passwordController.text)
-                      ? 'Password must contain at least:- 1 uppercase letter,1 lowercase letter, 1 number, 1 special character'
-                      : passwordController.text.length < 6
-                          ? 'Password length must at least 6'
-                          : '${LabelStrings.password} ${LabelStrings.require}',
                   onChanged: (value) {
                     setState(() {});
                   },
@@ -172,24 +155,17 @@ class _LoginViewState extends State<LoginView> {
                 if (validateFields()) {
                   loginController.submitLoader(true);
                   await loginController.getAdminList();
+                  await loginController.getFacultyList();
                   if (loginController.adminList.isNotEmpty &&
                       loginController.adminList.any(
                         (element) =>
-                            (element.email.toLowerCase().trim() ==
-                                    emailController.text.toLowerCase().trim() ||
-                                element.mobileNumber.trim() ==
-                                    emailController.text.trim()) &&
-                            element.password.trim() ==
-                                passwordController.text.trim(),
+                            (element.email.toLowerCase().trim() == emailController.text.toLowerCase().trim() || element.mobileNumber.trim() == emailController.text.trim()) &&
+                            element.password.trim() == passwordController.text.trim(),
                       )) {
                     Admin admin = loginController.adminList.singleWhere(
                       (element) =>
-                          (element.email.toLowerCase().trim() ==
-                                  emailController.text.toLowerCase().trim() ||
-                              element.mobileNumber.trim() ==
-                                  emailController.text.trim()) &&
-                          element.password.trim() ==
-                              passwordController.text.trim(),
+                          (element.email.toLowerCase().trim() == emailController.text.toLowerCase().trim() || element.mobileNumber.trim() == emailController.text.trim()) &&
+                          element.password.trim() == passwordController.text.trim(),
                     );
 
                     loginController.submitLoader(true);
@@ -206,6 +182,7 @@ class _LoginViewState extends State<LoginView> {
 
                     userDetails = UserDetails(
                       admin: admin,
+                      faculty: null,
                       userType: UserType.admin,
                     );
 
@@ -218,6 +195,45 @@ class _LoginViewState extends State<LoginView> {
                     emailController.clear();
                     passwordController.clear();
                     Get.offAllNamed(Routes.adminDashboard);
+                  } else if (loginController.facultyList.isNotEmpty &&
+                      loginController.facultyList.any(
+                        (element) =>
+                            (element.email.toLowerCase().trim() == emailController.text.toLowerCase().trim() || element.mobileNumber.trim() == emailController.text.trim()) &&
+                            element.password.trim() == passwordController.text.trim(),
+                      )) {
+                    Faculty faculty = loginController.facultyList.singleWhere(
+                          (element) =>
+                      (element.email.toLowerCase().trim() == emailController.text.toLowerCase().trim() || element.mobileNumber.trim() == emailController.text.trim()) &&
+                          element.password.trim() == passwordController.text.trim(),
+                    );
+
+                    loginController.submitLoader(true);
+                    await loginController.getStorage.write(
+                      StorageKeys.facultyDetails,
+                      jsonEncode(
+                        faculty.toJson(),
+                      ),
+                    );
+                    await loginController.getStorage.write(
+                      StorageKeys.userType,
+                      UserType.faculty.toString(),
+                    );
+
+                    userDetails = UserDetails(
+                      admin: null,
+                      faculty: faculty,
+                      userType: UserType.faculty,
+                    );
+
+                    await Future.delayed(
+                      const Duration(
+                        seconds: 1,
+                      ),
+                    );
+                    loginController.submitLoader(false);
+                    emailController.clear();
+                    passwordController.clear();
+                    Get.offAllNamed(Routes.facultyDashboard);
                   } else {
                     showErrorSnackBar(
                       context: context,

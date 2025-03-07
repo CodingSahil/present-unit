@@ -11,4 +11,7 @@ class AssetsPaths {
   static const String studentSVG = 'assets/svg/student_svg.svg';
   static const String settingSVG = 'assets/svg/setting_svg.svg';
   static const String swipeRightSVG = 'assets/svg/right-arrow-for_delete.svg';
+  static const String assignmentSVG = 'assets/svg/assignment_svg.svg';
+  static const String classesSVG = 'assets/svg/classes_svg.svg';
+  static const String editSVG = 'assets/svg/edit_svg.svg';
 }

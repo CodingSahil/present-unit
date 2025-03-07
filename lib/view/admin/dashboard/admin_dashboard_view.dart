@@ -8,6 +8,7 @@ import 'package:present_unit/controller/admin/class_list_controller.dart';
 import 'package:present_unit/controller/admin/course_controller.dart';
 import 'package:present_unit/controller/admin/faculty_controller.dart';
 import 'package:present_unit/controller/admin/subject_controller.dart';
+import 'package:present_unit/helper-widgets/bottom_nav_bar.dart';
 import 'package:present_unit/helper-widgets/buttons/submit_button.dart';
 import 'package:present_unit/helper-widgets/loader/loader.dart';
 import 'package:present_unit/helpers/assets_path/assets_path.dart';
@@ -46,7 +47,6 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
   /// bottom navigation
   List<Widget> listOfNavigationWidgets = [];
   int selectedIndex = 0;
-  late Widget selectedTab;
 
   @override
   void initState() {
@@ -60,15 +60,17 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
     listOfNavigationWidgets = [
       iconAndTitleHelper(
         bottomNavigationBarEnums: AdminBottomNavigationBarEnums.home,
+        numberOfTab: 3,
       ),
       iconAndTitleHelper(
         bottomNavigationBarEnums: AdminBottomNavigationBarEnums.course,
+        numberOfTab: 3,
       ),
       iconAndTitleHelper(
         bottomNavigationBarEnums: AdminBottomNavigationBarEnums.faculty,
+        numberOfTab: 3,
       ),
     ];
-    selectedTab = listOfNavigationWidgets.first;
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
@@ -410,120 +412,64 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        width: MediaQuery.sizeOf(context).width,
-        padding: EdgeInsets.only(
-          bottom: isIOS ? Dimens.height18 : 0,
-          top: Dimens.height18,
-        ),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.black.withAlpha(
-                (255 * 0.2).toInt(),
-              ),
-              blurStyle: BlurStyle.outer,
-              spreadRadius: 1,
-              blurRadius: 12,
-            ),
-          ],
-        ),
-        constraints: BoxConstraints(
-          minHeight: MediaQuery.sizeOf(context).height * 0.08,
-          maxHeight: MediaQuery.sizeOf(context).height * 0.11 + (isIOS ? MediaQuery.sizeOf(context).height * 0.02 : 0),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: listOfNavigationWidgets.map(
-            (e) {
-              int index = listOfNavigationWidgets.indexOf(e);
-              return GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  setState(() {
-                    selectedIndex = index;
-                  });
-                },
-                child: e,
-              );
-            },
-          ).toList(),
-          // children: [
-          //   GestureDetector(
-          //     behavior: HitTestBehavior.translucent,
-          //     onTap: () {
-          //       setState(() {
-          //         selectTab = AdminBottomNavigationBarEnums.home;
-          //       });
-          //     },
-          //     child: iconAndTitleHelper(
-          //       bottomNavigationBarEnums: AdminBottomNavigationBarEnums.home,
-          //     ),
-          //   ),
-          //   GestureDetector(
-          //     behavior: HitTestBehavior.translucent,
-          //     onTap: () {
-          //       setState(() {
-          //         selectTab = AdminBottomNavigationBarEnums.course;
-          //       });
-          //     },
-          //     child: iconAndTitleHelper(
-          //       bottomNavigationBarEnums: AdminBottomNavigationBarEnums.course,
-          //     ),
-          //   ),
-          //   GestureDetector(
-          //     behavior: HitTestBehavior.translucent,
-          //     onTap: () {
-          //       setState(() {
-          //         selectTab = AdminBottomNavigationBarEnums.faculty;
-          //       });
-          //     },
-          //     child: iconAndTitleHelper(
-          //       bottomNavigationBarEnums: AdminBottomNavigationBarEnums.faculty,
-          //     ),
-          //   ),
-          // ],
-        ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        children: listOfNavigationWidgets.map(
+          (e) {
+            int index = listOfNavigationWidgets.indexOf(e);
+            return GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                setState(() {
+                  selectedIndex = index;
+                });
+              },
+              child: e,
+            );
+          },
+        ).toList(),
       ),
     );
   }
 
   Widget iconAndTitleHelper({
     required AdminBottomNavigationBarEnums bottomNavigationBarEnums,
+    required int numberOfTab,
   }) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () {
-        setState(() {
-          selectTab = bottomNavigationBarEnums;
-        });
-      },
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          vertical: Dimens.height16,
-          horizontal: Dimens.width24,
-        ),
-        child: Column(
-          children: [
-            SvgPicture.asset(
-              iconForBottomNavigationBarEnums(
-                bottomNavigationBarEnums: bottomNavigationBarEnums,
+    return SizedBox(
+      width: MediaQuery.sizeOf(context).width / numberOfTab,
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          setState(() {
+            selectTab = bottomNavigationBarEnums;
+          });
+        },
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            vertical: Dimens.height16,
+            horizontal: Dimens.width24,
+          ),
+          child: Column(
+            children: [
+              SvgPicture.asset(
+                iconForBottomNavigationBarEnums(
+                  bottomNavigationBarEnums: bottomNavigationBarEnums,
+                ),
+                height: Dimens.height40,
+                width: Dimens.width40,
+                colorFilter: ColorFilter.mode(
+                  selectTab == bottomNavigationBarEnums ? AppColors.primaryColor : AppColors.unselectedColor,
+                  BlendMode.srcIn,
+                ),
               ),
-              height: Dimens.height40,
-              width: Dimens.width40,
-              colorFilter: ColorFilter.mode(
-                selectTab == bottomNavigationBarEnums ? AppColors.primaryColor : AppColors.unselectedColor,
-                BlendMode.srcIn,
+              AppTextTheme.textSize14(
+                label: titleForBottomNavigationBarEnums(
+                  bottomNavigationBarEnums: bottomNavigationBarEnums,
+                ),
+                color: selectTab == bottomNavigationBarEnums ? AppColors.primaryColor : AppColors.unselectedColor,
               ),
-            ),
-            AppTextTheme.textSize14(
-              label: titleForBottomNavigationBarEnums(
-                bottomNavigationBarEnums: bottomNavigationBarEnums,
-              ),
-              color: selectTab == bottomNavigationBarEnums ? AppColors.primaryColor : AppColors.unselectedColor,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -2,26 +2,35 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:present_unit/controller/admin/class_list_controller.dart';
-import 'package:present_unit/controller/admin/subject_controller.dart';
 import 'package:present_unit/controller/faculty/classes_with_attendance_controller.dart';
 import 'package:present_unit/helper-widgets/app-bar/app_bar.dart';
 import 'package:present_unit/helper-widgets/bottom-sheet/bottom_sheet.dart';
+import 'package:present_unit/helper-widgets/buttons/field_with_click_event.dart';
+import 'package:present_unit/helper-widgets/buttons/submit_button.dart';
 import 'package:present_unit/helper-widgets/loader/loader.dart';
+import 'package:present_unit/helper-widgets/text-field/labled_textform_field.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
+import 'package:present_unit/helpers/date-time-convert/date_time_conversion.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
 import 'package:present_unit/helpers/extension/string_print.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
-import 'package:present_unit/main.dart';
+import 'package:present_unit/models/class_list/class_list_models.dart';
 import 'package:present_unit/models/class_list_for_attendance/class_list_for_attendance.dart';
+import 'package:present_unit/models/college_registration/college_registration_models.dart';
 import 'package:present_unit/models/faculty/faculty_model.dart';
 import 'package:present_unit/models/navigation_models/common_models/bottomsheet_selection_model.dart';
+import 'package:present_unit/models/subject/subject_model.dart';
 import 'package:present_unit/routes/routes.dart';
 import 'package:present_unit/view/faculty/classes/add_edit_classes/task_list_view.dart';
 import 'package:present_unit/view/splash_view.dart';
 
 class AddEditClassesWithAttendanceView extends StatefulWidget {
-  const AddEditClassesWithAttendanceView({super.key});
+  const AddEditClassesWithAttendanceView({
+    super.key,
+    this.arguments,
+  });
+
+  final dynamic arguments;
 
   @override
   State<AddEditClassesWithAttendanceView> createState() => _AddEditClassesWithAttendanceViewState();
@@ -29,14 +38,34 @@ class AddEditClassesWithAttendanceView extends StatefulWidget {
 
 class _AddEditClassesWithAttendanceViewState extends State<AddEditClassesWithAttendanceView> {
   late final ClassesWithAttendanceController classesWithAttendanceController;
+  late final TextEditingController descriptionController;
+  late final TextEditingController dateOfLectureController;
+  late final TextEditingController startTimeOfLectureController;
+  late final TextEditingController endTimeOfLectureController;
+
+  ///
   List<Tasks> tasks = [];
   Faculty? faculty;
   BottomSheetSelectionModel? selectedClassList;
   BottomSheetSelectionModel? selectedSubjectList;
+  DateTime? selectedDate;
+  TimeOfDay? selectedStartTime;
+  TimeOfDay? selectedEndTime;
+  bool isError = false;
+  ClassesForAttendanceModel? classesForAttendanceModel;
 
   @override
   void initState() {
     classesWithAttendanceController = Get.find<ClassesWithAttendanceController>();
+    descriptionController = TextEditingController();
+    dateOfLectureController = TextEditingController();
+    startTimeOfLectureController = TextEditingController();
+    endTimeOfLectureController = TextEditingController();
+    selectedDate = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day + 1,
+    );
     if (userDetails != null && userDetails!.faculty != null) {
       faculty = userDetails!.faculty!;
     }
@@ -46,16 +75,67 @@ class _AddEditClassesWithAttendanceViewState extends State<AddEditClassesWithAtt
         await classesWithAttendanceController.getClassesList();
         await classesWithAttendanceController.getListOfClassListStudent();
         await classesWithAttendanceController.getListOfSubject();
+
+        if (widget.arguments != null && widget.arguments is ClassesForAttendanceModel) {
+          classesForAttendanceModel = widget.arguments as ClassesForAttendanceModel;
+
+          if (classesForAttendanceModel != null) {
+            if (classesForAttendanceModel!.description != null && classesForAttendanceModel!.description!.isNotEmpty) {
+              descriptionController.text = classesForAttendanceModel!.description!;
+            }
+            if (classesForAttendanceModel!.lectureDate.isNotEmpty) {
+              dateOfLectureController.text = classesForAttendanceModel!.lectureDate;
+              selectedDate = DateTimeConversion.convertStringToDate(classesForAttendanceModel!.lectureDate);
+            }
+            if (classesForAttendanceModel!.startingTime.isNotEmpty) {
+              startTimeOfLectureController.text = classesForAttendanceModel!.startingTime;
+              selectedStartTime = DateTimeConversion.convertStringToTime(classesForAttendanceModel!.startingTime);
+            }
+            if (classesForAttendanceModel!.endingTime.isNotEmpty) {
+              endTimeOfLectureController.text = classesForAttendanceModel!.endingTime;
+              selectedEndTime = DateTimeConversion.convertStringToTime(classesForAttendanceModel!.endingTime);
+            }
+            if (classesForAttendanceModel!.tasks != null && classesForAttendanceModel!.tasks!.isNotEmpty) {
+              tasks = classesForAttendanceModel!.tasks!;
+            }
+            ClassListModel selectionForClass = classesWithAttendanceController.classList.singleWhere(
+              (element) => element.id == classesForAttendanceModel!.classDetails.id,
+            );
+            selectedClassList = BottomSheetSelectionModel(
+              id: selectionForClass.id,
+              name: selectionForClass.name,
+            );
+            Subject selectionForSubject = classesWithAttendanceController.subjectList.singleWhere(
+              (element) => element.id == classesForAttendanceModel!.subject.id,
+            );
+            selectedSubjectList = BottomSheetSelectionModel(
+              id: selectionForSubject.id,
+              name: selectionForSubject.name,
+            );
+          }
+        }
       },
     );
     super.initState();
   }
 
+  bool validateFields() =>
+      selectedClassList != null &&
+      selectedSubjectList != null &&
+      tasks.isNotEmpty &&
+      descriptionController.text.isNotEmpty &&
+      selectedDate != null &&
+      dateOfLectureController.text.isNotEmpty &&
+      selectedStartTime != null &&
+      startTimeOfLectureController.text.isNotEmpty &&
+      selectedEndTime != null &&
+      endTimeOfLectureController.text.isNotEmpty;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: commonAppBarPreferred(
-        label: 'Add Edit Classes',
+        label: widget.arguments != null && widget.arguments is ClassesForAttendanceModel ? 'Edit Lecture' : 'Add Lecture',
         isAdd: false,
       ),
       body: Obx(
@@ -71,8 +151,12 @@ class _AddEditClassesWithAttendanceViewState extends State<AddEditClassesWithAtt
                   vertical: Dimens.height36,
                 ),
                 children: [
-                  GestureDetector(
-                    behavior: HitTestBehavior.translucent,
+                  /// select class
+                  FieldWithClickEventHelper(
+                    label: selectedClassList?.name ?? 'Select Class',
+                    isValueFilled: selectedClassList != null && selectedClassList!.name.isNotEmpty,
+                    isError: isError,
+                    errorMessage: 'Select Class',
                     onTap: () async {
                       await showCommonBottomSheet(
                         context: context,
@@ -93,42 +177,15 @@ class _AddEditClassesWithAttendanceViewState extends State<AddEditClassesWithAtt
                         },
                       );
                     },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(
-                          Dimens.radius16,
-                        ),
-                        border: Border.all(
-                          color: AppColors.black,
-                          width: 0.5,
-                        ),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        vertical: Dimens.height24,
-                        horizontal: Dimens.width30,
-                      ),
-                      width: MediaQuery.sizeOf(context).width,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          AppTextTheme.textSize14(
-                            label: selectedClassList?.name ?? 'Select Class',
-                            color: AppColors.black.withAlpha(
-                              (255 * 0.7).toInt(),
-                            ),
-                          ),
-                          Icon(
-                            Icons.keyboard_arrow_down,
-                            color: AppColors.black,
-                            size: Dimens.height36,
-                          ),
-                        ],
-                      ),
-                    ),
                   ),
                   SizedBox(height: Dimens.height36),
-                  GestureDetector(
-                    behavior: HitTestBehavior.translucent,
+
+                  /// select subject
+                  FieldWithClickEventHelper(
+                    label: selectedSubjectList?.name ?? 'Select Subject',
+                    isValueFilled: selectedSubjectList != null && selectedSubjectList!.name.isNotEmpty,
+                    isError: isError,
+                    errorMessage: 'Select Subject',
                     onTap: () async {
                       await showCommonBottomSheet(
                         context: context,
@@ -149,42 +206,16 @@ class _AddEditClassesWithAttendanceViewState extends State<AddEditClassesWithAtt
                         },
                       );
                     },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(
-                          Dimens.radius16,
-                        ),
-                        border: Border.all(
-                          color: AppColors.black,
-                          width: 0.5,
-                        ),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        vertical: Dimens.height24,
-                        horizontal: Dimens.width30,
-                      ),
-                      width: MediaQuery.sizeOf(context).width,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          AppTextTheme.textSize14(
-                            label: selectedSubjectList?.name ?? 'Select Subject',
-                            color: AppColors.black.withAlpha(
-                              (255 * 0.7).toInt(),
-                            ),
-                          ),
-                          Icon(
-                            Icons.keyboard_arrow_down,
-                            color: AppColors.black,
-                            size: Dimens.height36,
-                          ),
-                        ],
-                      ),
-                    ),
                   ),
                   SizedBox(height: Dimens.height36),
-                  GestureDetector(
-                    behavior: HitTestBehavior.translucent,
+
+                  /// tasks
+                  FieldWithClickEventHelper(
+                    label: tasks.isNotEmpty ? '${tasks.length} ${tasks.length > 1 ? 'Tasks' : 'Task'} is added' : 'Add Tasks',
+                    isValueFilled: tasks.isNotEmpty,
+                    roundedIcon: Icons.keyboard_arrow_right,
+                    isError: isError,
+                    errorMessage: 'Select Task',
                     onTap: () async {
                       Get.toNamed(
                         Routes.taskListView,
@@ -202,42 +233,173 @@ class _AddEditClassesWithAttendanceViewState extends State<AddEditClassesWithAtt
                           onEvent: (taskList) {
                             setState(() {
                               tasks = taskList;
-                              tasks.map((e) => jsonEncode(e.toJson(),),).toList().toString().logOnString('tasks in main screen => ');
+                              tasks
+                                  .map(
+                                    (e) => jsonEncode(
+                                      e.toJson(),
+                                    ),
+                                  )
+                                  .toList()
+                                  .toString()
+                                  .logOnString('tasks in main screen => ');
                             });
                           },
                         ),
                       );
                     },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(
-                          Dimens.radius16,
-                        ),
-                        border: Border.all(
-                          color: AppColors.black,
-                          width: 0.5,
-                        ),
+                  ),
+                  SizedBox(height: Dimens.height36),
+
+                  /// description
+                  LabeledTextFormField(
+                    controller: descriptionController,
+                    hintText: 'Description',
+                    textInputType: TextInputType.multiline,
+                    textInputAction: TextInputAction.newline,
+                    maxLines: 4,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: Dimens.width20,
+                      vertical: Dimens.height20,
+                    ),
+                  ),
+                  SizedBox(height: Dimens.height36),
+
+                  /// select date
+                  GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () async {
+                      selectedDate = await showDatePicker(
+                        context: context,
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(DateTime.now().year + 1),
+                        currentDate: selectedDate,
+                        initialDate: selectedDate,
+                      );
+                      if (selectedDate != null) {
+                        dateOfLectureController.text = DateTimeConversion.convertDateIntoString(selectedDate!);
+                      }
+                      setState(() {});
+                    },
+                    child: LabeledTextFormField(
+                      controller: dateOfLectureController,
+                      hintText: 'Select Lecture Date',
+                      enable: false,
+                      suffix: Icon(
+                        Icons.calendar_month_rounded,
+                        size: Dimens.height32,
+                        color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
                       ),
-                      padding: EdgeInsets.symmetric(
-                        vertical: Dimens.height24,
-                        horizontal: Dimens.width30,
-                      ),
-                      width: MediaQuery.sizeOf(context).width,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          AppTextTheme.textSize14(
-                            label: tasks.isNotEmpty ? '${tasks.length} is added' : 'Add Tasks',
-                            color: AppColors.black.withAlpha(
-                              (255 * 0.7).toInt(),
+                    ),
+                  ),
+                  SizedBox(height: Dimens.height36),
+
+                  /// select time
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () async {
+                            selectedStartTime = await showTimePicker(
+                              context: context,
+                              initialTime: selectedStartTime ?? TimeOfDay.now(),
+                            );
+                            if (selectedStartTime != null) {
+                              startTimeOfLectureController.text = DateTimeConversion.convertTimeIntoString(selectedStartTime!);
+                            }
+                            setState(() {});
+                          },
+                          child: LabeledTextFormField(
+                            controller: startTimeOfLectureController,
+                            hintText: 'Select Start Time',
+                            enable: false,
+                            suffix: Icon(
+                              Icons.access_time_rounded,
+                              size: Dimens.height32,
+                              color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
                             ),
                           ),
-                          Icon(
-                            Icons.keyboard_arrow_right,
-                            color: AppColors.black,
-                            size: Dimens.height36,
+                        ),
+                      ),
+                      SizedBox(width: Dimens.width20),
+                      Expanded(
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () async {
+                            selectedEndTime = await showTimePicker(
+                              context: context,
+                              initialTime: selectedEndTime ?? TimeOfDay.now(),
+                            );
+                            if (selectedEndTime != null) {
+                              endTimeOfLectureController.text = DateTimeConversion.convertTimeIntoString(selectedEndTime!);
+                            }
+                            setState(() {});
+                          },
+                          child: LabeledTextFormField(
+                            controller: endTimeOfLectureController,
+                            hintText: 'Select End Time',
+                            enable: false,
+                            suffix: Icon(
+                              Icons.access_time_rounded,
+                              size: Dimens.height32,
+                              color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
+                            ),
                           ),
-                        ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: Dimens.height36),
+                  GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () async {
+                      setState(() {
+                        isError = !validateFields();
+                      });
+                      if (isError) return;
+
+                      String documentID =
+                          '${selectedSubjectList?.name.replaceAll("-", "_").replaceAll(" ", "_")}_${DateTimeConversion.convertDateIntoString(selectedDate!).replaceAll("-", "_")}_${userDetails?.faculty?.name.replaceAll(" ", "_")}';
+                      classesForAttendanceModel = ClassesForAttendanceModel(
+                        documentID: documentID,
+                        id: classesWithAttendanceController.globalClassesForAttendanceModel.length + 1,
+                        faculty: faculty ?? Faculty.empty(),
+                        subject: classesWithAttendanceController.subjectList.singleWhere(
+                          (element) => element.id == selectedSubjectList?.id,
+                        ),
+                        college: faculty?.admin?.college ?? College.empty(),
+                        studentList: classesWithAttendanceController.classList
+                                .singleWhere(
+                                  (element) => element.id == selectedClassList?.id,
+                                )
+                                .studentList ??
+                            [],
+                        classDetails: classesWithAttendanceController.classList.singleWhere(
+                          (element) => element.id == selectedClassList?.id,
+                        ),
+                        lectureDate: dateOfLectureController.text,
+                        startingTime: startTimeOfLectureController.text,
+                        endingTime: endTimeOfLectureController.text,
+                        tasks: tasks,
+                        description: descriptionController.text,
+                      );
+                      if (classesForAttendanceModel != null) {
+                        await classesWithAttendanceController.addLecture(classesForAttendanceModel!);
+                        Get.back(
+                          result: true,
+                        );
+                      }
+                    },
+                    child: SubmitButtonHelper(
+                      width: MediaQuery.sizeOf(context).width,
+                      height: Dimens.height80,
+                      child: Obx(
+                        () => classesWithAttendanceController.submitLoader.value
+                            ? const ButtonLoader()
+                            : AppTextTheme.textSize14(
+                                label: widget.arguments != null && widget.arguments is ClassesForAttendanceModel ? 'Edit Lecture' : 'Add Lecture',
+                                color: AppColors.white,
+                              ),
                       ),
                     ),
                   ),

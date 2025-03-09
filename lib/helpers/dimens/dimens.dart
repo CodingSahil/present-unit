@@ -53,7 +53,11 @@ class Dimens {
   static final double height96 = 96.h;
   static final double height98 = 98.h;
   static final double height100 = 100.h;
+  static final double height110 = 110.h;
+  static final double height115 = 115.h;
+  static final double height120 = 120.h;
   static final double height125 = 125.h;
+  static final double height130 = 130.h;
   static final double height150 = 150.h;
   static final double height175 = 175.h;
   static final double height200 = 200.h;

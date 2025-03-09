@@ -111,8 +111,11 @@ class RouteGenerator {
         );
 
       case Routes.addEditClassesWithAttendanceView:
+        dynamic arguments = settings.arguments;
         return MaterialPageRoute(
-          builder: (context) => const AddEditClassesWithAttendanceView(),
+          builder: (context) => AddEditClassesWithAttendanceView(
+            arguments: arguments,
+          ),
         );
 
       case Routes.taskListView:

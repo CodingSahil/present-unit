@@ -34,6 +34,8 @@ class LabeledTextFormField extends StatefulWidget {
     this.isPasswordField = false,
     this.focusNode,
     this.onClose,
+    this.onTap,
+    this.suffix,
   });
 
   final String? labelText;
@@ -58,7 +60,9 @@ class LabeledTextFormField extends StatefulWidget {
   final bool isCancel;
   final bool isPasswordField;
   final FocusNode? focusNode;
+  final VoidCallback? onTap;
   final void Function()? onClose;
+  final Widget? suffix;
 
   @override
   State<LabeledTextFormField> createState() => _LabeledTextFormFieldState();
@@ -104,6 +108,7 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
                       : <TextInputFormatter>[
                           UpperCaseTextFormatter(),
                         ],
+      onTap: widget.onTap,
       style: GoogleFonts.firaSans(
         fontWeight: FontWeight.normal,
         fontSize: Dimens.textSize24,
@@ -112,13 +117,9 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
       decoration: InputDecoration(
         contentPadding: widget.contentPadding,
         filled: !widget.enable,
-        labelText: widget.labelText != null && widget.labelText!.isNotEmpty
-            ? '${widget.labelText} ${widget.isOptionalFields ? '(Optional)' : ''}'
-            : null,
+        labelText: widget.labelText != null && widget.labelText!.isNotEmpty ? '${widget.labelText} ${widget.isOptionalFields ? '(Optional)' : ''}' : null,
         hintText: widget.hintText,
-        errorText: widget.isError
-            ? widget.errorMessage ?? '${widget.hintText} is required'
-            : null,
+        errorText: widget.isError ? widget.errorMessage ?? '${widget.hintText} is required' : null,
         errorMaxLines: 5,
         errorStyle: GoogleFonts.firaSans(
           fontWeight: FontWeight.normal,
@@ -127,9 +128,7 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
         ),
         prefixText: widget.isCurrencyBeforeText ? '₹ ' : null,
         prefixStyle: TextStyle(
-          color: widget.showRedTextColor
-              ? AppColors.red
-              : AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
+          color: widget.showRedTextColor ? AppColors.red : AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
         ),
         labelStyle: GoogleFonts.firaSans(
           fontWeight: FontWeight.normal,
@@ -139,66 +138,68 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
         hintStyle: GoogleFonts.firaSans(
           fontWeight: FontWeight.normal,
           fontSize: Dimens.textSize24,
-          color: AppColors.black,
+          color: AppColors.black.withAlpha(
+            (255 * 0.5).toInt(),
+          ),
         ),
-        suffixIcon: widget.isCancel
-            ? GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: widget.onClose,
-                child: Icon(
-                  Icons.cancel,
-                  color: AppColors.red,
-                  size: Dimens.height28,
-                ),
-              )
-            : widget.isPasswordField
-                ? Container(
-                    height: Dimens.height40,
-                    width: Dimens.width40,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: Dimens.width20,
-                      vertical: Dimens.height20,
-                    ),
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        setState(() => isEyeOpen = !isEyeOpen);
-                      },
-                      child: isEyeOpen
-                          ? SvgPicture.asset(
-                              AssetsPaths.eyeOpenSVG,
-                              height: Dimens.height30,
-                              width: Dimens.width30,
-                              colorFilter: ColorFilter.mode(
-                                AppColors.black.withAlpha(
-                                  (255 * 0.75).toInt(),
-                                ),
-                                BlendMode.srcIn,
-                              ),
-                            )
-                          : SvgPicture.asset(
-                              AssetsPaths.eyeCloseSVG,
-                              height: Dimens.height30,
-                              width: Dimens.width30,
-                              colorFilter: ColorFilter.mode(
-                                AppColors.black.withAlpha(
-                                  (255 * 0.75).toInt(),
-                                ),
-                                BlendMode.srcIn,
-                              ),
-                            ),
+        suffixIcon: widget.suffix != null
+            ? widget.suffix!
+            : widget.isCancel
+                ? GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: widget.onClose,
+                    child: Icon(
+                      Icons.cancel,
+                      color: AppColors.red,
+                      size: Dimens.height28,
                     ),
                   )
-                : null,
+                : widget.isPasswordField
+                    ? Container(
+                        height: Dimens.height40,
+                        width: Dimens.width40,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: Dimens.width20,
+                          vertical: Dimens.height20,
+                        ),
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () {
+                            setState(() => isEyeOpen = !isEyeOpen);
+                          },
+                          child: isEyeOpen
+                              ? SvgPicture.asset(
+                                  AssetsPaths.eyeOpenSVG,
+                                  height: Dimens.height30,
+                                  width: Dimens.width30,
+                                  colorFilter: ColorFilter.mode(
+                                    AppColors.black.withAlpha(
+                                      (255 * 0.75).toInt(),
+                                    ),
+                                    BlendMode.srcIn,
+                                  ),
+                                )
+                              : SvgPicture.asset(
+                                  AssetsPaths.eyeCloseSVG,
+                                  height: Dimens.height30,
+                                  width: Dimens.width30,
+                                  colorFilter: ColorFilter.mode(
+                                    AppColors.black.withAlpha(
+                                      (255 * 0.75).toInt(),
+                                    ),
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                        ),
+                      )
+                    : null,
         floatingLabelBehavior: FloatingLabelBehavior.auto,
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(
             Dimens.radius20,
           ),
           borderSide: BorderSide(
-            color: widget.showBorder
-                ? AppColors.primaryColor
-                : AppColors.transparent,
+            color: widget.showBorder ? AppColors.primaryColor : AppColors.transparent,
             width: widget.showBorder ? Dimens.width1 : 0,
           ),
         ),

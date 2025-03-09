@@ -14,6 +14,7 @@ class ClassesWithAttendanceController extends GetxController {
   ClassesWithAttendanceController();
 
   RxBool loader = false.obs;
+  RxBool submitLoader = false.obs;
   List<ClassesForAttendanceModel> globalClassesForAttendanceModel = [];
   List<ClassesForAttendanceModel> classesForAttendanceModel = [];
   List<ClassListModel> globalClassList = [];
@@ -22,12 +23,17 @@ class ClassesWithAttendanceController extends GetxController {
   List<Subject> subjectList = [];
   Faculty? faculty;
 
-  Future<void> getClassesList() async {
+  Future<void> getClassesList({
+    bool isLoaderRequire = true,
+  }) async {
     if (userDetails != null && userDetails!.faculty != null) {
       faculty = userDetails!.faculty!;
     }
-    loader(true);
-    globalClassesForAttendanceModel = await getListFromFirebase<ClassesForAttendanceModel>(collection: CollectionStrings.classListForAttendance, fromJson: ClassesForAttendanceModel.fromJson);
+    if (isLoaderRequire) loader(true);
+    globalClassesForAttendanceModel = await getListFromFirebase<ClassesForAttendanceModel>(
+      collection: CollectionStrings.classListForAttendance,
+      fromJson: ClassesForAttendanceModel.fromJson,
+    );
     if (globalClassesForAttendanceModel.isNotEmpty) {
       classesForAttendanceModel = globalClassesForAttendanceModel
           .where(
@@ -35,7 +41,7 @@ class ClassesWithAttendanceController extends GetxController {
           )
           .toList();
     }
-    loader(false);
+    if (isLoaderRequire) loader(false);
   }
 
   Future<void> getListOfClassListStudent() async {
@@ -51,14 +57,14 @@ class ClassesWithAttendanceController extends GetxController {
     classList = globalClassList
         .where(
           (element) => element.admin?.id == faculty?.admin?.id,
-    )
+        )
         .toList();
     if (globalClassList.isNotEmpty) {
       jsonEncode(
         globalClassList
             .map(
               (e) => e.toJson(),
-        )
+            )
             .toList(),
       ).logOnString('classList');
     }
@@ -77,10 +83,28 @@ class ClassesWithAttendanceController extends GetxController {
     subjectList = globalSubjectList
         .where(
           (element) => element.admin?.id == faculty?.admin?.id,
-    )
+        )
         .toList();
     loader(false);
-
   }
 
+  Future<void> addLecture(ClassesForAttendanceModel request) async {
+    submitLoader(true);
+    await writeAnObject(
+      collection: CollectionStrings.classListForAttendance,
+      newDocumentName: request.documentID,
+      newMap: request.toJson(),
+    );
+    submitLoader(false);
+  }
+
+  Future<void> deleteLecture(String documentName) async {
+    await deleteAnObject(
+      collection: CollectionStrings.classListForAttendance,
+      documentName: documentName,
+    );
+    await getClassesList(
+      isLoaderRequire: false,
+    );
+  }
 }

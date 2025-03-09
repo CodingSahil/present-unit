@@ -8,6 +8,7 @@ class ClassesForAttendanceModel extends Equatable {
   const ClassesForAttendanceModel({
     required this.documentID,
     required this.id,
+    required this.classDetails,
     required this.faculty,
     required this.subject,
     required this.college,
@@ -27,11 +28,12 @@ class ClassesForAttendanceModel extends Equatable {
   final Faculty faculty;
   final Subject subject;
   final College college;
+  final ClassListModel classDetails;
   final List<Student> studentList;
   final List<Student>? presentStudentList;
   final List<Student>? absentStudentList;
   final String? notes;
-  final List<String>? tasks;
+  final List<Tasks>? tasks;
   final String? description;
   final String lectureDate;
   final String startingTime;
@@ -42,6 +44,7 @@ class ClassesForAttendanceModel extends Equatable {
         documentID,
         id,
         faculty,
+        classDetails,
         subject,
         college,
         tasks,
@@ -62,6 +65,7 @@ class ClassesForAttendanceModel extends Equatable {
     return ClassesForAttendanceModel(
       documentID: json['documentID'] as String? ?? '',
       id: json['id'] as int? ?? 0,
+      classDetails: json['classDetails'] != null ? ClassListModel.fromJson(json['classDetails'] as Map<String, dynamic>, '') : ClassListModel.empty(),
       faculty: Faculty.fromJson(json['faculty'] as Map<String, dynamic>, ''),
       subject: Subject.fromJson(json['subject'] as Map<String, dynamic>, ''),
       college: College.fromJson(json['college'] as Map<String, dynamic>),
@@ -78,7 +82,12 @@ class ClassesForAttendanceModel extends Equatable {
               )
               .toList() ??
           [],
-      tasks: json['tasks'] as List<String>? ?? [],
+      tasks: (json['tasks'] as List<dynamic>?)
+              ?.map(
+                (e) => Tasks.fromJson(e as Map<String, dynamic>, ''),
+              )
+              .toList() ??
+          [],
       notes: json['notes'] as String? ?? '',
       description: json['description'] as String? ?? '',
       lectureDate: json['lectureDate'] as String? ?? '',
@@ -88,16 +97,16 @@ class ClassesForAttendanceModel extends Equatable {
   }
 
   Map<String, dynamic> toJson() => {
-        'documentID': documentID,
         'id': id,
         'faculty': faculty.toJson(),
         'subject': subject.toJson(),
         'college': college.toJson(),
+        'classDetails': classDetails.toJson(),
         if (studentList.isNotEmpty) 'studentList': studentList.map((e) => e.toJson()).toList(),
         if (presentStudentList != null && presentStudentList!.isNotEmpty) 'presentStudentList': presentStudentList!.map((e) => e.toJson()).toList(),
         if (absentStudentList != null && absentStudentList!.isNotEmpty) 'absentStudentList': absentStudentList!.map((e) => e.toJson()).toList(),
         if (notes != null && notes!.isNotEmpty) 'notes': notes,
-        if (tasks != null && tasks!.isNotEmpty) 'tasks': tasks,
+        if (tasks != null && tasks!.isNotEmpty) 'tasks': tasks!.map((e) => e.toJson()).toList(),
         if (description != null && description!.isNotEmpty) 'description': description,
         if (lectureDate.isNotEmpty) 'lectureDate': lectureDate,
         if (startingTime.isNotEmpty) 'startingTime': startingTime,
@@ -107,9 +116,10 @@ class ClassesForAttendanceModel extends Equatable {
   ClassesForAttendanceModel copyWith({
     int? id,
     Faculty? faculty,
+    ClassListModel? classDetails,
     Subject? subject,
     College? college,
-    List<String>? tasks,
+    List<Tasks>? tasks,
     List<Student>? studentList,
     List<Student>? presentStudentList,
     List<Student>? absentStudentList,
@@ -123,6 +133,7 @@ class ClassesForAttendanceModel extends Equatable {
       documentID: documentID,
       id: id ?? this.id,
       faculty: faculty ?? this.faculty,
+      classDetails: classDetails ?? this.classDetails,
       subject: subject ?? this.subject,
       college: college ?? this.college,
       tasks: tasks ?? this.tasks,

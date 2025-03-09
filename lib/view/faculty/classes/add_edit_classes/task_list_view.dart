@@ -67,7 +67,11 @@ class _TaskListViewState extends State<TaskListView> {
             milliseconds: 200,
           ),
           () {
-            FocusScope.of(context).requestFocus(alertDialogTaskFocusNode);
+            try {
+              FocusScope.of(context).requestFocus(alertDialogTaskFocusNode);
+            } on Exception catch (e) {
+              e.toString().logOnString('Exception => ');
+            }
           },
         );
         return StatefulBuilder(
@@ -161,14 +165,14 @@ class _TaskListViewState extends State<TaskListView> {
 
   @override
   Widget build(BuildContext context) {
-    '${taskList.map(
-              (e) => jsonEncode(
-                e.toJson(),
-              ),
-            ).toList()}'
-        .logOnString('taskList => ');
+    // '${taskList.map(
+    //           (e) => jsonEncode(
+    //             e.toJson(),
+    //           ),
+    //         ).toList()}'
+    //     .logOnString('taskList => ');
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBgColor,
+      backgroundColor: AppColors.white,
       appBar: taskListNavigation != null && taskListNavigation!.showAppBar
           ? commonAppBarPreferred(
               label: taskListNavigation!.taskList.isNotEmpty ? 'Edit Tasks' : 'Add Tasks',
@@ -212,88 +216,109 @@ class _TaskListViewState extends State<TaskListView> {
             )
           : ListView(
               padding: EdgeInsets.symmetric(
-                vertical: Dimens.height28,
+                vertical: Dimens.height16,
                 horizontal: Dimens.width20,
               ),
               children: taskList.map(
                 (item) {
                   int index = taskList.indexOf(item);
-                  return Container(
-                    margin: EdgeInsets.only(
-                      top: index == 0 ? Dimens.height12 : 0,
-                      bottom: Dimens.height28,
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: Dimens.width24,
-                      vertical: Dimens.height20,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(
-                        Dimens.radius15,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Checkbox(
-                          value: item.completed,
-                          activeColor: AppColors.primaryColor,
-                          visualDensity: const VisualDensity(
-                            vertical: VisualDensity.minimumDensity,
-                            horizontal: VisualDensity.minimumDensity,
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              if (value != null) {
-                                taskList[index].copyWith(completed: value);
-                              }
-                            });
-                          },
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        // margin: EdgeInsets.only(
+                        //   top: index == 0 ? Dimens.height12 : 0,
+                        //   bottom: Dimens.height20,
+                        // ),
+                        padding: EdgeInsets.symmetric(
+                          vertical: Dimens.height16,
+                          horizontal: Dimens.width16,
                         ),
-                        SizedBox(width: Dimens.width12),
-                        Expanded(
-                          child: AppTextTheme.textSize16(
-                            label: item.task.toString(),
-                            color: AppColors.black,
-                            fontWeight: FontWeight.w400,
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.circular(
+                            Dimens.radius15,
                           ),
                         ),
-                        SizedBox(width: Dimens.width12),
-                        GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () {
-                            showAddEditTaskAlertDialog(
-                              task: item,
-                            );
-                          },
-                          child: SvgPicture.asset(
-                            AssetsPaths.editSVG,
-                            alignment: Alignment.center,
-                            width: Dimens.width34,
-                            height: Dimens.height34,
-                            colorFilter: ColorFilter.mode(
-                              AppColors.black,
-                              BlendMode.srcIn,
+                        child: Row(
+                          children: [
+                            Checkbox(
+                              value: item.completed,
+                              activeColor: AppColors.primaryColor,
+                              shape: CircleBorder(
+                                eccentricity: 0.75,
+                                side: BorderSide(
+                                  color: AppColors.primaryColor,
+                                ),
+                              ),
+                              visualDensity: const VisualDensity(
+                                vertical: VisualDensity.minimumDensity,
+                                horizontal: VisualDensity.minimumDensity,
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  if (value != null) {
+                                    value.toString().logOnString('value => ');
+                                    taskList[index] = taskList[index].copyWith(completed: value);
+                                    taskList.map((e) => jsonEncode(e.toJson()),).toList().toString().logOnString('taskList => ');
+                                  }
+                                });
+                              },
                             ),
+                            SizedBox(width: Dimens.width12),
+                            Expanded(
+                              child: AppTextTheme.textSize16(
+                                label: item.task.toString(),
+                                color: AppColors.black,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            SizedBox(width: Dimens.width12),
+                            GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onTap: () {
+                                showAddEditTaskAlertDialog(
+                                  task: item,
+                                );
+                              },
+                              child: SvgPicture.asset(
+                                AssetsPaths.editSVG,
+                                alignment: Alignment.center,
+                                width: Dimens.width34,
+                                height: Dimens.height34,
+                                colorFilter: ColorFilter.mode(
+                                  AppColors.black,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: Dimens.width24),
+                            GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onTap: () {
+                                setState(() {
+                                  taskList.removeAt(index);
+                                });
+                              },
+                              child: Icon(
+                                Icons.delete,
+                                color: AppColors.red,
+                                size: Dimens.height38,
+                              ),
+                            ),
+                            SizedBox(width: Dimens.width12),
+                          ],
+                        ),
+                      ),
+                      if (index != taskList.length - 1)
+                        Divider(
+                          height: 1,
+                          thickness: 0.5,
+                          color: AppColors.black.withAlpha(
+                            (255 * 0.2).toInt(),
                           ),
                         ),
-                        SizedBox(width: Dimens.width24),
-                        GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () {
-                            setState(() {
-                              taskList.removeAt(index);
-                            });
-                          },
-                          child: Icon(
-                            Icons.delete,
-                            color: AppColors.red,
-                            size: Dimens.height38,
-                          ),
-                        ),
-                        SizedBox(width: Dimens.width12),
-                      ],
-                    ),
+                    ],
                   );
                 },
               ).toList(),
@@ -301,20 +326,20 @@ class _TaskListViewState extends State<TaskListView> {
       floatingActionButton: taskList.isEmpty
           ? const SizedBox.shrink()
           : FloatingActionButton.extended(
-            onPressed: () {
-              showAddEditTaskAlertDialog();
-            },
-            label: AppTextTheme.textSize14(
-              label: 'Add New Task',
-              color: AppColors.white,
+              onPressed: () {
+                showAddEditTaskAlertDialog();
+              },
+              label: AppTextTheme.textSize14(
+                label: 'Add New Task',
+                color: AppColors.white,
+              ),
+              backgroundColor: AppColors.primaryColor,
+              icon: Icon(
+                Icons.add,
+                color: AppColors.white,
+                size: Dimens.height30,
+              ),
             ),
-            backgroundColor: AppColors.primaryColor,
-            icon: Icon(
-              Icons.add,
-              color: AppColors.white,
-              size: Dimens.height30,
-            ),
-          ),
     );
   }
 }

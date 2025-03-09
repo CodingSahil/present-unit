@@ -8,6 +8,7 @@ import 'package:present_unit/helper-widgets/bottom-sheet/bottom_sheet.dart';
 import 'package:present_unit/helper-widgets/buttons/field_with_click_event.dart';
 import 'package:present_unit/helper-widgets/buttons/submit_button.dart';
 import 'package:present_unit/helper-widgets/loader/loader.dart';
+import 'package:present_unit/helper-widgets/snackbar/snackbar.dart';
 import 'package:present_unit/helper-widgets/text-field/labled_textform_field.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/date-time-convert/date_time_conversion.dart';
@@ -383,10 +384,20 @@ class _AddEditClassesWithAttendanceViewState extends State<AddEditClassesWithAtt
                         tasks: tasks,
                         description: descriptionController.text,
                       );
-                      if (classesForAttendanceModel != null) {
+                      if (widget.arguments != null && widget.arguments is ClassesForAttendanceModel && classesForAttendanceModel != null) {
+                        await classesWithAttendanceController.updateLecture(classesForAttendanceModel!);
+                        Get.back(
+                          result: true,
+                        );
+                      } else if (classesForAttendanceModel != null) {
                         await classesWithAttendanceController.addLecture(classesForAttendanceModel!);
                         Get.back(
                           result: true,
+                        );
+                      } else {
+                        showErrorSnackBar(
+                          context: context,
+                          title: 'Something went wrong',
                         );
                       }
                     },

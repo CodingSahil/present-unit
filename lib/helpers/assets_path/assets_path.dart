@@ -15,4 +15,8 @@ class AssetsPaths {
   static const String classesSVG = 'assets/svg/classes_svg.svg';
   static const String editSVG = 'assets/svg/edit_svg.svg';
   static const String simpleEditSVG = 'assets/svg/simple_edit_svg.svg';
+  static const String taskTodoSVG = 'assets/svg/tasks_svg.svg';
+  static const String attendanceSVG = 'assets/svg/attendance_svg.svg';
+  static const String notesSVG = 'assets/svg/notes_svg.svg';
+  static const String studentsSVG = 'assets/svg/student_svg.svg';
 }

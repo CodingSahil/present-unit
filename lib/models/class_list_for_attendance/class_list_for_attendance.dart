@@ -96,6 +96,19 @@ class ClassesForAttendanceModel extends Equatable {
     );
   }
 
+  factory ClassesForAttendanceModel.empty() => ClassesForAttendanceModel(
+        documentID: '',
+        id: -1000,
+        classDetails: ClassListModel.empty(),
+        faculty: Faculty.empty(),
+        subject: Subject.empty(),
+        college: College.empty(),
+        studentList: [],
+        lectureDate: '',
+        startingTime: '',
+        endingTime: '',
+      );
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'faculty': faculty.toJson(),

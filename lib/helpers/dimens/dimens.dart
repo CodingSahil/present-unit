@@ -25,6 +25,7 @@ class Dimens {
   static final double height40 = 40.h;
   static final double height42 = 42.h;
   static final double height44 = 44.h;
+  static final double height45 = 45.h;
   static final double height46 = 46.h;
   static final double height48 = 48.h;
   static final double height50 = 50.h;
@@ -87,6 +88,7 @@ class Dimens {
   static final double width40 = 40.w;
   static final double width42 = 42.w;
   static final double width44 = 44.w;
+  static final double width45 = 45.w;
   static final double width46 = 46.w;
   static final double width48 = 48.w;
   static final double width50 = 50.w;

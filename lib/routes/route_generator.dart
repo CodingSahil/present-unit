@@ -14,6 +14,7 @@ import 'package:present_unit/view/faculty/assignment/assignment_list_view.dart';
 import 'package:present_unit/view/faculty/classes/add_edit_classes/add_edit_classes_with_attendance_view.dart';
 import 'package:present_unit/view/faculty/classes/add_edit_classes/task_list_view.dart';
 import 'package:present_unit/view/faculty/classes/class_list_view.dart';
+import 'package:present_unit/view/faculty/classes/lecture_details/lecture_details_view.dart';
 import 'package:present_unit/view/faculty/dashboard/faculty_dashboard_view.dart';
 import 'package:present_unit/view/login_view.dart';
 import 'package:present_unit/view/splash_view.dart';
@@ -122,6 +123,14 @@ class RouteGenerator {
         dynamic arguments = settings.arguments;
         return MaterialPageRoute(
           builder: (context) => TaskListView(
+            arguments: arguments,
+          ),
+        );
+
+      case Routes.lectureDetailsView:
+        dynamic arguments = settings.arguments;
+        return MaterialPageRoute(
+          builder: (context) => LectureDetailsView(
             arguments: arguments,
           ),
         );

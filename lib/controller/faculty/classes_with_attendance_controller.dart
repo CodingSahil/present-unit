@@ -98,6 +98,16 @@ class ClassesWithAttendanceController extends GetxController {
     submitLoader(false);
   }
 
+  Future<void> updateLecture(ClassesForAttendanceModel request) async {
+    submitLoader(true);
+    await updateAnObject(
+      collection: CollectionStrings.classListForAttendance,
+      documentName: request.documentID,
+      newMap: request.toJson(),
+    );
+    submitLoader(false);
+  }
+
   Future<void> deleteLecture(String documentName) async {
     await deleteAnObject(
       collection: CollectionStrings.classListForAttendance,

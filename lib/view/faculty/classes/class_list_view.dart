@@ -49,6 +49,8 @@ class _ClassListForAttendanceViewState extends State<ClassListForAttendanceView>
           dynamic result = await Get.toNamed(Routes.addEditClassesWithAttendanceView);
           if (result is bool && result == true) {
             await classesWithAttendanceController.getClassesList();
+            await Future.delayed(const Duration(milliseconds: 500));
+            classesWithAttendanceController.update([UpdateKeys.updateLectureList]);
           }
         },
       ),
@@ -79,7 +81,6 @@ class _ClassListForAttendanceViewState extends State<ClassListForAttendanceView>
                             (lecture) {
                               DateTime startTime = DateTimeConversion.convertStringToDateTime(lecture.startingTime);
                               DateTime endTime = DateTimeConversion.convertStringToDateTime(lecture.endingTime);
-                              int differenceInHours = endTime.difference(startTime).inHours;
                               int differenceInMinutes = endTime.difference(startTime).inMinutes;
                               log('difference => ${DateTimeConversion.convertMinutesToHours(differenceInMinutes)}');
                               RxBool deleteLoader = false.obs;
@@ -99,6 +100,7 @@ class _ClassListForAttendanceViewState extends State<ClassListForAttendanceView>
                                             await classesWithAttendanceController.deleteLecture(
                                               lecture.documentID,
                                             );
+                                            await Future.delayed(const Duration(milliseconds: 500));
                                             classesWithAttendanceController.update([
                                               UpdateKeys.updateLectureList,
                                             ]);
@@ -114,138 +116,152 @@ class _ClassListForAttendanceViewState extends State<ClassListForAttendanceView>
                                         ),
                                       ],
                                     ),
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: Dimens.height12,
-                                        horizontal: Dimens.width30,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.white,
-                                        borderRadius: BorderRadius.circular(
-                                          Dimens.radius15,
+                                    child: GestureDetector(
+                                      behavior: HitTestBehavior.translucent,
+                                      onTap: () {
+                                        Get.toNamed(
+                                          Routes.lectureDetailsView,
+                                          arguments: lecture,
+                                        );
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: Dimens.height12,
+                                          horizontal: Dimens.width30,
                                         ),
-                                      ),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        spacing: Dimens.height16,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              VerticalTitleValueComponent(
-                                                title: 'Subject',
-                                                value: lecture.subject.name,
-                                              ),
-                                              GestureDetector(
-                                                behavior: HitTestBehavior.translucent,
-                                                onTap: () async {
-                                                  Get.toNamed(
-                                                    Routes.addEditClassesWithAttendanceView,
-                                                    arguments: lecture,
-                                                  );
-                                                },
-                                                child: Row(
+                                        decoration: BoxDecoration(
+                                          color: AppColors.white,
+                                          borderRadius: BorderRadius.circular(
+                                            Dimens.radius15,
+                                          ),
+                                        ),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          spacing: Dimens.height16,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                VerticalTitleValueComponent(
+                                                  title: 'Subject',
+                                                  value: lecture.subject.name,
+                                                ),
+                                                GestureDetector(
+                                                  behavior: HitTestBehavior.translucent,
+                                                  onTap: () async {
+                                                    dynamic result = await Get.toNamed(
+                                                      Routes.addEditClassesWithAttendanceView,
+                                                      arguments: lecture,
+                                                    );
+                                                    if (result is bool && result == true) {
+                                                      await classesWithAttendanceController.getClassesList();
+                                                      await Future.delayed(const Duration(milliseconds: 500));
+                                                      classesWithAttendanceController.update([UpdateKeys.updateLectureList]);
+                                                    }
+                                                  },
+                                                  child: Row(
+                                                    children: [
+                                                      SvgPicture.asset(
+                                                        AssetsPaths.simpleEditSVG,
+                                                        alignment: Alignment.center,
+                                                        width: Dimens.width28,
+                                                        height: Dimens.height28,
+                                                        colorFilter: ColorFilter.mode(
+                                                          AppColors.black,
+                                                          BlendMode.srcIn,
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: Dimens.width12),
+                                                      AppTextTheme.textSize14(
+                                                        label: 'Edit',
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                VerticalTitleValueComponent(
+                                                  title: 'Class',
+                                                  value: lecture.classDetails.name,
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.end,
                                                   children: [
-                                                    SvgPicture.asset(
-                                                      AssetsPaths.simpleEditSVG,
-                                                      alignment: Alignment.center,
-                                                      width: Dimens.width28,
-                                                      height: Dimens.height28,
-                                                      colorFilter: ColorFilter.mode(
-                                                        AppColors.black,
-                                                        BlendMode.srcIn,
+                                                    AppTextTheme.textSize12(
+                                                      label: 'Lecture Date',
+                                                      color: AppColors.black.withAlpha(
+                                                        (255 * 0.6).toInt(),
                                                       ),
                                                     ),
-                                                    SizedBox(width: Dimens.width12),
-                                                    AppTextTheme.textSize14(
-                                                      label: 'Edit',
+                                                    SizedBox(width: Dimens.width8),
+                                                    AppTextTheme.textSize16(
+                                                      label: lecture.lectureDate,
                                                     ),
                                                   ],
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              VerticalTitleValueComponent(
-                                                title: 'Class',
-                                                value: lecture.classDetails.name,
-                                              ),
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.end,
-                                                children: [
-                                                  AppTextTheme.textSize12(
-                                                    label: 'Lecture Date',
-                                                    color: AppColors.black.withAlpha(
-                                                      (255 * 0.6).toInt(),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    AppTextTheme.textSize12(
+                                                      label: 'Starting Time',
+                                                      color: AppColors.black.withAlpha(
+                                                        (255 * 0.6).toInt(),
+                                                      ),
                                                     ),
-                                                  ),
-                                                  SizedBox(width: Dimens.width8),
-                                                  AppTextTheme.textSize16(
-                                                    label: lecture.lectureDate,
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  AppTextTheme.textSize12(
-                                                    label: 'Starting Time',
-                                                    color: AppColors.black.withAlpha(
-                                                      (255 * 0.6).toInt(),
+                                                    SizedBox(width: Dimens.width8),
+                                                    AppTextTheme.textSize16(
+                                                      label: lecture.startingTime,
                                                     ),
-                                                  ),
-                                                  SizedBox(width: Dimens.width8),
-                                                  AppTextTheme.textSize16(
-                                                    label: lecture.startingTime,
-                                                  ),
-                                                ],
-                                              ),
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.end,
-                                                children: [
-                                                  AppTextTheme.textSize12(
-                                                    label: 'Ending Time',
-                                                    color: AppColors.black.withAlpha(
-                                                      (255 * 0.6).toInt(),
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: Dimens.width8),
-                                                  AppTextTheme.textSize16(
-                                                    label: lecture.endingTime,
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              VerticalTitleValueComponent(
-                                                title: 'No. of Students',
-                                                value: lecture.studentList.length.toString(),
-                                              ),
-                                              if (lecture.tasks != null && lecture.tasks!.isNotEmpty)
-                                                VerticalTitleValueComponent(
-                                                  title: 'No. of Tasks',
-                                                  value: lecture.tasks?.length.toString() ?? '',
-                                                  isAtCenter: true,
+                                                  ],
                                                 ),
-                                              VerticalTitleValueComponent(
-                                                title: 'Duration of Lecture',
-                                                value: DateTimeConversion.convertMinutesToHours(differenceInMinutes),
-                                                isAtEnd: true,
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                                  children: [
+                                                    AppTextTheme.textSize12(
+                                                      label: 'Ending Time',
+                                                      color: AppColors.black.withAlpha(
+                                                        (255 * 0.6).toInt(),
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: Dimens.width8),
+                                                    AppTextTheme.textSize16(
+                                                      label: lecture.endingTime,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                VerticalTitleValueComponent(
+                                                  title: 'No. of Students',
+                                                  value: lecture.studentList.length.toString(),
+                                                ),
+                                                if (lecture.tasks != null && lecture.tasks!.isNotEmpty)
+                                                  VerticalTitleValueComponent(
+                                                    title: 'No. of Tasks',
+                                                    value: lecture.tasks?.length.toString() ?? '',
+                                                    isAtCenter: true,
+                                                  ),
+                                                VerticalTitleValueComponent(
+                                                  title: 'Duration of Lecture',
+                                                  value: DateTimeConversion.convertMinutesToHours(differenceInMinutes),
+                                                  isAtEnd: true,
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   );

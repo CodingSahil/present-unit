@@ -9,7 +9,7 @@ PreferredSizeWidget commonAppBarPreferred({
   bool isBack = true,
   bool isAdd = true,
   void Function()? onTap,
-
+PreferredSizeWidget? bottom,
 }) {
   return AppBar(
     backgroundColor: AppColors.primaryColor,
@@ -45,6 +45,7 @@ PreferredSizeWidget commonAppBarPreferred({
         ),
       SizedBox(width: Dimens.width28),
     ],
+    bottom: bottom,
   );
 }
 

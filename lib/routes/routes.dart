@@ -20,4 +20,5 @@ class Routes {
   static const String assignmentForAttendance = 'AssignmentForAttendance.dart';
   static const String addEditClassesWithAttendanceView = 'AddEditClassesWithAttendanceView.dart';
   static const String taskListView = 'TaskListView.dart';
+  static const String lectureDetailsView = 'LectureDetailsView.dart';
 }

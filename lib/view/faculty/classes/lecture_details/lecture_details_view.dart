@@ -66,6 +66,13 @@ class _LectureDetailsViewState extends State<LectureDetailsView> with SingleTick
   }
 
   @override
+  void dispose() {
+    classesWithAttendanceController.submitLoader.value = false;
+    classesWithAttendanceController.loader.value = true;
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
@@ -77,6 +84,28 @@ class _LectureDetailsViewState extends State<LectureDetailsView> with SingleTick
         backgroundColor: AppColors.scaffoldBgColor,
         appBar: commonAppBarPreferred(
           label: 'Lecture Details',
+          isSave: tabIndex == 0,
+          saveWidget: Obx(
+            () => classesWithAttendanceController.submitLoader.value
+                ? Center(
+                    child: Loader(
+                      color: AppColors.white,
+                    ),
+                  )
+                : Icon(
+                    Icons.check,
+                    color: AppColors.white,
+                    size: Dimens.width44,
+                  ),
+          ),
+          onSave: () async {
+            if (classesForAttendanceModel != null) {
+              classesWithAttendanceController.submitLoader(true);
+              await classesWithAttendanceController.updateLecture(classesForAttendanceModel!);
+              classesWithAttendanceController.submitLoader(false);
+              setState(() {});
+            }
+          },
           bottom: TabBar(
             controller: tabController,
             dividerColor: AppColors.white,
@@ -982,10 +1011,10 @@ class _StudentCardForLectureState extends State<StudentCardForLecture> {
   @override
   void initState() {
     super.initState();
-    if(widget.isPresent) {
+    if (widget.isPresent) {
       studentStatus = StudentStatus.present;
     }
-    if(widget.isAbsent) {
+    if (widget.isAbsent) {
       studentStatus = StudentStatus.absent;
     }
   }

@@ -284,3 +284,127 @@ class _AssignmentDetailsCardState extends State<AssignmentDetailsCard> with Sing
     );
   }
 }
+
+class AssignmentDetailsReadOnlyCard extends StatelessWidget {
+  const AssignmentDetailsReadOnlyCard({
+    super.key,
+    required this.assignmentModel,
+  });
+
+  final AssignmentModel assignmentModel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: Dimens.height12,
+        horizontal: Dimens.width30,
+      ),
+      margin: EdgeInsets.only(
+        bottom: Dimens.height30,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(
+          Dimens.radius15,
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: Dimens.height16,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              VerticalTitleValueComponent(
+                title: 'Subject',
+                value: assignmentModel.subject.name,
+              ),
+              AppTextTheme.textSize15(
+                label: '#${assignmentModel.id}',
+                color: AppColors.black,
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              VerticalTitleValueComponent(
+                title: 'Class',
+                value: assignmentModel.classListModel.name,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  AppTextTheme.textSize12(
+                    label: 'Submission Date',
+                    color: AppColors.black.withAlpha(
+                      (255 * 0.6).toInt(),
+                    ),
+                  ),
+                  SizedBox(width: Dimens.width8),
+                  AppTextTheme.textSize16(
+                    label: assignmentModel.submissionDate,
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              VerticalTitleValueComponent(
+                title: 'No. of Students',
+                value: assignmentModel.studentList.length.toString(),
+              ),
+              VerticalTitleValueComponent(
+                title: 'Assignment Type',
+                value: assignmentModel.assignmentType[0].toUpperCase() + assignmentModel.assignmentType.substring(1).toLowerCase(),
+                isAtEnd: true,
+              ),
+            ],
+          ),
+          SizedBox(height: Dimens.height6),
+          Divider(
+            height: 1,
+            thickness: 0.5,
+            color: AppColors.black.withAlpha((255 * 0.5).toInt()),
+          ),
+          SizedBox(height: Dimens.height6),
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              Get.toNamed(
+                Routes.pdfView,
+                arguments: assignmentModel.assignmentURL,
+              );
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                AppTextTheme.textSize14(
+                  label: 'View Assignment',
+                  color: AppColors.black,
+                ),
+                SizedBox(width: Dimens.width12),
+                SvgPicture.asset(
+                  AssetsPaths.swipeRightSVG,
+                  height: Dimens.height32,
+                  width: Dimens.width40,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.black,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: Dimens.height6),
+        ],
+      ),
+    );
+  }
+}

@@ -87,8 +87,8 @@ class _ClassListForAttendanceViewState extends State<ClassListForAttendanceView>
                               return ClassesWithAttendanceView(
                                 lecture: lecture,
                                 classesWithAttendanceController: classesWithAttendanceController,
-                                onRefresh: () async {
-                                  await classesWithAttendanceController.getClassesList();
+                                onRefresh: (isLoaderRequire) async {
+                                  await classesWithAttendanceController.getClassesList(isLoaderRequire: isLoaderRequire);
                                   await Future.delayed(const Duration(milliseconds: 500));
                                   classesWithAttendanceController.update([UpdateKeys.updateLectureList]);
                                 },
@@ -123,7 +123,7 @@ class ClassesWithAttendanceView extends StatefulWidget {
 
   final ClassesForAttendanceModel lecture;
   final ClassesWithAttendanceController classesWithAttendanceController;
-  final void Function() onRefresh;
+  final void Function(bool isLoaderRequire) onRefresh;
   final void Function(ClassesForAttendanceModel lecture) onDelete;
 
   @override
@@ -160,7 +160,7 @@ class _ClassesWithAttendanceViewState extends State<ClassesWithAttendanceView> w
             onPressed: (context) async {
               widget.onDelete(widget.lecture);
               await Future.delayed(const Duration(milliseconds: 600));
-              widget.onRefresh();
+              widget.onRefresh(true);
               slideController.close();
             },
             icon: Icons.delete,
@@ -174,11 +174,12 @@ class _ClassesWithAttendanceViewState extends State<ClassesWithAttendanceView> w
       ),
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: () {
-          Get.toNamed(
+        onTap: () async {
+          await Get.toNamed(
             Routes.lectureDetailsView,
             arguments: widget.lecture,
           );
+          widget.onRefresh(false);
         },
         child: Container(
           padding: EdgeInsets.symmetric(
@@ -214,7 +215,7 @@ class _ClassesWithAttendanceViewState extends State<ClassesWithAttendanceView> w
                         arguments: widget.lecture,
                       );
                       if (result is bool && result == true) {
-                        widget.onRefresh();
+                        widget.onRefresh(true);
                       }
                     },
                     child: Row(
@@ -320,6 +321,136 @@ class _ClassesWithAttendanceViewState extends State<ClassesWithAttendanceView> w
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class ClassesWithAttendanceReadView extends StatelessWidget {
+  const ClassesWithAttendanceReadView({
+    super.key,
+    required this.classesForAttendanceModel,
+    required this.differenceInMinutes,
+  });
+
+  final ClassesForAttendanceModel classesForAttendanceModel;
+  final String differenceInMinutes;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: Dimens.height12,
+        horizontal: Dimens.width30,
+      ),
+      margin: EdgeInsets.only(
+        bottom: Dimens.height30,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(
+          Dimens.radius15,
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: Dimens.height16,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              VerticalTitleValueComponent(
+                title: 'Subject',
+                value: classesForAttendanceModel.subject.name,
+              ),
+              AppTextTheme.textSize15(
+                label: '#${classesForAttendanceModel.id}',
+                color: AppColors.black,
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              VerticalTitleValueComponent(
+                title: 'Class',
+                value: classesForAttendanceModel.classDetails.name,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  AppTextTheme.textSize12(
+                    label: 'Lecture Date',
+                    color: AppColors.black.withAlpha(
+                      (255 * 0.6).toInt(),
+                    ),
+                  ),
+                  SizedBox(width: Dimens.width8),
+                  AppTextTheme.textSize16(
+                    label: classesForAttendanceModel.lectureDate,
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppTextTheme.textSize12(
+                    label: 'Starting Time',
+                    color: AppColors.black.withAlpha(
+                      (255 * 0.6).toInt(),
+                    ),
+                  ),
+                  SizedBox(width: Dimens.width8),
+                  AppTextTheme.textSize16(
+                    label: classesForAttendanceModel.startingTime,
+                  ),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  AppTextTheme.textSize12(
+                    label: 'Ending Time',
+                    color: AppColors.black.withAlpha(
+                      (255 * 0.6).toInt(),
+                    ),
+                  ),
+                  SizedBox(width: Dimens.width8),
+                  AppTextTheme.textSize16(
+                    label: classesForAttendanceModel.endingTime,
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              VerticalTitleValueComponent(
+                title: 'No. of Students',
+                value: classesForAttendanceModel.studentList.length.toString(),
+              ),
+              if (classesForAttendanceModel.tasks != null && classesForAttendanceModel.tasks!.isNotEmpty)
+                VerticalTitleValueComponent(
+                  title: 'No. of Tasks',
+                  value: classesForAttendanceModel.tasks?.length.toString() ?? '',
+                  isAtCenter: true,
+                ),
+              VerticalTitleValueComponent(
+                title: 'Duration of Lecture',
+                value: differenceInMinutes,
+                isAtEnd: true,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

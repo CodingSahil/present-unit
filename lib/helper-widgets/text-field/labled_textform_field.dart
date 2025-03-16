@@ -155,34 +155,23 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
                     ),
                   )
                 : widget.isPasswordField
-                    ? Container(
-                        height: Dimens.height40,
-                        width: Dimens.width40,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: Dimens.width20,
-                          vertical: Dimens.height20,
-                        ),
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () {
-                            setState(() => isEyeOpen = !isEyeOpen);
-                          },
-                          child: isEyeOpen
-                              ? SvgPicture.asset(
+                    ? GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () {
+                          setState(() => isEyeOpen = !isEyeOpen);
+                        },
+                        child: isEyeOpen
+                            ? Container(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: Dimens.height24,
+                                  horizontal: Dimens.width8,
+                                ),
+                                height: Dimens.height30,
+                                width: Dimens.width30,
+                                child: SvgPicture.asset(
                                   AssetsPaths.eyeOpenSVG,
-                                  height: Dimens.height30,
-                                  width: Dimens.width30,
-                                  colorFilter: ColorFilter.mode(
-                                    AppColors.black.withAlpha(
-                                      (255 * 0.75).toInt(),
-                                    ),
-                                    BlendMode.srcIn,
-                                  ),
-                                )
-                              : SvgPicture.asset(
-                                  AssetsPaths.eyeCloseSVG,
-                                  height: Dimens.height30,
-                                  width: Dimens.width30,
+                                  // height: Dimens.height24,
+                                  // width: Dimens.width24,
                                   colorFilter: ColorFilter.mode(
                                     AppColors.black.withAlpha(
                                       (255 * 0.75).toInt(),
@@ -190,7 +179,26 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
                                     BlendMode.srcIn,
                                   ),
                                 ),
-                        ),
+                              )
+                            : Container(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: Dimens.height24,
+                                  horizontal: Dimens.width8,
+                                ),
+                                height: Dimens.height30,
+                                width: Dimens.width30,
+                                child: SvgPicture.asset(
+                                  AssetsPaths.eyeCloseSVG,
+                                  // height: Dimens.height24,
+                                  // width: Dimens.width24,
+                                  colorFilter: ColorFilter.mode(
+                                    AppColors.black.withAlpha(
+                                      (255 * 0.75).toInt(),
+                                    ),
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                              ),
                       )
                     : null,
         floatingLabelBehavior: FloatingLabelBehavior.auto,

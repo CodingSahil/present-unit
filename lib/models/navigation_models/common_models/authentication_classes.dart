@@ -9,6 +9,18 @@ class UserDetails {
     required this.userType,
   });
 
+  UserDetails copyWith({
+    Admin? admin,
+    Faculty? faculty,
+    UserType? userType,
+  }) {
+    return UserDetails(
+      admin: admin ?? this.admin,
+      faculty: faculty ?? this.faculty,
+      userType: userType ?? this.userType,
+    );
+  }
+
   factory UserDetails.clean() => UserDetails(
         admin: null,
         faculty: null,

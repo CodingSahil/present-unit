@@ -8,6 +8,7 @@ import 'package:present_unit/controller/admin/class_list_controller.dart';
 import 'package:present_unit/controller/admin/course_controller.dart';
 import 'package:present_unit/controller/admin/faculty_controller.dart';
 import 'package:present_unit/controller/admin/subject_controller.dart';
+import 'package:present_unit/controller/change_password_controller.dart';
 import 'package:present_unit/controller/college_registration_controller.dart';
 import 'package:present_unit/controller/faculty/assignment_controller.dart';
 import 'package:present_unit/controller/faculty/classes_with_attendance_controller.dart';
@@ -29,5 +30,6 @@ class StoreBinding extends Bindings {
     Get.lazyPut(() => AddEditClassListController());
     Get.lazyPut(() => ClassesWithAttendanceController());
     Get.lazyPut(() => AssignmentController());
+    Get.lazyPut(() => ChangePasswordController());
   }
 }

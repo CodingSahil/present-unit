@@ -46,6 +46,7 @@ class ClassListModel extends Equatable {
       admin: json['admin'] != null
           ? Admin.fromJson(
               json['admin'] as Map<String, dynamic>,
+              '',
             )
           : null,
       studentList: (json['studentList'] as List<dynamic>?)
@@ -210,6 +211,7 @@ class Student extends Equatable {
       admin: json['admin'] != null
           ? Admin.fromJson(
               json['admin'] as Map<String, dynamic>,
+              '',
             )
           : null,
       college: json['college'] != null
@@ -241,6 +243,7 @@ class Student extends Equatable {
       admin: json['admin'] != null
           ? Admin.fromJson(
               json['admin'] as Map<String, dynamic>,
+              '',
             )
           : null,
       college: json['college'] != null

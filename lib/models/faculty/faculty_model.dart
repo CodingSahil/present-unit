@@ -39,7 +39,7 @@ class Faculty extends Equatable {
         fcmToken: json['fcmToken'] as String?,
         admin: json['admin'] != null
             ? Admin.fromJson(
-                json['admin'] as Map<String, dynamic>,
+                json['admin'] as Map<String, dynamic>,'',
               )
             : null,
         courseList: json['courseList'] != null

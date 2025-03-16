@@ -151,7 +151,7 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
                 } else {
                   Admin admin = storedData != null && storedData.toString().isNotEmpty
                       ? Admin.fromJson(
-                          jsonDecode(storedData.toString()),
+                          jsonDecode(storedData.toString()),'',
                         )
                       : Admin.empty();
                   Course course = Course(

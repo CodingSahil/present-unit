@@ -12,9 +12,13 @@ class Loader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CircularProgressIndicator(
-      color: color ?? AppColors.primaryColor,
-      strokeWidth: 1,
+    return SizedBox(
+      height: Dimens.height28,
+      width: Dimens.width28,
+      child: CircularProgressIndicator(
+        color: color ?? AppColors.primaryColor,
+        strokeWidth: 1.5,
+      ),
     );
   }
 }

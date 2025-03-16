@@ -28,7 +28,7 @@ class LoginController extends GetxController {
     adminList = collectedObject.docs
         .map(
           (e) => Admin.fromJson(
-            e.data() as Map<String, dynamic>,
+            e.data() as Map<String, dynamic>,'',
           ),
         )
         .toList();

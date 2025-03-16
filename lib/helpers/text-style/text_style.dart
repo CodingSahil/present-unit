@@ -633,4 +633,46 @@ class AppTextTheme {
     );
   }
 
+  static Widget textSize32({
+    required String label,
+    TextAlign textAlign = TextAlign.start,
+    int maxLines = 1,
+    TextOverflow overflow = TextOverflow.visible,
+    Color? color,
+    FontWeight fontWeight = FontWeight.w500,
+  }) {
+    return Text(
+      label,
+      textAlign: textAlign,
+      maxLines: maxLines,
+      overflow: overflow,
+      style: GoogleFonts.firaSans(
+        color: color ?? AppColors.black,
+        fontWeight: fontWeight,
+        fontSize: 32,
+      ),
+    );
+  }
+
+  static Widget textSize35({
+    required String label,
+    TextAlign textAlign = TextAlign.start,
+    int maxLines = 1,
+    TextOverflow overflow = TextOverflow.visible,
+    Color? color,
+    FontWeight fontWeight = FontWeight.w500,
+  }) {
+    return Text(
+      label,
+      textAlign: textAlign,
+      maxLines: maxLines,
+      overflow: overflow,
+      style: GoogleFonts.firaSans(
+        color: color ?? AppColors.black,
+        fontWeight: fontWeight,
+        fontSize: 35,
+      ),
+    );
+  }
+
 }

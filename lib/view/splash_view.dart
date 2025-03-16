@@ -57,7 +57,7 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
             admin: Admin.fromJson(
               jsonDecode(
                 adminDetails,
-              ),
+              ),'',
             ),
             faculty: null,
             userType: fetchUserType(

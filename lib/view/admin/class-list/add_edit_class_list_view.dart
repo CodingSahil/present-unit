@@ -65,7 +65,7 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
     var adminDetails = getStorage.read(StorageKeys.adminDetails);
     admin = adminDetails != null
         ? Admin.fromJson(
-            jsonDecode(adminDetails),
+            jsonDecode(adminDetails),'',
           )
         : null;
 

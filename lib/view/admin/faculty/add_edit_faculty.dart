@@ -76,7 +76,7 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
         await subjectController.getListOfSubject();
         await addEditFacultyController.getListOfFaculty();
         var adminDetails = getStorage.read(StorageKeys.adminDetails);
-        admin = Admin.fromJson(jsonDecode(adminDetails));
+        admin = Admin.fromJson(jsonDecode(adminDetails),'');
       },
     );
 

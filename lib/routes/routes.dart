@@ -24,4 +24,6 @@ class Routes {
   static const String lectureDetailsView = 'LectureDetailsView.dart';
   static const String addEditAssignmentView = 'AddEditAssignmentView.dart';
   static const String pdfView = 'PdfView.dart';
+  static const String lectureCommonListView = 'LectureCommonListView.dart';
+  static const String assignmentCommonListView = 'AssignmentCommonListView.dart';
 }

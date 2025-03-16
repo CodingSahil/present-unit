@@ -8,8 +8,11 @@ PreferredSizeWidget commonAppBarPreferred({
   required String label,
   bool isBack = true,
   bool isAdd = true,
+  bool isSave = false,
+  Widget? saveWidget,
   void Function()? onTap,
-PreferredSizeWidget? bottom,
+  void Function()? onSave,
+  PreferredSizeWidget? bottom,
 }) {
   return AppBar(
     backgroundColor: AppColors.primaryColor,
@@ -17,16 +20,16 @@ PreferredSizeWidget? bottom,
     automaticallyImplyLeading: false,
     leading: isBack
         ? GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () {
-        Get.back();
-      },
-      child: Icon(
-        Icons.arrow_back_ios_new_rounded,
-        color: AppColors.white,
-        size: Dimens.width36,
-      ),
-    )
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              Get.back();
+            },
+            child: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: AppColors.white,
+              size: Dimens.width36,
+            ),
+          )
         : null,
     title: AppTextTheme.textSize16(
       label: label,
@@ -42,7 +45,15 @@ PreferredSizeWidget? bottom,
             color: AppColors.white,
             size: Dimens.width44,
           ),
-        ),
+        )
+      else if (isSave && saveWidget != null)
+        GestureDetector(
+          onTap: onSave,
+          behavior: HitTestBehavior.translucent,
+          child: saveWidget,
+        )
+      else
+        const SizedBox.shrink(),
       SizedBox(width: Dimens.width28),
     ],
     bottom: bottom,

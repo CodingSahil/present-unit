@@ -18,6 +18,7 @@ import 'package:present_unit/view/faculty/classes/add_edit_classes/task_list_vie
 import 'package:present_unit/view/faculty/classes/lecture_list_view.dart';
 import 'package:present_unit/view/faculty/classes/lecture_details/lecture_details_view.dart';
 import 'package:present_unit/view/faculty/dashboard/faculty_dashboard_view.dart';
+import 'package:present_unit/view/faculty/dashboard/lecture_common_list_view.dart';
 import 'package:present_unit/view/login_view.dart';
 import 'package:present_unit/view/pdf_view.dart';
 import 'package:present_unit/view/splash_view.dart';
@@ -41,8 +42,11 @@ class RouteGenerator {
         );
 
       case Routes.changePasswordView:
+        var arguments = settings.arguments;
         return MaterialPageRoute(
-          builder: (context) => const ChangePasswordView(),
+          builder: (context) => ChangePasswordView(
+            arguments: arguments,
+          ),
         );
 
       /// Admin
@@ -161,6 +165,22 @@ class RouteGenerator {
         dynamic arguments = settings.arguments;
         return MaterialPageRoute(
           builder: (context) => PdfView(
+            arguments: arguments,
+          ),
+        );
+
+      case Routes.lectureCommonListView:
+        dynamic arguments = settings.arguments;
+        return MaterialPageRoute(
+          builder: (context) => LectureCommonListView(
+            arguments: arguments,
+          ),
+        );
+
+      case Routes.assignmentCommonListView:
+        dynamic arguments = settings.arguments;
+        return MaterialPageRoute(
+          builder: (context) => AssignmentCommonListView(
             arguments: arguments,
           ),
         );

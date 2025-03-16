@@ -8,6 +8,7 @@ import 'package:present_unit/helper-widgets/loader/loader.dart';
 import 'package:present_unit/helpers/assets_path/assets_path.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
+import 'package:present_unit/helpers/enum/common_enums.dart';
 import 'package:present_unit/helpers/enum/faculty_enum.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
 import 'package:present_unit/main.dart';
@@ -62,6 +63,12 @@ class _FacultyDashboardViewState extends State<FacultyDashboardView> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  AppTextTheme.textSize32(
+                    label: 'PresentUnit',
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  SizedBox(height: Dimens.height18),
                   if (isFacultyDetailsFilled)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,39 +181,43 @@ class _FacultyDashboardViewState extends State<FacultyDashboardView> {
                             ],
                           ),
                         ),
-                        // SizedBox(height: Dimens.height28),
-                        // Divider(
-                        //   color: AppColors.black.withAlpha(
-                        //     (255 * 0.4).toInt(),
-                        //   ),
-                        //   height: 1,
-                        //   thickness: 0.5,
-                        // ),
-                        // SizedBox(height: Dimens.height28),
-                        // GestureDetector(
-                        //   behavior: HitTestBehavior.translucent,
-                        //   onTap: () async {},
-                        //   child: Row(
-                        //     children: [
-                        //       SvgPicture.asset(
-                        //         AssetsPaths.settingSVG,
-                        //         height: Dimens.height34,
-                        //         width: Dimens.width34,
-                        //         colorFilter: ColorFilter.mode(
-                        //           AppColors.black
-                        //               .withAlpha((255 * 0.4).toInt()),
-                        //           BlendMode.srcIn,
-                        //         ),
-                        //       ),
-                        //       SizedBox(width: Dimens.width24),
-                        //       AppTextTheme.textSize16(
-                        //         label: 'Settings',
-                        //         color: AppColors.black
-                        //             .withAlpha((255 * 0.4).toInt()),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
+                        SizedBox(height: Dimens.height28),
+                        Divider(
+                          color: AppColors.black.withAlpha(
+                            (255 * 0.4).toInt(),
+                          ),
+                          height: 1,
+                          thickness: 0.5,
+                        ),
+                        SizedBox(height: Dimens.height28),
+                        GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () async {
+                            Navigator.pop(context);
+                            Get.toNamed(
+                              Routes.changePasswordView,
+                              arguments: UserType.faculty,
+                            );
+                          },
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(
+                                AssetsPaths.changePasswordSVG,
+                                height: Dimens.height34,
+                                width: Dimens.width34,
+                                colorFilter: ColorFilter.mode(
+                                  AppColors.black.withAlpha((255 * 0.4).toInt()),
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                              SizedBox(width: Dimens.width24),
+                              AppTextTheme.textSize16(
+                                label: 'Change Password',
+                                color: AppColors.black.withAlpha((255 * 0.4).toInt()),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),

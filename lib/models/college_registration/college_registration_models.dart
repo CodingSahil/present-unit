@@ -82,15 +82,17 @@ class College extends Equatable {
 
 class Admin extends Equatable {
   const Admin({
+    this.documentID,
     required this.id,
     required this.email,
     required this.name,
     required this.password,
     required this.mobileNumber,
-   required  this.college,
+    required this.college,
     this.fcmToken,
   });
 
+  final String? documentID;
   final num id;
   final String name;
   final String email;
@@ -99,7 +101,8 @@ class Admin extends Equatable {
   final String? fcmToken;
   final College college;
 
-  factory Admin.fromJson(Map<String, dynamic> json) => Admin(
+  factory Admin.fromJson(Map<String, dynamic> json, String documentID) => Admin(
+        documentID: documentID,
         id: json['id'] as num,
         email: json['email'] as String,
         name: json['name'] as String,
@@ -110,14 +113,14 @@ class Admin extends Equatable {
       );
 
   factory Admin.empty() => Admin(
-    id: -1000,
-    email: '',
-    name: '',
-    password: '',
-    mobileNumber: '',
-    fcmToken: null,
-    college: College.empty(),
-  );
+        id: -1000,
+        email: '',
+        name: '',
+        password: '',
+        mobileNumber: '',
+        fcmToken: null,
+        college: College.empty(),
+      );
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -126,8 +129,7 @@ class Admin extends Equatable {
         'password': password,
         'mobileNumber': mobileNumber,
         if (fcmToken != null && fcmToken!.isNotEmpty) 'fcmToken': fcmToken,
-        if (college.id != -1000)
-          'college': college.toJson(),
+        if (college.id != -1000) 'college': college.toJson(),
       };
 
   Admin copyWith({
@@ -153,7 +155,7 @@ class Admin extends Equatable {
   List<Object?> get props => [
         id,
         email,
-    name,
+        name,
         password,
         mobileNumber,
         fcmToken,

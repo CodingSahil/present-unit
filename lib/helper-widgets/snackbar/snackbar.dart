@@ -35,10 +35,11 @@ void showErrorSnackBar({
         milliseconds: durationInMilliseconds ?? 2000,
       ),
       backgroundColor: AppColors.red,
-      content: AppTextTheme.textSize16(
+      content: AppTextTheme.textSize14(
         label: title,
         color: AppColors.white,
         fontWeight: FontWeight.w500,
+        maxLines: 2,
       ),
     ),
   );

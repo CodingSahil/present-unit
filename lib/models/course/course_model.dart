@@ -21,7 +21,7 @@ class Course extends Equatable {
       duration: json['duration'] as num,
       admin: json['admin'] != null
           ? Admin.fromJson(
-              json['admin'] as Map<String, dynamic>,
+              json['admin'] as Map<String, dynamic>,'',
             )
           : null,
     );

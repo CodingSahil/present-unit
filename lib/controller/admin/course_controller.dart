@@ -24,11 +24,12 @@ class CourseController extends GetxController {
     );
     courseList = globalCourseList
         .where(
-          (element) => element.admin?.id == admin?.id,
+          (element) => element.admin?.id == admin?.id && element.admin?.name.toLowerCase() == admin?.name.toLowerCase(),
         )
         .toList();
-
+    courseList.sort((a, b) => a.id.compareTo(b.id));
     loader(false);
+    update([UpdateKeys.updateCourses]);
   }
 
   Future<void> deleteData({
@@ -39,8 +40,7 @@ class CourseController extends GetxController {
       collection: CollectionStrings.course,
       documentName: course.documentID,
     );
-    getListOfCourse(
-    );
+    getListOfCourse();
     deleteLoader(false);
     update([UpdateKeys.updateCourses]);
   }

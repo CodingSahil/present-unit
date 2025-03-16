@@ -21,6 +21,7 @@ class ClassesForAttendanceModel extends Equatable {
     this.notes,
     this.tasks,
     this.description,
+    this.mentionInNotesList = const [],
   });
 
   final String documentID;
@@ -38,6 +39,7 @@ class ClassesForAttendanceModel extends Equatable {
   final String lectureDate;
   final String startingTime;
   final String endingTime;
+  final List<MentionInNotes> mentionInNotesList;
 
   @override
   List<Object?> get props => [
@@ -56,6 +58,7 @@ class ClassesForAttendanceModel extends Equatable {
         lectureDate,
         startingTime,
         endingTime,
+        mentionInNotesList,
       ];
 
   factory ClassesForAttendanceModel.fromJson(
@@ -63,22 +66,22 @@ class ClassesForAttendanceModel extends Equatable {
     String documentID,
   ) {
     return ClassesForAttendanceModel(
-      documentID: json['documentID'] as String? ?? '',
+      documentID: documentID,
       id: json['id'] as int? ?? 0,
       classDetails: json['classDetails'] != null ? ClassListModel.fromJson(json['classDetails'] as Map<String, dynamic>, '') : ClassListModel.empty(),
       faculty: Faculty.fromJson(json['faculty'] as Map<String, dynamic>, ''),
       subject: Subject.fromJson(json['subject'] as Map<String, dynamic>, ''),
       college: College.fromJson(json['college'] as Map<String, dynamic>),
-      studentList: (json['studentList'] as List).map((e) => Student.fromJson(e as Map<String, dynamic>)).toList(),
+      studentList: (json['studentList'] as List).map((e) => Student.fromJson(e as Map<String, dynamic>,'')).toList(),
       presentStudentList: (json['presentStudentList'] as List<dynamic>?)
               ?.map(
-                (e) => Student.fromJson(e as Map<String, dynamic>),
+                (e) => Student.fromJson(e as Map<String, dynamic>,''),
               )
               .toList() ??
           [],
       absentStudentList: (json['absentStudentList'] as List<dynamic>?)
               ?.map(
-                (e) => Student.fromJson(e as Map<String, dynamic>),
+                (e) => Student.fromJson(e as Map<String, dynamic>,''),
               )
               .toList() ??
           [],
@@ -93,6 +96,14 @@ class ClassesForAttendanceModel extends Equatable {
       lectureDate: json['lectureDate'] as String? ?? '',
       startingTime: json['startingTime'] as String? ?? '',
       endingTime: json['endingTime'] as String? ?? '',
+      mentionInNotesList: (json['mentionInNotesList'] as List<dynamic>?)
+              ?.map(
+                (e) => MentionInNotes.fromJson(
+                  e as Map<String, dynamic>,
+                ),
+              )
+              .toList() ??
+          [],
     );
   }
 
@@ -103,7 +114,7 @@ class ClassesForAttendanceModel extends Equatable {
         faculty: Faculty.empty(),
         subject: Subject.empty(),
         college: College.empty(),
-        studentList: [],
+        studentList: const [],
         lectureDate: '',
         startingTime: '',
         endingTime: '',
@@ -124,6 +135,12 @@ class ClassesForAttendanceModel extends Equatable {
         if (lectureDate.isNotEmpty) 'lectureDate': lectureDate,
         if (startingTime.isNotEmpty) 'startingTime': startingTime,
         if (endingTime.isNotEmpty) 'endingTime': endingTime,
+        if (mentionInNotesList.isNotEmpty)
+          'mentionInNotesList': mentionInNotesList
+              .map(
+                (e) => e.toJson(),
+              )
+              .toList(),
       };
 
   ClassesForAttendanceModel copyWith({
@@ -141,6 +158,7 @@ class ClassesForAttendanceModel extends Equatable {
     String? lectureDate,
     String? startingTime,
     String? endingTime,
+    List<MentionInNotes>? mentionInNotesList,
   }) {
     return ClassesForAttendanceModel(
       documentID: documentID,
@@ -158,6 +176,7 @@ class ClassesForAttendanceModel extends Equatable {
       lectureDate: lectureDate ?? this.lectureDate,
       startingTime: startingTime ?? this.startingTime,
       endingTime: endingTime ?? this.endingTime,
+      mentionInNotesList: mentionInNotesList ?? this.mentionInNotesList,
     );
   }
 }
@@ -206,6 +225,43 @@ class Tasks extends Equatable {
       task: task ?? this.task,
       index: index ?? this.index,
       completed: completed ?? this.completed,
+    );
+  }
+}
+
+class MentionInNotes extends Equatable {
+  const MentionInNotes({
+    required this.studentDetails,
+    required this.mentionedAs,
+  });
+
+  final Student studentDetails;
+  final String mentionedAs;
+
+  @override
+  List<Object?> get props => [studentDetails, mentionedAs];
+
+  factory MentionInNotes.fromJson(Map<String, dynamic> json) {
+    return MentionInNotes(
+      studentDetails: Student.fromJson(json['studentDetails'] as Map<String, dynamic>,''),
+      mentionedAs: json['mentionedAs'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'studentDetails': studentDetails.toJson(),
+      'mentionedAs': mentionedAs,
+    };
+  }
+
+  MentionInNotes copyWith({
+    Student? studentDetails,
+    String? mentionedAs,
+  }) {
+    return MentionInNotes(
+      studentDetails: studentDetails ?? this.studentDetails,
+      mentionedAs: mentionedAs ?? this.mentionedAs,
     );
   }
 }

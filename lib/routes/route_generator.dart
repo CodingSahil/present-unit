@@ -9,14 +9,17 @@ import 'package:present_unit/view/admin/faculty/add_edit_faculty.dart';
 import 'package:present_unit/view/admin/faculty/faculty_view.dart';
 import 'package:present_unit/view/admin/subject/add_edit_subject.dart';
 import 'package:present_unit/view/admin/subject/subject_view.dart';
+import 'package:present_unit/view/auth/change_password_view.dart';
 import 'package:present_unit/view/college_registration.dart';
+import 'package:present_unit/view/faculty/assignment/add_edit_assignment/add_edit_assignment_view.dart';
 import 'package:present_unit/view/faculty/assignment/assignment_list_view.dart';
 import 'package:present_unit/view/faculty/classes/add_edit_classes/add_edit_classes_with_attendance_view.dart';
 import 'package:present_unit/view/faculty/classes/add_edit_classes/task_list_view.dart';
-import 'package:present_unit/view/faculty/classes/class_list_view.dart';
+import 'package:present_unit/view/faculty/classes/lecture_list_view.dart';
 import 'package:present_unit/view/faculty/classes/lecture_details/lecture_details_view.dart';
 import 'package:present_unit/view/faculty/dashboard/faculty_dashboard_view.dart';
 import 'package:present_unit/view/login_view.dart';
+import 'package:present_unit/view/pdf_view.dart';
 import 'package:present_unit/view/splash_view.dart';
 
 class RouteGenerator {
@@ -35,6 +38,11 @@ class RouteGenerator {
       case Routes.registration:
         return MaterialPageRoute(
           builder: (context) => const CollegeRegistrationView(),
+        );
+
+      case Routes.changePasswordView:
+        return MaterialPageRoute(
+          builder: (context) => const ChangePasswordView(),
         );
 
       /// Admin
@@ -102,13 +110,19 @@ class RouteGenerator {
         );
 
       case Routes.classesForAttendance:
+        dynamic arguments = settings.arguments;
         return MaterialPageRoute(
-          builder: (context) => const ClassListForAttendanceView(),
+          builder: (context) => ClassListForAttendanceView(
+            arguments: arguments,
+          ),
         );
 
       case Routes.assignmentForAttendance:
+        dynamic arguments = settings.arguments;
         return MaterialPageRoute(
-          builder: (context) => const AssignmentListView(),
+          builder: (context) => AssignmentListView(
+            arguments: arguments,
+          ),
         );
 
       case Routes.addEditClassesWithAttendanceView:
@@ -131,6 +145,22 @@ class RouteGenerator {
         dynamic arguments = settings.arguments;
         return MaterialPageRoute(
           builder: (context) => LectureDetailsView(
+            arguments: arguments,
+          ),
+        );
+
+      case Routes.addEditAssignmentView:
+        dynamic arguments = settings.arguments;
+        return MaterialPageRoute(
+          builder: (context) => AddEditAssignmentView(
+            arguments: arguments,
+          ),
+        );
+
+      case Routes.pdfView:
+        dynamic arguments = settings.arguments;
+        return MaterialPageRoute(
+          builder: (context) => PdfView(
             arguments: arguments,
           ),
         );

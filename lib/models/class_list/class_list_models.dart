@@ -11,7 +11,6 @@ class ClassListModel extends Equatable {
     required this.course,
     required this.courseBatchYear,
     required this.admin,
-    required this.college,
     required this.studentList,
   });
 
@@ -22,7 +21,6 @@ class ClassListModel extends Equatable {
   final Course? course;
   final CourseBatchYear? courseBatchYear;
   final Admin? admin;
-  final College? college;
   final List<Student>? studentList;
 
   factory ClassListModel.fromJson(
@@ -50,16 +48,9 @@ class ClassListModel extends Equatable {
               json['admin'] as Map<String, dynamic>,
             )
           : null,
-      college: json['college'] != null
-          ? College.fromJson(
-              json['college'] as Map<String, dynamic>,
-            )
-          : null,
       studentList: (json['studentList'] as List<dynamic>?)
               ?.map(
-                (e) => Student.fromJson(
-                  e as Map<String, dynamic>,
-                ),
+                (e) => Student.fromJson(e as Map<String, dynamic>, ''),
               )
               .toList() ??
           [],
@@ -74,7 +65,6 @@ class ClassListModel extends Equatable {
         course: Course.empty(),
         courseBatchYear: CourseBatchYear.empty(),
         admin: Admin.empty(),
-        college: College.empty(),
         studentList: const [],
       );
 
@@ -83,13 +73,8 @@ class ClassListModel extends Equatable {
         'name': name,
         'division': division,
         if (course != null && course!.id != -1000) 'course': course!.toJson(),
-        if (courseBatchYear != null &&
-            courseBatchYear!.admissionYear != -1000 &&
-            courseBatchYear!.passingYear != -1000)
-          'courseBatchYear': courseBatchYear!.toJson(),
+        if (courseBatchYear != null && courseBatchYear!.admissionYear != -1000 && courseBatchYear!.passingYear != -1000) 'courseBatchYear': courseBatchYear!.toJson(),
         if (admin != null && admin!.id != -1000) 'admin': admin!.toJson(),
-        if (college != null && college!.id != -1000)
-          'college': college!.toJson(),
         if (studentList != null && studentList!.isNotEmpty)
           'studentList': studentList!
               .map(
@@ -116,7 +101,6 @@ class ClassListModel extends Equatable {
       course: course ?? this.course,
       courseBatchYear: courseBatchYear ?? this.courseBatchYear,
       admin: admin ?? this.admin,
-      college: college ?? this.college,
       studentList: studentList ?? this.studentList,
     );
   }
@@ -130,7 +114,6 @@ class ClassListModel extends Equatable {
         course,
         courseBatchYear,
         admin,
-        college,
         studentList,
       ];
 }
@@ -187,9 +170,11 @@ class CourseBatchYear extends Equatable {
 class Student extends Equatable {
   const Student({
     required this.id,
+    required this.rollNumber,
     required this.name,
     required this.mobileNumber,
     required this.email,
+    required this.gender,
     required this.password,
     required this.course,
     required this.admin,
@@ -197,21 +182,25 @@ class Student extends Equatable {
   });
 
   final num id;
+  final String rollNumber;
   final String name;
   final String mobileNumber;
   final String email;
+  final String gender;
   final String? password;
   final Course? course;
   final Admin? admin;
   final College? college;
 
-  factory Student.fromJson(Map<String, dynamic> json) {
+  factory Student.fromJson(Map<String, dynamic> json, String documentID) {
     return Student(
-      id: json['id'] as num,
-      name: json['name'] as String,
-      mobileNumber: json['mobileNumber'] as String,
-      email: json['email'] as String,
-      password: json['password'] as String?,
+      id: json['id'] as num? ?? 0,
+      rollNumber: json['rollNumber'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      mobileNumber: json['mobileNumber'] as String? ?? '',
+      email: json['email'] as String? ?? '',
+      gender: json['gender'] as String? ?? '',
+      password: json['password'] as String? ?? '',
       course: json['course'] != null
           ? Course.fromJson(
               json['course'] as Map<String, dynamic>,
@@ -237,9 +226,11 @@ class Student extends Equatable {
   ) {
     return Student(
       id: json['id'] as num,
+      rollNumber: json['rollNumber'] as String,
       name: json['name'] as String,
       mobileNumber: json['mobileNumber'] as String,
       email: json['email'] as String,
+      gender: json['gender'] as String? ?? '',
       password: json['password'] as String?,
       course: json['course'] != null
           ? Course.fromJson(
@@ -262,9 +253,11 @@ class Student extends Equatable {
 
   factory Student.empty() => Student(
         id: -1000,
+        rollNumber: '',
         name: '',
         mobileNumber: '',
         email: '',
+        gender: '',
         password: '',
         course: Course.empty(),
         admin: Admin.empty(),
@@ -273,14 +266,15 @@ class Student extends Equatable {
 
   Map<String, dynamic> toJson() => {
         'id': id,
+        'rollNumber': rollNumber,
         'name': name,
         'mobileNumber': mobileNumber,
         'email': email,
+        if (gender.isNotEmpty) 'gender': gender,
         if (password != null && password!.isNotEmpty) 'password': password,
         if (course != null && course!.id != -1000) 'course': course!.toJson(),
         if (admin != null && admin!.id != -1000) 'admin': admin!.toJson(),
-        if (college != null && college!.id != -1000)
-          'college': college!.toJson(),
+        if (college != null && college!.id != -1000) 'college': college!.toJson(),
       };
 
   static Map<String, dynamic> toJsonWithList(List<Student> listOfStudent) => {
@@ -293,16 +287,19 @@ class Student extends Equatable {
 
   Student copyWith({
     num? id,
+    String? rollNumber,
     String? name,
     String? mobileNumber,
     String? email,
     String? password,
+    String? gender,
     Course? course,
     Admin? admin,
     College? college,
   }) {
     return Student(
       id: id ?? this.id,
+      rollNumber: rollNumber ?? this.rollNumber,
       name: name ?? this.name,
       mobileNumber: mobileNumber ?? this.mobileNumber,
       email: email ?? this.email,
@@ -310,12 +307,14 @@ class Student extends Equatable {
       course: course ?? this.course,
       admin: admin ?? this.admin,
       college: college ?? this.college,
+      gender: gender ?? this.gender,
     );
   }
 
   @override
   List<Object?> get props => [
         id,
+        rollNumber,
         name,
         mobileNumber,
         email,
@@ -323,5 +322,6 @@ class Student extends Equatable {
         course,
         admin,
         college,
+        gender,
       ];
 }

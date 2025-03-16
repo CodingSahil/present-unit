@@ -9,7 +9,6 @@ class Subject extends Equatable {
     required this.name,
     this.course,
     this.admin,
-    this.college,
     required this.credit,
     this.referenceBooks,
     this.materials,
@@ -35,11 +34,6 @@ class Subject extends Equatable {
       json['admin'] as Map<String, dynamic>,
     )
         : null,
-    college: json['college'] != null
-        ? College.fromJson(
-      json['college'] as Map<String, dynamic>,
-    )
-        : null,
     credit: json['credit'] as num,
     referenceBooks:
     (json['referenceBooks'] as List?)?.map((e) => e as String).toList(),
@@ -54,7 +48,6 @@ class Subject extends Equatable {
         name: '',
         course: null,
         admin: null,
-        college: null,
         credit: 0,
         referenceBooks: null,
         materials: null,
@@ -80,7 +73,6 @@ class Subject extends Equatable {
         name: name ?? this.name,
         course: course ?? this.course,
         admin: admin ?? this.admin,
-        college: college ?? this.college,
         credit: credit ?? this.credit,
         referenceBooks: referenceBooks ?? this.referenceBooks,
         materials: materials ?? this.materials,
@@ -93,7 +85,6 @@ class Subject extends Equatable {
   final String name;
   final Course? course;
   final Admin? admin;
-  final College? college;
   final num credit;
   final List<String>? referenceBooks;
   final List<String>? materials;
@@ -105,8 +96,6 @@ class Subject extends Equatable {
         'name': name,
         if (course != null && course!.id != -1000) 'course': course!.toJson(),
         if (admin != null && admin!.id != -1000) 'admin': admin!.toJson(),
-        if (college != null && college!.id != -1000)
-          'college': college!.toJson(),
         'credit': credit,
         if (referenceBooks != null && referenceBooks!.isNotEmpty)
           'referenceBooks': referenceBooks,
@@ -122,7 +111,6 @@ class Subject extends Equatable {
         name,
         course,
         admin,
-        college,
         credit,
         referenceBooks,
         materials,

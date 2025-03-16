@@ -24,6 +24,7 @@ class FacultyController extends GetxController {
           (element) => element.admin?.id == admin?.id,
         )
         .toList();
+    facultyList.sort((a, b) => a.id.compareTo(b.id));
   }
 
   Future<void> deleteFacultyData({

@@ -7,4 +7,5 @@ class CollectionStrings {
   static const String classList = 'class-list';
   static const String students = 'students';
   static const String classListForAttendance = 'class-list-for-attendance';
+  static const String assignmentList = 'assignment-list';
 }

@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:local_auth/local_auth.dart';
-import 'package:present_unit/helpers/extension/string_print.dart';
 import 'package:present_unit/routes/route_generator.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'binding/store_bindings.dart';
 import 'firebase_options.dart';
+import 'helpers/database/supabase_client_keys.dart';
 
 // Platform  Firebase App Id
 // android   1:92580548493:android:b649ab00e3cc91a2aef7c4
@@ -23,6 +23,9 @@ final RegExp passwordRegex = RegExp(
   r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$',
 );
 
+final SupabaseClient supabase = SupabaseClient(SupabaseClientKeys.supabaseUrl, SupabaseClientKeys.supabaseKey);
+
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -35,6 +38,11 @@ Future<void> main() async {
   // canAuthenticate.toString().logOnString('canAuthenticate =>');
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  await Supabase.initialize(
+    url: SupabaseClientKeys.supabaseUrl,
+    anonKey: SupabaseClientKeys.supabaseKey,
   );
   // final List<BiometricType> availableBiometrics =
   // await localAuthentication.getAvailableBiometrics();

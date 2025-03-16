@@ -16,6 +16,7 @@ import 'package:present_unit/helper-widgets/text-field/labled_textform_field.dar
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/database/storage_keys.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
+import 'package:present_unit/helpers/get_new_id.dart';
 import 'package:present_unit/helpers/labels/label_strings.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
 import 'package:present_unit/main.dart';
@@ -141,9 +142,7 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor,
       appBar: commonAppBarPreferred(
-        label: widget.arguments != null && facultyNavigation != null
-            ? 'Edit Faculty'
-            : 'Add Faculty',
+        label: widget.arguments != null && facultyNavigation != null ? 'Edit Faculty' : 'Add Faculty',
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(
@@ -185,13 +184,8 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
             LabeledTextFormField(
               controller: facultyMobileNumberController,
               hintText: 'Faculty Mobile Number',
-              isError: isError &&
-                  (facultyMobileNumberController.text.isEmpty ||
-                      facultyMobileNumberController.text.length < 10),
-              errorMessage:
-                  isError && facultyMobileNumberController.text.length < 10
-                      ? 'Enter proper Mobile number'
-                      : null,
+              isError: isError && (facultyMobileNumberController.text.isEmpty || facultyMobileNumberController.text.length < 10),
+              errorMessage: isError && facultyMobileNumberController.text.length < 10 ? 'Enter proper Mobile number' : null,
               onChanged: (value) {
                 setState(() {});
               },
@@ -208,8 +202,7 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                       !passwordRegex.hasMatch(
                         facultyPasswordController.text,
                       )),
-              errorMessage: !passwordRegex
-                      .hasMatch(facultyPasswordController.text)
+              errorMessage: !passwordRegex.hasMatch(facultyPasswordController.text)
                   ? 'Password must contain at least:- 1 uppercase letter,\n1 lowercase letter, 1 number, 1 special character'
                   : facultyPasswordController.text.length < 6
                       ? 'Password length must at least 6'
@@ -234,8 +227,7 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                           ),
                         )
                         .toList(),
-                    selectValue: selectedCourseList != null &&
-                            selectedCourseList!.isNotEmpty
+                    selectValue: selectedCourseList != null && selectedCourseList!.isNotEmpty
                         ? selectedCourseList!
                             .map(
                               (e) => BottomSheetSelectionModel(
@@ -255,14 +247,12 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                             ? courseController.courseList
                                 .where(
                                   (element) => selectValue.any(
-                                    (elementInner) =>
-                                        element.id == elementInner.id,
+                                    (elementInner) => element.id == elementInner.id,
                                   ),
                                 )
                                 .toList()
                             : null;
-                        subjectController
-                            .getListOfSubjectAccordingToSelectedCourse(
+                        subjectController.getListOfSubjectAccordingToSelectedCourse(
                           courseIDs: selectedCourseList
                                   ?.map(
                                     (e) => e.id,
@@ -281,16 +271,8 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                       Dimens.radius16,
                     ),
                     border: Border.all(
-                      color: isError &&
-                              selectedCourseList != null &&
-                              selectedCourseList!.isNotEmpty
-                          ? AppColors.red
-                          : AppColors.black,
-                      width: isError &&
-                              selectedCourseList != null &&
-                              selectedCourseList!.isNotEmpty
-                          ? 1
-                          : 0.75,
+                      color: isError && selectedCourseList != null && selectedCourseList!.isEmpty ? AppColors.red : AppColors.black.withAlpha((255 * 0.5).toInt()),
+                      width: isError && selectedCourseList != null && selectedCourseList!.isEmpty ? 1 : 0.75,
                     ),
                   ),
                   padding: EdgeInsets.symmetric(
@@ -301,16 +283,14 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       AppTextTheme.textSize14(
-                        label: selectedCourseList != null &&
-                                selectedCourseList!.isNotEmpty
+                        label: selectedCourseList != null && selectedCourseList!.isNotEmpty
                             ? selectedCourseList!
                                 .map(
                                   (e) => e.name,
                                 )
                                 .join(', ')
                             : 'Select Course',
-                        color: selectedCourseList != null &&
-                                selectedCourseList!.isNotEmpty
+                        color: selectedCourseList != null && selectedCourseList!.isNotEmpty
                             ? AppColors.black
                             : AppColors.black.withAlpha(
                                 (255 * 0.5).toInt(),
@@ -342,8 +322,7 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                           ),
                         )
                         .toList(),
-                    selectValue: selectedSubjectList != null &&
-                            selectedSubjectList!.isNotEmpty
+                    selectValue: selectedSubjectList != null && selectedSubjectList!.isNotEmpty
                         ? selectedSubjectList!
                             .map(
                               (e) => BottomSheetSelectionModel(
@@ -363,8 +342,7 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                             ? subjectController.subjectList
                                 .where(
                                   (element) => selectValue.any(
-                                    (elementInner) =>
-                                        element.id == elementInner.id,
+                                    (elementInner) => element.id == elementInner.id,
                                   ),
                                 )
                                 .toList()
@@ -379,16 +357,8 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                       Dimens.radius16,
                     ),
                     border: Border.all(
-                      color: isError &&
-                              selectedSubjectList != null &&
-                              selectedSubjectList!.isNotEmpty
-                          ? AppColors.red
-                          : AppColors.black,
-                      width: isError &&
-                              selectedSubjectList != null &&
-                              selectedSubjectList!.isNotEmpty
-                          ? 1
-                          : 0.75,
+                      color: isError && selectedSubjectList != null && selectedSubjectList!.isEmpty ? AppColors.red : AppColors.black.withAlpha((255 * 0.5).toInt()),
+                      width: isError && selectedSubjectList != null && selectedSubjectList!.isEmpty ? 1 : 0.75,
                     ),
                   ),
                   padding: EdgeInsets.symmetric(
@@ -399,16 +369,14 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       AppTextTheme.textSize14(
-                        label: selectedSubjectList != null &&
-                                selectedSubjectList!.isNotEmpty
+                        label: selectedSubjectList != null && selectedSubjectList!.isNotEmpty
                             ? selectedSubjectList!
                                 .map(
                                   (e) => e.name,
                                 )
                                 .join(', ')
                             : 'Select Subject',
-                        color: selectedSubjectList != null &&
-                                selectedSubjectList!.isNotEmpty
+                        color: selectedSubjectList != null && selectedSubjectList!.isNotEmpty
                             ? AppColors.black
                             : AppColors.black.withAlpha(
                                 (255 * 0.5).toInt(),
@@ -453,6 +421,26 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                     courseList: selectedCourseList,
                     subjectList: selectedSubjectList,
                   );
+                  if (addEditFacultyController.facultyList.any(
+                    (element) => element.email.toLowerCase() == faculty.email.toLowerCase(),
+                  )) {
+                    showErrorSnackBar(
+                      context: context,
+                      title: 'Faculty\'s Email ID is already exist',
+                    );
+                    addEditFacultyController.submitLoader(false);
+                    return;
+                  }
+                  if (addEditFacultyController.globalFacultyList.any(
+                    (element) => element.mobileNumber == faculty.mobileNumber,
+                  )) {
+                    showErrorSnackBar(
+                      context: context,
+                      title: 'Faculty\'s Mobile Number is already exist',
+                    );
+                    addEditFacultyController.submitLoader(false);
+                    return;
+                  }
                   await addEditFacultyController.updateFacultyData(
                     faculty: faculty,
                   );
@@ -466,7 +454,13 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                   Faculty faculty = Faculty(
                     documentID:
                         '${facultyNameController.text.trim().toLowerCase().replaceAll(RegExp(r'[.\s]'), '')}${admin != null && admin!.id != -1000 ? '_${addEditFacultyController.globalFacultyList.length + 1}_${admin!.name.trim().toLowerCase().replaceAll(RegExp(r'[.\s]'), '')}' : 'temp${addEditFacultyController.globalFacultyList.length + 1}'}',
-                    id: addEditFacultyController.globalFacultyList.length + 1,
+                    id: getNewID(
+                      addEditFacultyController.globalFacultyList
+                          .map(
+                            (e) => e.id,
+                          )
+                          .toList(),
+                    ),
                     name: facultyNameController.text.trim(),
                     email: facultyEmailController.text.trim(),
                     mobileNumber: facultyMobileNumberController.text.trim(),
@@ -476,9 +470,7 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                     subjectList: selectedSubjectList,
                   );
                   if (addEditFacultyController.facultyList.any(
-                    (element) =>
-                        element.email.toLowerCase() ==
-                        faculty.email.toLowerCase(),
+                    (element) => element.email.toLowerCase() == faculty.email.toLowerCase(),
                   )) {
                     showErrorSnackBar(
                       context: context,
@@ -513,10 +505,7 @@ class _AddEditFacultyViewState extends State<AddEditFacultyView> {
                   () => addEditFacultyController.submitLoader.value
                       ? const ButtonLoader()
                       : AppTextTheme.textSize16(
-                          label: facultyNavigation != null &&
-                                  widget.arguments != null
-                              ? LabelStrings.update
-                              : LabelStrings.add,
+                          label: facultyNavigation != null && widget.arguments != null ? LabelStrings.update : LabelStrings.add,
                           color: AppColors.white,
                         ),
                 ),

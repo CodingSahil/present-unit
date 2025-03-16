@@ -15,6 +15,7 @@ class Dimens {
   static final double height20 = 20.h;
   static final double height22 = 22.h;
   static final double height24 = 24.h;
+  static final double height25 = 25.h;
   static final double height26 = 26.h;
   static final double height28 = 28.h;
   static final double height30 = 30.h;
@@ -41,6 +42,7 @@ class Dimens {
   static final double height70 = 70.h;
   static final double height72 = 72.h;
   static final double height74 = 74.h;
+  static final double height75 = 75.h;
   static final double height76 = 76.h;
   static final double height78 = 78.h;
   static final double height80 = 80.h;
@@ -59,6 +61,7 @@ class Dimens {
   static final double height120 = 120.h;
   static final double height125 = 125.h;
   static final double height130 = 130.h;
+  static final double height140 = 140.h;
   static final double height150 = 150.h;
   static final double height175 = 175.h;
   static final double height200 = 200.h;
@@ -117,8 +120,12 @@ class Dimens {
   static final double width96 = 96.w;
   static final double width98 = 98.w;
   static final double width100 = 100.w;
+  static final double width120 = 120.w;
   static final double width125 = 125.w;
+  static final double width130 = 130.w;
+  static final double width140 = 140.w;
   static final double width150 = 150.w;
+  static final double width160 = 160.w;
   static final double width175 = 175.w;
   static final double width180 = 180.w;
   static final double width185 = 185.w;
@@ -127,6 +134,8 @@ class Dimens {
   static final double width200 = 200.w;
   static final double width225 = 225.w;
   static final double width250 = 250.w;
+  static final double width260 = 260.w;
+  static final double width270 = 270.w;
   static final double width275 = 275.w;
   static final double width300 = 300.w;
 

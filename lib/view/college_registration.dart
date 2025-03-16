@@ -20,8 +20,7 @@ class CollegeRegistrationView extends StatefulWidget {
   });
 
   @override
-  State<CollegeRegistrationView> createState() =>
-      _CollegeRegistrationViewState();
+  State<CollegeRegistrationView> createState() => _CollegeRegistrationViewState();
 }
 
 class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
@@ -118,8 +117,7 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                   hintText: LabelStrings.enterCollegeName,
                   controller: collegeNameController,
                   isError: clickOnSave && collegeNameController.text.isEmpty,
-                  errorMessage:
-                      '${LabelStrings.collegeName} ${LabelStrings.require}',
+                  errorMessage: '${LabelStrings.collegeName} ${LabelStrings.require}',
                   textInputType: TextInputType.text,
                   onChanged: (value) {
                     setState(() {});
@@ -145,8 +143,7 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                   hintText: LabelStrings.enterLocation,
                   controller: locationController,
                   isError: clickOnSave && locationController.text.isEmpty,
-                  errorMessage:
-                      '${LabelStrings.location} ${LabelStrings.require}',
+                  errorMessage: '${LabelStrings.location} ${LabelStrings.require}',
                   textInputType: TextInputType.text,
                   onChanged: (value) {
                     setState(() {});
@@ -172,8 +169,7 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                   hintText: LabelStrings.enterNoOfDepartments,
                   controller: noOfDepartmentController,
                   isError: clickOnSave && noOfDepartmentController.text.isEmpty,
-                  errorMessage:
-                      '${LabelStrings.noOfDepartments} ${LabelStrings.require}',
+                  errorMessage: '${LabelStrings.noOfDepartments} ${LabelStrings.require}',
                   textInputType: TextInputType.number,
                   onChanged: (value) {
                     setState(() {});
@@ -199,8 +195,7 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                   hintText: LabelStrings.enterNoOfCourses,
                   controller: noOfCoursesController,
                   isError: clickOnSave && noOfCoursesController.text.isEmpty,
-                  errorMessage:
-                      '${LabelStrings.noOfCourses} ${LabelStrings.require}',
+                  errorMessage: '${LabelStrings.noOfCourses} ${LabelStrings.require}',
                   textInputType: TextInputType.number,
                   onChanged: (value) {
                     setState(() {});
@@ -226,8 +221,7 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                   hintText: LabelStrings.enterWebsite,
                   controller: websiteController,
                   isError: clickOnSave && websiteController.text.isEmpty,
-                  errorMessage:
-                      '${LabelStrings.website} ${LabelStrings.require}',
+                  errorMessage: '${LabelStrings.website} ${LabelStrings.require}',
                   textInputType: TextInputType.url,
                   onChanged: (value) {
                     setState(() {});
@@ -276,14 +270,8 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                 LabeledTextFormField(
                   hintText: LabelStrings.enterEmail,
                   controller: emailController,
-                  isError: clickOnSave &&
-                      (emailController.text.isEmpty ||
-                          (emailController.text.isNotEmpty &&
-                              !EmailValidator.validate(emailController.text))),
-                  errorMessage: (emailController.text.isNotEmpty &&
-                          !EmailValidator.validate(emailController.text))
-                      ? LabelStrings.emailIncorrect
-                      : '${LabelStrings.email} ${LabelStrings.require}',
+                  isError: clickOnSave && (emailController.text.isEmpty || (emailController.text.isNotEmpty && !EmailValidator.validate(emailController.text))),
+                  errorMessage: (emailController.text.isNotEmpty && !EmailValidator.validate(emailController.text)) ? LabelStrings.emailIncorrect : '${LabelStrings.email} ${LabelStrings.require}',
                   textInputType: TextInputType.emailAddress,
                   onChanged: (value) {
                     setState(() {});
@@ -309,8 +297,7 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                   hintText: LabelStrings.enterMobileNumber,
                   controller: mobileNumberController,
                   isError: clickOnSave && mobileNumberController.text.isEmpty,
-                  errorMessage:
-                      '${LabelStrings.mobileNumber} ${LabelStrings.require}',
+                  errorMessage: '${LabelStrings.mobileNumber} ${LabelStrings.require}',
                   textInputType: TextInputType.phone,
                   onChanged: (value) {
                     setState(() {});
@@ -335,10 +322,7 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                 LabeledTextFormField(
                   hintText: LabelStrings.enterPassword,
                   controller: passwordController,
-                  isError: clickOnSave &&
-                      (passwordController.text.isEmpty ||
-                          passwordController.text.length < 6 ||
-                          !passwordRegex.hasMatch(passwordController.text)),
+                  isError: clickOnSave && (passwordController.text.isEmpty || passwordController.text.length < 6 || !passwordRegex.hasMatch(passwordController.text)),
                   errorMessage: !passwordRegex.hasMatch(passwordController.text)
                       ? 'Password must contain at least:- 1 uppercase letter,1 lowercase letter, 1 number, 1 special character'
                       : passwordController.text.length < 6
@@ -365,13 +349,6 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
 
                 if (validateFields()) {
                   collegeRegistrationController.loader(true);
-                  Admin admin = Admin(
-                    id: collegeRegistrationController.adminList.length + 1,
-                    name: adminNameController.text.trim(),
-                    email: emailController.text.toLowerCase().trim(),
-                    password: passwordController.text.trim(),
-                    mobileNumber: mobileNumberController.text.trim(),
-                  );
                   College college = College(
                     id: collegeRegistrationController.collegeList.length + 1,
                     name: collegeNameController.text.trim(),
@@ -380,16 +357,19 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                     noOfDepartments: noOfDepartmentController.convertToNum(),
                     noOfCourses: noOfCoursesController.convertToNum(),
                     websiteUrl: websiteController.text.trim(),
-                    admin: admin,
+                  );
+                  Admin admin = Admin(
+                    id: collegeRegistrationController.adminList.length + 1,
+                    name: adminNameController.text.trim(),
+                    email: emailController.text.toLowerCase().trim(),
+                    password: passwordController.text.trim(),
+                    mobileNumber: mobileNumberController.text.trim(),
+                    college: college,
                   );
 
                   /// validation for check the user is already registered or not
                   if (collegeRegistrationController.collegeList.any(
-                    (element) =>
-                        element.name.trim().toLowerCase() ==
-                            college.name.trim().toLowerCase() &&
-                        element.email.trim().toLowerCase() ==
-                            college.email.trim().toLowerCase(),
+                    (element) => element.name.trim().toLowerCase() == college.name.trim().toLowerCase() && element.email.trim().toLowerCase() == college.email.trim().toLowerCase(),
                   )) {
                     showErrorSnackBar(
                       context: context,
@@ -400,12 +380,9 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                   }
                   if (collegeRegistrationController.adminList.any(
                     (element) =>
-                        element.name.trim().toLowerCase() ==
-                            admin.name.trim().toLowerCase() &&
-                        element.email.trim().toLowerCase() ==
-                            admin.email.trim().toLowerCase() &&
-                        element.mobileNumber.trim().toLowerCase() ==
-                            admin.mobileNumber.trim().toLowerCase(),
+                        element.name.trim().toLowerCase() == admin.name.trim().toLowerCase() &&
+                        element.email.trim().toLowerCase() == admin.email.trim().toLowerCase() &&
+                        element.mobileNumber.trim().toLowerCase() == admin.mobileNumber.trim().toLowerCase(),
                   )) {
                     showErrorSnackBar(
                       context: context,

@@ -1,27 +1,66 @@
-import 'dart:convert';
-
 import 'package:get/get.dart';
 import 'package:present_unit/app-repository/firestore_method.dart';
 import 'package:present_unit/helpers/database/collection_string.dart';
-import 'package:present_unit/helpers/extension/string_print.dart';
+import 'package:present_unit/models/assignment/assignment_model.dart';
 import 'package:present_unit/models/class_list/class_list_models.dart';
 import 'package:present_unit/models/class_list_for_attendance/class_list_for_attendance.dart';
 import 'package:present_unit/models/faculty/faculty_model.dart';
 import 'package:present_unit/models/subject/subject_model.dart';
 import 'package:present_unit/view/splash_view.dart';
 
-class ClassesWithAttendanceController extends GetxController {
-  ClassesWithAttendanceController();
+class AssignmentController extends GetxController {
+  AssignmentController();
 
   RxBool loader = false.obs;
   RxBool submitLoader = false.obs;
+  List<AssignmentModel> globalAssignmentList = [];
+  List<AssignmentModel> assignmentList = [];
+  List<Subject> globalSubjectList = [];
+  List<Subject> subjectList = [];
   List<ClassesForAttendanceModel> globalClassesForAttendanceModel = [];
   List<ClassesForAttendanceModel> classesForAttendanceModel = [];
   List<ClassListModel> globalClassList = [];
   List<ClassListModel> classList = [];
-  List<Subject> globalSubjectList = [];
-  List<Subject> subjectList = [];
   Faculty? faculty;
+
+  Future<void> getAssignmentList({
+    bool isLoaderRequire = true,
+  }) async {
+    if (userDetails != null && userDetails!.faculty != null) {
+      faculty = userDetails!.faculty!;
+    }
+    if (isLoaderRequire) loader(true);
+    globalAssignmentList = await getListFromFirebase<AssignmentModel>(
+      collection: CollectionStrings.assignmentList,
+      fromJson: AssignmentModel.fromJson,
+    );
+    if (globalAssignmentList.isNotEmpty) {
+      assignmentList = globalAssignmentList
+          .where(
+            (e) => e.faculty.id == faculty!.id,
+          )
+          .toList();
+      assignmentList.sort((a, b) => a.id.compareTo(b.id));
+    }
+    if (isLoaderRequire) loader(false);
+  }
+
+  Future<void> getListOfSubject() async {
+    loader(true);
+    if (userDetails != null && userDetails!.faculty != null) {
+      faculty = userDetails!.faculty!;
+    }
+    globalSubjectList = await getListFromFirebase<Subject>(
+      collection: CollectionStrings.subject,
+      fromJson: Subject.fromJson,
+    );
+    subjectList = globalSubjectList
+        .where(
+          (element) => element.admin?.id == faculty?.admin?.id,
+        )
+        .toList();
+    loader(false);
+  }
 
   Future<void> getClassesList({
     bool isLoaderRequire = true,
@@ -60,60 +99,26 @@ class ClassesWithAttendanceController extends GetxController {
           (element) => element.admin?.id == faculty?.admin?.id,
         )
         .toList();
-    if (globalClassList.isNotEmpty) {
-      jsonEncode(
-        globalClassList
-            .map(
-              (e) => e.toJson(),
-            )
-            .toList(),
-      ).logOnString('classList');
-    }
     loader(false);
   }
 
-  Future<void> getListOfSubject() async {
-    loader(true);
-    if (userDetails != null && userDetails!.faculty != null) {
-      faculty = userDetails!.faculty!;
-    }
-    globalSubjectList = await getListFromFirebase<Subject>(
-      collection: CollectionStrings.subject,
-      fromJson: Subject.fromJson,
-    );
-    subjectList = globalSubjectList
-        .where(
-          (element) => element.admin?.id == faculty?.admin?.id,
-        )
-        .toList();
-    loader(false);
-  }
-
-  Future<void> addLecture(ClassesForAttendanceModel request) async {
+  Future<void> writeInAssignment(AssignmentModel request) async {
     submitLoader(true);
     await writeAnObject(
-      collection: CollectionStrings.classListForAttendance,
+      collection: CollectionStrings.assignmentList,
       newDocumentName: request.documentID,
       newMap: request.toJson(),
     );
     submitLoader(false);
   }
 
-  Future<void> updateLecture(ClassesForAttendanceModel request) async {
+  Future<void> updateInAssignment(AssignmentModel request) async {
     submitLoader(true);
-    jsonEncode(request.toJson()).logOnString('request => ');
     await updateAnObject(
-      collection: CollectionStrings.classListForAttendance,
+      collection: CollectionStrings.assignmentList,
       documentName: request.documentID,
       newMap: request.toJson(),
     );
     submitLoader(false);
-  }
-
-  Future<void> deleteLecture(String documentName) async {
-    await deleteAnObject(
-      collection: CollectionStrings.classListForAttendance,
-      documentName: documentName,
-    );
   }
 }

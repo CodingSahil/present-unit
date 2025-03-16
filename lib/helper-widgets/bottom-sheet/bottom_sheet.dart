@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,10 +23,7 @@ Future<dynamic> showCommonBottomSheet({
   required void Function(BottomSheetSelectionModel selectValue) onSubmit,
 }) async {
   BottomSheetSelectionModel? selectValueLocal = listOfItems.firstWhereOrNull(
-    (element) =>
-        element.id == selectValue?.id &&
-        element.name.trim().toLowerCase() ==
-            selectValue?.name.trim().toLowerCase(),
+    (element) => element.id == selectValue?.id && element.name.trim().toLowerCase() == selectValue?.name.trim().toLowerCase(),
   );
   listOfItems.length.toString().logOnString('list => ');
   await showModalBottomSheet(
@@ -35,8 +34,7 @@ Future<dynamic> showCommonBottomSheet({
       return StatefulBuilder(
         builder: (context, setState) => listOfItems.isEmpty
             ? Center(
-                child: AppTextTheme.textSize16(
-                    label: LabelStrings.noData, color: AppColors.black),
+                child: AppTextTheme.textSize16(label: LabelStrings.noData, color: AppColors.black),
               )
             : Column(
                 children: [
@@ -78,8 +76,7 @@ Future<dynamic> showCommonBottomSheet({
                                     fontWeight: FontWeight.w600,
                                   ),
                                   contentPadding: EdgeInsets.zero,
-                                  controlAffinity:
-                                      ListTileControlAffinity.leading,
+                                  controlAffinity: ListTileControlAffinity.leading,
                                   selected: selectValueLocal?.id == item.id,
                                   onChanged: (value) {
                                     setState(() {
@@ -159,8 +156,7 @@ Future<dynamic> showCommonBottomSheetWithCheckBox({
       return StatefulBuilder(
         builder: (context, setState) => listOfItems.isEmpty
             ? Center(
-                child: AppTextTheme.textSize16(
-                    label: LabelStrings.noData, color: AppColors.black),
+                child: AppTextTheme.textSize16(label: LabelStrings.noData, color: AppColors.black),
               )
             : Column(
                 children: [
@@ -199,8 +195,7 @@ Future<dynamic> showCommonBottomSheetWithCheckBox({
                                         (element) => element.id == item.id,
                                       ),
                                   contentPadding: EdgeInsets.zero,
-                                  controlAffinity:
-                                      ListTileControlAffinity.leading,
+                                  controlAffinity: ListTileControlAffinity.leading,
                                   title: AppTextTheme.textSize12(
                                     label: item.name,
                                     color: AppColors.black,
@@ -213,8 +208,7 @@ Future<dynamic> showCommonBottomSheetWithCheckBox({
                                       ),
                                   activeColor: AppColors.primaryColor,
                                   onChanged: (value) {
-                                    if (selectValueLocal != null &&
-                                        selectValueLocal!.isNotEmpty) {
+                                    if (selectValueLocal != null && selectValueLocal!.isNotEmpty) {
                                       if (selectValueLocal!.any(
                                         (element) => element.id == item.id,
                                       )) {
@@ -296,12 +290,12 @@ Future<dynamic> showAddEditStudentBottomSheet({
   required void Function(Student selectValue) onSubmit,
 }) async {
   Student? selectValueLocal = listOfItems.firstWhereOrNull(
-    (element) =>
-        element.id == selectValue?.id &&
-        element.name.trim().toLowerCase() ==
-            selectValue?.name.trim().toLowerCase(),
+    (element) => element.id == selectValue?.id && element.name.trim().toLowerCase() == selectValue?.name.trim().toLowerCase(),
   );
   bool isError = false;
+  TextEditingController rollNumberController = TextEditingController(
+    text: selectValueLocal?.rollNumber,
+  );
   TextEditingController studentNameController = TextEditingController(
     text: selectValueLocal?.name,
   );
@@ -314,6 +308,11 @@ Future<dynamic> showAddEditStudentBottomSheet({
   TextEditingController studentPasswordController = TextEditingController(
     text: selectValueLocal?.password,
   );
+
+  String? selectedGender =
+      selectValueLocal != null && selectValueLocal.gender.isNotEmpty && (selectValueLocal.gender.toLowerCase().trim() == 'male' || selectValueLocal.gender.toLowerCase().trim() == 'female')
+          ? selectValueLocal.gender.toLowerCase().trim() == 'male' ? 'Male' : selectValueLocal.gender.toLowerCase().trim() == 'female' ? 'Female' : ''
+          : '';
 
   bool validateFields() =>
       studentNameController.text.isNotEmpty &&
@@ -361,6 +360,12 @@ Future<dynamic> showAddEditStudentBottomSheet({
                 ),
                 children: [
                   LabeledTextFormField(
+                    controller: rollNumberController,
+                    hintText: 'Student Roll No.',
+                    isError: isError && rollNumberController.text.isEmpty,
+                  ),
+                  SizedBox(height: Dimens.height18),
+                  LabeledTextFormField(
                     controller: studentNameController,
                     hintText: 'Student Name',
                     isError: isError && studentNameController.text.isEmpty,
@@ -370,26 +375,16 @@ Future<dynamic> showAddEditStudentBottomSheet({
                     controller: studentMobileNumberController,
                     hintText: 'Student Mobile Number',
                     textInputType: TextInputType.phone,
-                    isError: isError &&
-                        (studentMobileNumberController.text.isEmpty ||
-                            studentMobileNumberController.text.length < 10),
-                    errorMessage: studentMobileNumberController.text.length < 10
-                        ? 'Enter Proper Mobile Number'
-                        : null,
+                    isError: isError && (studentMobileNumberController.text.isEmpty || studentMobileNumberController.text.length < 10),
+                    errorMessage: studentMobileNumberController.text.length < 10 ? 'Enter Proper Mobile Number' : null,
                   ),
                   SizedBox(height: Dimens.height18),
                   LabeledTextFormField(
                     controller: studentEmailController,
                     hintText: 'Student Email',
                     textInputType: TextInputType.emailAddress,
-                    isError: isError &&
-                        (studentEmailController.text.isEmpty ||
-                            (studentEmailController.text.isNotEmpty &&
-                                !EmailValidator.validate(
-                                    studentEmailController.text))),
-                    errorMessage: (studentEmailController.text.isNotEmpty &&
-                            !EmailValidator.validate(
-                                studentEmailController.text))
+                    isError: isError && (studentEmailController.text.isEmpty || (studentEmailController.text.isNotEmpty && !EmailValidator.validate(studentEmailController.text))),
+                    errorMessage: (studentEmailController.text.isNotEmpty && !EmailValidator.validate(studentEmailController.text))
                         ? LabelStrings.emailIncorrect
                         : '${LabelStrings.email} ${LabelStrings.require}',
                   ),
@@ -398,18 +393,44 @@ Future<dynamic> showAddEditStudentBottomSheet({
                     controller: studentPasswordController,
                     hintText: 'Password',
                     isPasswordField: true,
-                    isError: isError &&
-                        (studentPasswordController.text.isEmpty ||
-                            studentPasswordController.text.length < 6 ||
-                            !passwordRegex
-                                .hasMatch(studentPasswordController.text)),
-                    errorMessage: !passwordRegex
-                            .hasMatch(studentPasswordController.text)
+                    isError: isError && (studentPasswordController.text.isEmpty || studentPasswordController.text.length < 6 || !passwordRegex.hasMatch(studentPasswordController.text)),
+                    errorMessage: !passwordRegex.hasMatch(studentPasswordController.text)
                         ? 'Password must contain at least:- 1 uppercase letter,\n1 lowercase letter, 1 number, 1 special character'
                         : studentPasswordController.text.length < 6
                             ? 'Password length must at least 6'
                             : '${LabelStrings.password} ${LabelStrings.require}',
                     textInputType: TextInputType.text,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Radio<String>(
+                        value: "Male",
+                        groupValue: selectedGender,
+                        activeColor: AppColors.primaryColor,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedGender = value;
+                          });
+                        },
+                      ),
+                      AppTextTheme.textSize14(
+                        label: 'Male',
+                      ),
+                      Radio<String>(
+                        value: "Female",
+                        groupValue: selectedGender,
+                        activeColor: AppColors.primaryColor,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedGender = value;
+                          });
+                        },
+                      ),
+                      AppTextTheme.textSize14(
+                        label: 'Female',
+                      ),
+                    ],
                   ),
                   SizedBox(height: Dimens.height36),
                   GestureDetector(
@@ -420,27 +441,24 @@ Future<dynamic> showAddEditStudentBottomSheet({
                       });
                       if (!isError) {
                         Student student = Student(
-                          id: listOfItems.isNotEmpty
-                              ? listOfItems.length + 1
-                              : 1,
+                          id: listOfItems.isNotEmpty ? listOfItems.length + 1 : 1,
+                          rollNumber: rollNumberController.text,
                           name: studentNameController.text,
                           mobileNumber: studentMobileNumberController.text,
                           email: studentEmailController.text,
                           password: studentPasswordController.text,
-                          course: selectValueLocal != null &&
-                                  selectValueLocal.course != null
+                          course: selectValueLocal != null && selectValueLocal.course != null
                               ? selectValueLocal.course
                               : listOfItems.isNotEmpty
                                   ? listOfItems.first.course
                                   : Course.empty(),
-                          admin: selectValueLocal != null &&
-                                  selectValueLocal.admin != null
+                          gender: selectedGender != null && selectedGender!.isNotEmpty ? selectedGender! : '',
+                          admin: selectValueLocal != null && selectValueLocal.admin != null
                               ? selectValueLocal.admin
                               : listOfItems.isNotEmpty
                                   ? listOfItems.first.admin
                                   : Admin.empty(),
-                          college: selectValueLocal != null &&
-                                  selectValueLocal.college != null
+                          college: selectValueLocal != null && selectValueLocal.college != null
                               ? selectValueLocal.college
                               : listOfItems.isNotEmpty
                                   ? listOfItems.first.college

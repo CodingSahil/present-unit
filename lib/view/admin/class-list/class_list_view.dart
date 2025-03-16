@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:present_unit/controller/admin/class_list_controller.dart';
 import 'package:present_unit/helper-widgets/app-bar/app_bar.dart';
+import 'package:present_unit/helper-widgets/loader/loader.dart';
 import 'package:present_unit/helpers/assets_path/assets_path.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/database/update_state_keys.dart';
@@ -33,6 +34,7 @@ class _ClassListViewState extends State<ClassListView> {
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
         await classListController.getListOfClassList();
+        await classListController.getListOfStudentList();
       },
     );
   }
@@ -47,31 +49,47 @@ class _ClassListViewState extends State<ClassListView> {
           var result = await Get.toNamed(Routes.addEditClassList);
           if (result is bool && result) {
             await classListController.getListOfClassList();
-            classListController.update([UpdateKeys.updateSubject]);
+            await Future.delayed(const Duration(milliseconds: 600));
+            classListController.update([UpdateKeys.updateClassList]);
           }
         },
       ),
-      body: GetBuilder<ClassListController>(
-        id: UpdateKeys.updateSubject,
-        builder: (ClassListController controller) => classListController.classList.isNotEmpty
-            ? ListView(
-                padding: EdgeInsets.symmetric(
-                  horizontal: Dimens.width8,
-                  vertical: Dimens.height24,
+      body: Obx(
+        () => classListController.loader.value
+            ? Center(
+                child: Loader(
+                  color: AppColors.primaryColor,
                 ),
-                children: classListController.classList
-                    .map(
-                      (classList) => ClassDetailsView(
-                        classListController: classListController,
-                        classList: classList,
-                      ),
-                    )
-                    .toList(),
               )
-            : Center(
-                child: AppTextTheme.textSize16(
-                  label: LabelStrings.noData,
-                ),
+            : GetBuilder<ClassListController>(
+                id: UpdateKeys.updateClassList,
+                builder: (ClassListController controller) => controller.classList.isNotEmpty
+                    ? ListView(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: Dimens.width8,
+                          vertical: Dimens.height24,
+                        ),
+                        children: controller.classList
+                            .map(
+                              (classList) => ClassDetailsView(
+                                classListController: controller,
+                                classList: classList,
+                                onRefresh: () async {
+                                  await classListController.getListOfClassList();
+                                  await Future.delayed(const Duration(milliseconds: 600));
+                                  controller.update([UpdateKeys.updateClassList]);
+                                  setState(() {});
+                                },
+                                onDelete: (classList) {},
+                              ),
+                            )
+                            .toList(),
+                      )
+                    : Center(
+                        child: AppTextTheme.textSize16(
+                          label: LabelStrings.noData,
+                        ),
+                      ),
               ),
       ),
     );
@@ -83,10 +101,14 @@ class ClassDetailsView extends StatefulWidget {
     super.key,
     required this.classListController,
     required this.classList,
+    required this.onRefresh,
+    required this.onDelete,
   });
 
   final ClassListController classListController;
   final ClassListModel classList;
+  final void Function() onRefresh;
+  final void Function(ClassListModel classList) onDelete;
 
   @override
   State<ClassDetailsView> createState() => _ClassDetailsViewState();
@@ -109,15 +131,15 @@ class _ClassDetailsViewState extends State<ClassDetailsView> with SingleTickerPr
       endActionPane: ActionPane(motion: const ScrollMotion(), extentRatio: 0.4, openThreshold: 0.1, closeThreshold: 0.1, children: [
         SlidableAction(
           onPressed: (context) async {
-            // setState(() {
-            //   deleteLoader = true;
-            // });
             await widget.classListController.deleteClassListObject(
               documentName: classList.documentID,
             );
-            // setState(() {
-            //   deleteLoader = false;
-            // });
+            await Future.delayed(const Duration(milliseconds: 600));
+            await widget.classListController.deleteStudentListObject(
+              documentName: classList.documentID,
+            );
+            await Future.delayed(const Duration(milliseconds: 600));
+            await widget.classListController.getListOfClassList();
             widget.classListController.update([
               UpdateKeys.updateSubject,
             ]);
@@ -141,7 +163,6 @@ class _ClassDetailsViewState extends State<ClassDetailsView> with SingleTickerPr
             division: classList.division,
             courseBatchYear: classList.courseBatchYear,
             studentList: classList.studentList,
-            college: classList.college,
             course: classList.course != null ? classList.course! : Course.empty(),
             admin: classList.admin != null ? classList.admin! : Admin.empty(),
           );
@@ -150,10 +171,8 @@ class _ClassDetailsViewState extends State<ClassDetailsView> with SingleTickerPr
             Routes.addEditClassList,
             arguments: classListModel,
           );
-          if (result is bool && result) {
-            await widget.classListController.getListOfClassList();
-            widget.classListController.update([UpdateKeys.updateSubject]);
-            setState(() {});
+          if (result is bool && result == true) {
+            widget.onRefresh();
           }
         },
         child: Container(

@@ -4,3 +4,9 @@ enum UserType {
   student,
   none,
 }
+
+enum AssignmentType {
+  assignment,
+  journal,
+  homeWork,
+}

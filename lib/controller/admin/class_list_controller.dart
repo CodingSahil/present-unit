@@ -12,6 +12,8 @@ class ClassListController extends GetxController {
   RxBool loader = false.obs;
   List<ClassListModel> globalClassList = [];
   List<ClassListModel> classList = [];
+  List<Student> globalStudentList = [];
+  List<Student> studentList = [];
   Admin? admin;
 
   Future<void> getListOfClassList() async {
@@ -37,7 +39,26 @@ class ClassListController extends GetxController {
             )
             .toList(),
       ).logOnString('classList');
+      classList.sort((a, b) => a.id.compareTo(b.id));
     }
+    loader(false);
+  }
+
+  Future<void> getListOfStudentList() async {
+    loader(true);
+    if (userDetails != null && userDetails!.admin != null) {
+      admin = userDetails!.admin;
+    }
+    globalStudentList = await getListFromFirebase<Student>(
+      collection: CollectionStrings.students,
+      fromJson: Student.fromJson,
+    );
+
+    studentList = globalStudentList
+        .where(
+          (element) => element.admin?.id == admin?.id,
+        )
+        .toList();
     loader(false);
   }
 
@@ -46,6 +67,15 @@ class ClassListController extends GetxController {
   }) async {
     await deleteAnObject(
       collection: CollectionStrings.classList,
+      documentName: documentName,
+    );
+  }
+
+  Future<void> deleteStudentListObject({
+    required String documentName,
+  }) async {
+    await deleteAnObject(
+      collection: CollectionStrings.students,
       documentName: documentName,
     );
   }

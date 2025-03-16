@@ -9,7 +9,6 @@ class College extends Equatable {
     required this.noOfDepartments,
     required this.noOfCourses,
     required this.websiteUrl,
-    this.admin,
   });
 
   final num id;
@@ -19,7 +18,6 @@ class College extends Equatable {
   final num noOfDepartments;
   final num noOfCourses;
   final String websiteUrl;
-  final Admin? admin;
 
   factory College.fromJson(Map<String, dynamic> json) => College(
         id: json['id'] as num,
@@ -29,11 +27,6 @@ class College extends Equatable {
         noOfDepartments: json['noOfDepartments'] as num,
         noOfCourses: json['noOfCourses'] as num,
         websiteUrl: json['websiteUrl'] as String,
-        admin: json['admin'] != null
-            ? Admin.fromJson(
-                json['admin'] as Map<String, dynamic>,
-              )
-            : null,
       );
 
   factory College.empty() => const College(
@@ -44,7 +37,6 @@ class College extends Equatable {
         noOfDepartments: 0,
         noOfCourses: 0,
         websiteUrl: '',
-        admin: null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -55,7 +47,6 @@ class College extends Equatable {
         'noOfDepartments': noOfDepartments,
         'noOfCourses': noOfCourses,
         'websiteUrl': websiteUrl,
-        if (admin != null && admin!.id != -1000) 'admin': admin?.toJson(),
       };
 
   College copyWith({
@@ -66,7 +57,6 @@ class College extends Equatable {
     num? noOfDepartments,
     num? noOfCourses,
     String? websiteUrl,
-    Admin? admin,
   }) =>
       College(
         id: id ?? this.id,
@@ -76,7 +66,6 @@ class College extends Equatable {
         noOfDepartments: noOfDepartments ?? this.noOfDepartments,
         noOfCourses: noOfCourses ?? this.noOfCourses,
         websiteUrl: websiteUrl ?? this.websiteUrl,
-        admin: admin ?? this.admin,
       );
 
   @override
@@ -88,7 +77,6 @@ class College extends Equatable {
         noOfDepartments,
         noOfCourses,
         websiteUrl,
-        admin,
       ];
 }
 
@@ -99,8 +87,8 @@ class Admin extends Equatable {
     required this.name,
     required this.password,
     required this.mobileNumber,
+   required  this.college,
     this.fcmToken,
-    this.college,
   });
 
   final num id;
@@ -109,7 +97,7 @@ class Admin extends Equatable {
   final String password;
   final String mobileNumber;
   final String? fcmToken;
-  final College? college;
+  final College college;
 
   factory Admin.fromJson(Map<String, dynamic> json) => Admin(
         id: json['id'] as num,
@@ -118,19 +106,17 @@ class Admin extends Equatable {
         password: json['password'] as String,
         mobileNumber: json['mobileNumber'] as String,
         fcmToken: json['fcmToken'] as String? ?? '',
-        college: json['college'] != null
-            ? College.fromJson(json['college'] as Map<String, dynamic>)
-            : null,
+        college: json['college'] != null ? College.fromJson(json['college'] as Map<String, dynamic>) : College.empty(),
       );
 
-  factory Admin.empty() => const Admin(
+  factory Admin.empty() => Admin(
     id: -1000,
     email: '',
     name: '',
     password: '',
     mobileNumber: '',
     fcmToken: null,
-    college: null,
+    college: College.empty(),
   );
 
   Map<String, dynamic> toJson() => {
@@ -140,8 +126,8 @@ class Admin extends Equatable {
         'password': password,
         'mobileNumber': mobileNumber,
         if (fcmToken != null && fcmToken!.isNotEmpty) 'fcmToken': fcmToken,
-        if (college != null && college!.id != -1000)
-          'college': college!.toJson(),
+        if (college.id != -1000)
+          'college': college.toJson(),
       };
 
   Admin copyWith({

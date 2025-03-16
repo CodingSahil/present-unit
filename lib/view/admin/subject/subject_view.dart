@@ -1,9 +1,13 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:present_unit/controller/admin/subject_controller.dart';
 import 'package:present_unit/helper-widgets/app-bar/app_bar.dart';
+import 'package:present_unit/helper-widgets/loader/loader.dart';
 import 'package:present_unit/helpers/assets_path/assets_path.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/database/update_state_keys.dart';
@@ -25,6 +29,7 @@ class SubjectView extends StatefulWidget {
 
 class _SubjectViewState extends State<SubjectView> with SingleTickerProviderStateMixin {
   late SubjectController subjectController;
+  late final slideController = SlidableController(this);
   bool deleteLoader = false;
 
   @override
@@ -50,33 +55,55 @@ class _SubjectViewState extends State<SubjectView> with SingleTickerProviderStat
           var result = await Get.toNamed(Routes.addEditSubject);
           if (result is bool && result) {
             await subjectController.getListOfSubject();
-            setState(() {});
+            await Future.delayed(
+              const Duration(milliseconds: 500),
+            );
+            subjectController.update([UpdateKeys.updateSubject]);
           }
         },
       ),
-      body: GetBuilder<SubjectController>(
+      body: Obx(() => subjectController.loader.value
+          ? Center(
+        child: Loader(
+          color: AppColors.primaryColor,
+        ),
+      )
+          : GetBuilder<SubjectController>(
         id: UpdateKeys.updateSubject,
-        builder: (SubjectController controller) => subjectController.subjectList.isNotEmpty
+        builder: (SubjectController controller) => controller.subjectList.isNotEmpty
             ? ListView(
-                padding: EdgeInsets.symmetric(
-                  horizontal: Dimens.width8,
-                  vertical: Dimens.height24,
-                ),
-                children: subjectController.subjectList
-                    .map(
-                      (subject) => SubjectDetailCard(
-                        subjectController: subjectController,
-                        subject: subject,
-                      ),
-                    )
-                    .toList(),
-              )
+          padding: EdgeInsets.symmetric(
+            horizontal: Dimens.width8,
+            vertical: Dimens.height24,
+          ),
+          children: controller.subjectList
+              .map(
+                (subject) => SubjectDetailCard(
+              subjectController: controller,
+              subject: subject,
+              onRefresh: () async {
+                await subjectController.getListOfSubject();
+                await Future.delayed(
+                  const Duration(seconds: 1),
+                );
+                subjectController.update([UpdateKeys.updateSubject]);
+              },
+              onDelete: (subject) async {
+                await subjectController.deleteData(
+                  subject: subject,
+                );
+                await Future.delayed(const Duration(milliseconds: 500));
+              },
+            ),
+          )
+              .toList(),
+        )
             : Center(
-                child: AppTextTheme.textSize16(
-                  label: LabelStrings.noData,
-                ),
-              ),
-      ),
+          child: AppTextTheme.textSize16(
+            label: LabelStrings.noData,
+          ),
+        ),
+      ),),
     );
   }
 }
@@ -86,10 +113,14 @@ class SubjectDetailCard extends StatefulWidget {
     super.key,
     required this.subjectController,
     required this.subject,
+    required this.onRefresh,
+    required this.onDelete,
   });
 
   final SubjectController subjectController;
   final Subject subject;
+  final void Function() onRefresh;
+  final void Function(Subject subject) onDelete;
 
   @override
   State<SubjectDetailCard> createState() => _SubjectDetailCardState();
@@ -98,7 +129,6 @@ class SubjectDetailCard extends StatefulWidget {
 class _SubjectDetailCardState extends State<SubjectDetailCard> with SingleTickerProviderStateMixin {
   late final slideController = SlidableController(this);
   late Subject subject;
-  bool deleteLoader = false;
 
   @override
   void initState() {
@@ -118,18 +148,10 @@ class _SubjectDetailCardState extends State<SubjectDetailCard> with SingleTicker
         children: [
           SlidableAction(
             onPressed: (context) async {
-              setState(() {
-                deleteLoader = true;
-              });
-              await widget.subjectController.deleteData(
-                subject: subject,
-              );
-              setState(() {
-                deleteLoader = false;
-              });
-              widget.subjectController.update([
-                UpdateKeys.updateSubject,
-              ]);
+              log('subject => ${jsonEncode(subject.toJson())}');
+              widget.onDelete(subject);
+              await Future.delayed(const Duration(seconds: 1));
+              widget.onRefresh();
               slideController.close();
             },
             icon: Icons.delete,
@@ -151,7 +173,6 @@ class _SubjectDetailCardState extends State<SubjectDetailCard> with SingleTicker
             credit: subject.credit,
             semester: subject.semester,
             subjectCode: subject.subjectCode,
-            college: subject.college,
             course: subject.course != null ? subject.course! : Course.empty(),
             admin: subject.admin != null ? subject.admin! : Admin.empty(),
           );
@@ -161,8 +182,7 @@ class _SubjectDetailCardState extends State<SubjectDetailCard> with SingleTicker
             arguments: subjectNavigation,
           );
           if (result is bool && result) {
-            await widget.subjectController.getListOfSubject();
-            setState(() {});
+            widget.onRefresh();
           }
         },
         child: Container(

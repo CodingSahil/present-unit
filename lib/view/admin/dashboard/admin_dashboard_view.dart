@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -45,35 +43,21 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
   Admin? admin;
 
   /// bottom navigation
-  List<Widget> listOfNavigationWidgets = [];
   int selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
-
     courseController = Get.find<CourseController>();
     facultyController = Get.find<FacultyController>();
     classListController = Get.find<ClassListController>();
     subjectController = Get.find<SubjectController>();
 
-    listOfNavigationWidgets = [
-      iconAndTitleHelper(
-        bottomNavigationBarEnums: AdminBottomNavigationBarEnums.home,
-        numberOfTab: 3,
-      ),
-      iconAndTitleHelper(
-        bottomNavigationBarEnums: AdminBottomNavigationBarEnums.course,
-        numberOfTab: 3,
-      ),
-      iconAndTitleHelper(
-        bottomNavigationBarEnums: AdminBottomNavigationBarEnums.faculty,
-        numberOfTab: 3,
-      ),
-    ];
+
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
+
         loader(true);
         await courseController.getListOfCourse();
         await facultyController.getListOfFaculty();
@@ -413,20 +397,20 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
         ),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
-        children: listOfNavigationWidgets.map(
-          (e) {
-            int index = listOfNavigationWidgets.indexOf(e);
-            return GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                setState(() {
-                  selectedIndex = index;
-                });
-              },
-              child: e,
-            );
-          },
-        ).toList(),
+        children: [
+          iconAndTitleHelper(
+            bottomNavigationBarEnums: AdminBottomNavigationBarEnums.home,
+            numberOfTab: 3,
+          ),
+          iconAndTitleHelper(
+            bottomNavigationBarEnums: AdminBottomNavigationBarEnums.course,
+            numberOfTab: 3,
+          ),
+          iconAndTitleHelper(
+            bottomNavigationBarEnums: AdminBottomNavigationBarEnums.faculty,
+            numberOfTab: 3,
+          ),
+        ],
       ),
     );
   }

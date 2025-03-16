@@ -2,6 +2,7 @@ class Routes {
   static const String splash = 'splash.dart';
   static const String login = 'login.dart';
   static const String registration = 'registration.dart';
+  static const String changePasswordView = 'ChangePasswordView.dart';
 
   /// Admin
   static const String adminDashboard = 'AdminDashboard.dart';
@@ -21,4 +22,6 @@ class Routes {
   static const String addEditClassesWithAttendanceView = 'AddEditClassesWithAttendanceView.dart';
   static const String taskListView = 'TaskListView.dart';
   static const String lectureDetailsView = 'LectureDetailsView.dart';
+  static const String addEditAssignmentView = 'AddEditAssignmentView.dart';
+  static const String pdfView = 'PdfView.dart';
 }

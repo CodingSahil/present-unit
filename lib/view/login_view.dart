@@ -134,16 +134,16 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ],
             ),
-            SizedBox(height: Dimens.height36),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                AppTextTheme.textSize16(
-                  label: LabelStrings.forgotPassword,
-                  color: AppColors.primaryColor,
-                ),
-              ],
-            ),
+            // SizedBox(height: Dimens.height36),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.end,
+            //   children: [
+            //     AppTextTheme.textSize16(
+            //       label: LabelStrings.forgotPassword,
+            //       color: AppColors.primaryColor,
+            //     ),
+            //   ],
+            // ),
             SizedBox(height: Dimens.height60),
             GestureDetector(
               behavior: HitTestBehavior.translucent,

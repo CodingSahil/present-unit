@@ -19,14 +19,7 @@ class AddEditSubjectController extends GetxController {
     required bool isAdminFilled,
     required bool isCourseFilled,
   }) =>
-      subjectName.isNotEmpty &&
-      subjectCredit != 0 &&
-      subjectCredit <= 10 &&
-      semester != 0 &&
-      semester <= 10 &&
-      subjectCode.isNotEmpty &&
-      isAdminFilled &&
-      isCourseFilled;
+      subjectName.isNotEmpty && subjectCredit != 0 && subjectCredit <= 10 && semester != 0 && semester <= 10 && subjectCode.isNotEmpty && isAdminFilled && isCourseFilled;
 
   Future<void> getListOfSubject() async {
     if (userDetails != null && userDetails!.admin != null) {
@@ -39,8 +32,9 @@ class AddEditSubjectController extends GetxController {
     subjectList = globalSubjectList
         .where(
           (element) => element.admin?.id == admin?.id,
-    )
+        )
         .toList();
+    subjectList.sort((a, b) => a.id.compareTo(b.id));
   }
 
   Future<void> writeSubjectData({

@@ -65,7 +65,7 @@ class _AdminDashboardHelperViewState extends State<AdminDashboardHelperView> {
         automaticallyImplyLeading: false,
         centerTitle: false,
         title: AppTextTheme.textSize16(
-          label: 'Welcome ${widget.admin?.name}',
+          label: 'Welcome, ${widget.admin?.name}',
           color: AppColors.white,
         ),
         actions: [

@@ -19,4 +19,7 @@ class AssetsPaths {
   static const String attendanceSVG = 'assets/svg/attendance_svg.svg';
   static const String notesSVG = 'assets/svg/notes_svg.svg';
   static const String studentsSVG = 'assets/svg/student_svg.svg';
+  static const String informationSVG = 'assets/svg/information_svg.svg';
+  static const String callOutSVG = 'assets/svg/call_out_svg.svg';
+  static const String pdfSVG = 'assets/svg/pdf_svg.svg';
 }

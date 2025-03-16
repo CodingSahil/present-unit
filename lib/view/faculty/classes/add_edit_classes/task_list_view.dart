@@ -236,8 +236,11 @@ class _TaskListViewState extends State<TaskListView> {
                         ),
                         decoration: BoxDecoration(
                           color: AppColors.white,
-                          borderRadius: BorderRadius.circular(
-                            Dimens.radius15,
+                          borderRadius: BorderRadius.only(
+                            topLeft: index == 0 ? Radius.circular(Dimens.radius15) : Radius.zero,
+                            topRight: index == 0 ? Radius.circular(Dimens.radius15) : Radius.zero,
+                            bottomLeft: index == taskList.length - 1 ? Radius.circular(Dimens.radius15) : Radius.zero,
+                            bottomRight: index == taskList.length - 1 ? Radius.circular(Dimens.radius15) : Radius.zero,
                           ),
                         ),
                         child: Row(

@@ -3,3 +3,9 @@ enum FacultyUserModules {
   classes,
   assignment,
 }
+
+enum StudentStatus {
+  present,
+  absent,
+  none,
+}

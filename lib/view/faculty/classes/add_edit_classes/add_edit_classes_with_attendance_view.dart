@@ -163,6 +163,9 @@ class _AddEditClassesWithAttendanceViewState extends State<AddEditClassesWithAtt
                         context: context,
                         title: 'Select Class',
                         listOfItems: classesWithAttendanceController.classList
+                            .where(
+                              (element) => faculty != null && faculty!.courseList != null && faculty!.courseList!.any((elementInner) => elementInner.id == element.course?.id),
+                            )
                             .map(
                               (e) => BottomSheetSelectionModel(
                                 id: e.id,
@@ -192,6 +195,10 @@ class _AddEditClassesWithAttendanceViewState extends State<AddEditClassesWithAtt
                         context: context,
                         title: 'Select Subject',
                         listOfItems: classesWithAttendanceController.subjectList
+                            .where((element) {
+                              ClassListModel temp = classesWithAttendanceController.classList.singleWhere((element) => element.id == selectedClassList?.id);
+                              return temp.course?.id == element.course?.id;
+                            })
                             .map(
                               (e) => BottomSheetSelectionModel(
                                 id: e.id,

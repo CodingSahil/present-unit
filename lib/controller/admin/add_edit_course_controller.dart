@@ -38,6 +38,7 @@ class AddEditCourseController extends GetxController {
           (element) => element.admin?.id == admin?.id,
         )
         .toList();
+    courseList.sort((a, b) => a.id.compareTo(b.id));
   }
 
   Future<void> writeCourseData({

@@ -27,6 +27,7 @@ class AddEditClassListController extends GetxController {
           (element) => element.admin?.id == admin?.id,
         )
         .toList();
+    classList.sort((a, b) => a.id.compareTo(b.id));
   }
 
   Future<void> getListOfStudentList() async {

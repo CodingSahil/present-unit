@@ -12,6 +12,7 @@ import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/database/storage_keys.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
 import 'package:present_unit/helpers/extension/form_field_extension.dart';
+import 'package:present_unit/helpers/get_new_id.dart';
 import 'package:present_unit/helpers/labels/label_strings.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
@@ -73,9 +74,7 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor,
       appBar: commonAppBarPreferred(
-        label: widget.arguments != null
-            ? LabelStrings.editCourse
-            : LabelStrings.addCourse,
+        label: widget.arguments != null ? LabelStrings.editCourse : LabelStrings.addCourse,
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(
@@ -96,14 +95,8 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
             LabeledTextFormField(
               controller: courseDurationController,
               hintText: LabelStrings.enterCourseDuration,
-              isError: isError &&
-                  (courseDurationController.text.isEmpty ||
-                      courseDurationController.convertToNum() == 0 ||
-                      courseDurationController.convertToNum() > 10),
-              errorMessage:
-                  isError && courseDurationController.convertToNum() > 10
-                      ? LabelStrings.enterProperDuration
-                      : null,
+              isError: isError && (courseDurationController.text.isEmpty || courseDurationController.convertToNum() == 0 || courseDurationController.convertToNum() > 10),
+              errorMessage: isError && courseDurationController.convertToNum() > 10 ? LabelStrings.enterProperDuration : null,
               onChanged: (value) {
                 setState(() {});
               },
@@ -126,8 +119,7 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
                 }
                 addEditCourseController.submitLoader(true);
 
-                dynamic storedData = addEditCourseController.getStorage
-                    .read(StorageKeys.adminDetails);
+                dynamic storedData = addEditCourseController.getStorage.read(StorageKeys.adminDetails);
                 if (courseNavigation != null) {
                   Admin? admin = courseNavigation!.admin;
                   if (admin != null) {
@@ -144,8 +136,7 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
                   );
 
                   if (addEditCourseController.globalCourseList.any(
-                    (element) =>
-                        element.name.toLowerCase() == course.name.toLowerCase(),
+                    (element) => element.name.toLowerCase() == course.name.toLowerCase(),
                   )) {
                     showErrorSnackBar(
                       context: context,
@@ -158,36 +149,42 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
                     course: course,
                   );
                 } else {
-                  Admin admin =
-                      storedData != null && storedData.toString().isNotEmpty
-                          ? Admin.fromJson(
-                              jsonDecode(storedData.toString()),
-                            )
-                          : Admin.empty();
-                  admin = admin.copyWith(
-                    college: College.empty(),
-                  );
+                  Admin admin = storedData != null && storedData.toString().isNotEmpty
+                      ? Admin.fromJson(
+                          jsonDecode(storedData.toString()),
+                        )
+                      : Admin.empty();
                   Course course = Course(
-                    id: addEditCourseController.globalCourseList.isNotEmpty
-                        ? addEditCourseController.globalCourseList.length + 1
-                        : 1,
+                    id: getNewID(addEditCourseController.globalCourseList
+                        .map(
+                          (e) => e.id,
+                        )
+                        .toList()),
                     name: courseNameController.text.trim(),
                     duration: courseDurationController.convertToNum(),
-                    documentID:
-                        '${courseNameController.text.trim().replaceAll(RegExp(r'[.\s]'), '')}${admin.id != -1000 ? '_${admin.id}' : ''}_${admin.email.split("@").first.replaceAll(
-                              ".",
-                              "",
-                            )}',
+                    documentID: '${courseNameController.text.trim().replaceAll(RegExp(r'[.\s]'), '')}${admin.id != -1000 ? '_${admin.id}' : ''}_${admin.email.split("@").first.replaceAll(
+                          ".",
+                          "",
+                        )}',
                     admin: admin,
                   );
 
-                  if (addEditCourseController.globalCourseList.any(
-                    (element) =>
-                        element.name.toLowerCase() == course.name.toLowerCase(),
+                  /// if course is already exist in list , college specific
+                  if (addEditCourseController.courseList.any(
+                    (element) => element.name.toLowerCase() == course.name.toLowerCase(),
                   )) {
                     showErrorSnackBar(
                       context: context,
                       title: 'Course is already exist!',
+                    );
+                    addEditCourseController.submitLoader(false);
+                    return;
+                  }
+
+                  if (addEditCourseController.courseList.length == admin.college.noOfCourses) {
+                    showErrorSnackBar(
+                      context: context,
+                      title: 'You reached your limit of entering course',
                     );
                     addEditCourseController.submitLoader(false);
                     return;
@@ -209,10 +206,7 @@ class _AddEditCourseViewState extends State<AddEditCourseView> {
                   () => addEditCourseController.submitLoader.value
                       ? const ButtonLoader()
                       : AppTextTheme.textSize16(
-                          label: courseNavigation != null &&
-                                  widget.arguments != null
-                              ? LabelStrings.update
-                              : LabelStrings.add,
+                          label: courseNavigation != null && widget.arguments != null ? LabelStrings.update : LabelStrings.add,
                           color: AppColors.white,
                         ),
                 ),

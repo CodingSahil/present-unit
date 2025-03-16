@@ -8,11 +8,13 @@ import 'package:present_unit/helper-widgets/app-bar/app_bar.dart';
 import 'package:present_unit/helper-widgets/bottom-sheet/bottom_sheet.dart';
 import 'package:present_unit/helper-widgets/buttons/submit_button.dart';
 import 'package:present_unit/helper-widgets/loader/loader.dart';
+import 'package:present_unit/helper-widgets/snackbar/snackbar.dart';
 import 'package:present_unit/helper-widgets/text-field/labled_textform_field.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
 import 'package:present_unit/helpers/extension/form_field_extension.dart';
 import 'package:present_unit/helpers/extension/string_print.dart';
+import 'package:present_unit/helpers/get_new_id.dart';
 import 'package:present_unit/helpers/labels/label_strings.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
@@ -20,6 +22,7 @@ import 'package:present_unit/models/course/course_model.dart';
 import 'package:present_unit/models/navigation_models/admin/admin_navigation_models.dart';
 import 'package:present_unit/models/navigation_models/common_models/bottomsheet_selection_model.dart';
 import 'package:present_unit/models/subject/subject_model.dart';
+import 'package:present_unit/view/splash_view.dart';
 
 class AddEditSubjectView extends StatefulWidget {
   const AddEditSubjectView({
@@ -63,6 +66,10 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
         await addEditCourseController.getListOfCourse();
+        await addEditSubjectController.getListOfSubject();
+        if (userDetails != null && userDetails!.admin != null) {
+          addEditSubjectController.admin = userDetails!.admin;
+        }
       },
     );
 
@@ -81,6 +88,7 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
           );
         }
       }
+      log('subjectNavigation != null => ${subjectNavigation != null}');
     }
   }
 
@@ -98,57 +106,7 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
         ),
         child: ListView(
           children: [
-            LabeledTextFormField(
-              controller: subjectNameController,
-              hintText: 'Enter Subject Name',
-              isError: isError && subjectNameController.text.isEmpty,
-              onChanged: (value) {
-                setState(() {});
-              },
-            ),
-            SizedBox(height: Dimens.height30),
-            LabeledTextFormField(
-              controller: subjectCreditController,
-              hintText: 'Enter Subject Credit',
-              isError: isError &&
-                  (subjectCreditController.text.isEmpty ||
-                      subjectCreditController.convertToNum() == 0 ||
-                      subjectCreditController.convertToNum() > 10),
-              errorMessage:
-                  isError && subjectCreditController.convertToNum() > 10
-                      ? 'Enter proper credit'
-                      : null,
-              onChanged: (value) {
-                setState(() {});
-              },
-              textInputType: TextInputType.number,
-            ),
-            SizedBox(height: Dimens.height30),
-            LabeledTextFormField(
-              controller: semesterController,
-              hintText: 'Enter Semester',
-              isError: isError &&
-                  (semesterController.text.isEmpty ||
-                      semesterController.convertToNum() == 0 ||
-                      semesterController.convertToNum() > 10),
-              errorMessage: isError && semesterController.convertToNum() > 10
-                  ? 'Enter proper semester'
-                  : null,
-              onChanged: (value) {
-                setState(() {});
-              },
-              textInputType: TextInputType.number,
-            ),
-            SizedBox(height: Dimens.height30),
-            LabeledTextFormField(
-              controller: subjectCodeController,
-              hintText: 'Enter Subject Code',
-              isError: isError && subjectCodeController.text.isEmpty,
-              onChanged: (value) {
-                setState(() {});
-              },
-            ),
-            SizedBox(height: Dimens.height30),
+            /// select course
             StatefulBuilder(builder: (context, setInnerState) {
               return GestureDetector(
                 behavior: HitTestBehavior.translucent,
@@ -159,25 +117,25 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
                     listOfItems: addEditCourseController.courseList
                         .map(
                           (e) => BottomSheetSelectionModel(
-                            id: e.id,
-                            name: e.name,
-                          ),
-                        )
+                        id: e.id,
+                        name: e.name,
+                      ),
+                    )
                         .toList(),
                     selectValue: selectedCourse != null
                         ? BottomSheetSelectionModel(
-                            id: selectedCourse!.id,
-                            name: selectedCourse!.name,
-                          )
+                      id: selectedCourse!.id,
+                      name: selectedCourse!.name,
+                    )
                         : null,
                     onSubmit: (selectValue) {
                       setState(() {
                         selectedCourse = addEditCourseController.courseList.any(
-                          (element) => element.id == selectValue.id,
+                              (element) => element.id == selectValue.id,
                         )
                             ? addEditCourseController.courseList.singleWhere(
-                                (element) => element.id == selectValue.id,
-                              )
+                              (element) => element.id == selectValue.id,
+                        )
                             : null;
                       });
                     },
@@ -189,9 +147,7 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
                       Dimens.radius16,
                     ),
                     border: Border.all(
-                      color: isError && selectedCourse == null
-                          ? AppColors.red
-                          : AppColors.black,
+                      color: isError && selectedCourse == null ? AppColors.red : AppColors.black.withAlpha((255 * 0.4).toInt()),
                       width: isError && selectedCourse == null ? 1 : 0.75,
                     ),
                   ),
@@ -203,9 +159,7 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       AppTextTheme.textSize14(
-                        label: selectedCourse != null
-                            ? selectedCourse!.name
-                            : 'Select Course',
+                        label: selectedCourse != null ? selectedCourse!.name : 'Select Course',
                         color: AppColors.black.withAlpha(
                           (255 * 0.7).toInt(),
                         ),
@@ -220,6 +174,47 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
                 ),
               );
             }),
+            SizedBox(height: Dimens.height30),
+            LabeledTextFormField(
+              controller: subjectCodeController,
+              hintText: 'Enter Subject Code',
+              isError: isError && subjectCodeController.text.isEmpty,
+              onChanged: (value) {
+                setState(() {});
+              },
+            ),
+            SizedBox(height: Dimens.height30),
+            LabeledTextFormField(
+              controller: subjectNameController,
+              hintText: 'Enter Subject Name',
+              isError: isError && subjectNameController.text.isEmpty,
+              onChanged: (value) {
+                setState(() {});
+              },
+            ),
+            SizedBox(height: Dimens.height30),
+            LabeledTextFormField(
+              controller: semesterController,
+              hintText: 'Enter Semester',
+              isError: isError && (semesterController.text.isEmpty || semesterController.convertToNum() == 0 || semesterController.convertToNum() > 10),
+              errorMessage: isError && semesterController.convertToNum() > 10 ? 'Enter proper semester' : null,
+              onChanged: (value) {
+                setState(() {});
+              },
+              textInputType: TextInputType.number,
+            ),
+            SizedBox(height: Dimens.height30),
+            LabeledTextFormField(
+              controller: subjectCreditController,
+              hintText: 'Enter Subject Credit',
+              isError: isError && (subjectCreditController.text.isEmpty || subjectCreditController.convertToNum() == 0 || subjectCreditController.convertToNum() > 10),
+              errorMessage: isError && subjectCreditController.convertToNum() > 10 ? 'Enter proper credit' : null,
+              onChanged: (value) {
+                setState(() {});
+              },
+              textInputType: TextInputType.number,
+            ),
+
             SizedBox(height: Dimens.height60),
             GestureDetector(
               behavior: HitTestBehavior.translucent,
@@ -238,13 +233,13 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
                 if (isError) {
                   return;
                 }
+
                 addEditSubjectController.submitLoader(true);
 
                 if (subjectNavigation != null) {
                   Course? course = selectedCourse;
                   if (addEditSubjectController.admin != null) {
-                    addEditSubjectController.admin =
-                        addEditSubjectController.admin!.copyWith(
+                    addEditSubjectController.admin = addEditSubjectController.admin!.copyWith(
                       college: College.empty(),
                     );
                   }
@@ -258,23 +253,36 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
                     course: course,
                     admin: addEditSubjectController.admin,
                   );
+
+                  if (addEditSubjectController.subjectList.any(
+                    (e) => e.course?.id == course?.id && e.subjectCode == subjectCodeController.text,
+                  )) {
+                    showErrorSnackBar(
+                      context: context,
+                      title: 'Subject code is already present',
+                    );
+                    addEditSubjectController.submitLoader(false);
+                    return;
+                  }
                   await addEditSubjectController.updateSubjectData(
                     subject: subject,
                   );
                 } else {
                   if (addEditSubjectController.admin != null) {
-                    addEditSubjectController.admin =
-                        addEditSubjectController.admin!.copyWith(
+                    addEditSubjectController.admin = addEditSubjectController.admin!.copyWith(
                       college: College.empty(),
                     );
                   }
-                  log('message');
                   Course? course = selectedCourse;
 
                   Subject subject = Subject(
                     documentID:
                         '${subjectNameController.text.trim().toLowerCase().replaceAll(RegExp(r'[.\s]'), '')}${addEditSubjectController.admin != null && addEditSubjectController.admin!.id != -1000 ? '_${addEditSubjectController.admin!.id}_${addEditSubjectController.admin!.name.trim().toLowerCase().replaceAll(RegExp(r'[.\s]'), '')}' : 'temp${addEditSubjectController.globalSubjectList.length + 1}'}',
-                    id: addEditSubjectController.globalSubjectList.length + 1,
+                    id: getNewID(addEditSubjectController.globalSubjectList
+                        .map(
+                          (e) => e.id,
+                        )
+                        .toList()),
                     name: subjectNameController.text.trim(),
                     credit: subjectCreditController.convertToNum(),
                     semester: semesterController.convertToNum(),
@@ -282,6 +290,17 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
                     course: course,
                     admin: addEditSubjectController.admin,
                   );
+
+                  if (addEditSubjectController.subjectList.any(
+                    (e) => e.course?.id == course?.id && e.subjectCode == subjectCodeController.text,
+                  )) {
+                    showErrorSnackBar(
+                      context: context,
+                      title: 'Subject code is already present',
+                    );
+                    addEditSubjectController.submitLoader(false);
+                    return;
+                  }
                   if (course != null) {
                     await addEditSubjectController.writeSubjectData(
                       subject: subject,
@@ -300,10 +319,7 @@ class _AddEditSubjectViewState extends State<AddEditSubjectView> {
                   () => addEditSubjectController.submitLoader.value
                       ? const ButtonLoader()
                       : AppTextTheme.textSize16(
-                          label: subjectNavigation != null &&
-                                  widget.arguments != null
-                              ? LabelStrings.update
-                              : LabelStrings.add,
+                          label: subjectNavigation != null && widget.arguments != null ? LabelStrings.update : LabelStrings.add,
                           color: AppColors.white,
                         ),
                 ),

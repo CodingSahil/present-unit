@@ -235,6 +235,7 @@ class _AddEditAssignmentViewState extends State<AddEditAssignmentView> {
                         color: AppColors.black,
                         size: Dimens.height36,
                       ),
+                      // underline: null,
                       items: [
                         DropdownMenuItem<AssignmentType>(
                           value: AssignmentType.assignment,

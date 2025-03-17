@@ -258,9 +258,11 @@ class LectureDetailsOnHomePage extends StatelessWidget {
                 color: AppColors.black,
               ),
               SizedBox(width: Dimens.width16),
-              AppTextTheme.textSize15(
-                label: className,
-                color: AppColors.black,
+              Expanded(
+                child: AppTextTheme.textSize15(
+                  label: className,
+                  color: AppColors.black,
+                ),
               ),
               // Container(
               //   width: Dimens.width1,
@@ -274,23 +276,29 @@ class LectureDetailsOnHomePage extends StatelessWidget {
               //     ),
               //   ),
               // ),
-              const Spacer(),
+              // const Spacer(),
               SizedBox(width: Dimens.width24),
-              AppTextTheme.textSize15(
-                label: startTime,
-                color: AppColors.black,
-              ),
-              SizedBox(width: Dimens.width8),
-              Icon(
-                Icons.arrow_forward,
-                color: AppColors.black,
-                size: Dimens.height24,
-              ),
-              SizedBox(width: Dimens.width8),
-              AppTextTheme.textSize15(
-                label: endTime,
-                color: AppColors.black,
-              ),
+              Expanded(
+                child: Row(
+                  children: [
+                    AppTextTheme.textSize15(
+                      label: startTime,
+                      color: AppColors.black,
+                    ),
+                    SizedBox(width: Dimens.width8),
+                    Icon(
+                      Icons.arrow_forward,
+                      color: AppColors.black,
+                      size: Dimens.height24,
+                    ),
+                    SizedBox(width: Dimens.width8),
+                    AppTextTheme.textSize15(
+                      label: endTime,
+                      color: AppColors.black,
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
         ),

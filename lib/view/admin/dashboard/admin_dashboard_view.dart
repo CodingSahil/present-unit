@@ -136,10 +136,19 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AppTextTheme.textSize32(
-                    label: 'PresentUnit',
-                    color: AppColors.primaryColor,
-                    fontWeight: FontWeight.w600,
+                  Row(
+                    children: [
+                      AppTextTheme.textSize32(
+                        label: 'Present',
+                        color: AppColors.primaryColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      AppTextTheme.textSize32(
+                        label: 'Unit',
+                        color: Color(0xfffcb103),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ],
                   ),
                   SizedBox(height: Dimens.height18),
                   if (isAdminDetailsFilled)

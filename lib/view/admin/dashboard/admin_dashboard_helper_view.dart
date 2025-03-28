@@ -47,12 +47,8 @@ class _AdminDashboardHelperViewState extends State<AdminDashboardHelperView> {
         return LabelStrings.home;
       case AdminBottomNavigationBarEnums.course:
         return LabelStrings.course;
-      case AdminBottomNavigationBarEnums.classList:
-        return LabelStrings.classList;
       case AdminBottomNavigationBarEnums.faculty:
         return LabelStrings.faculty;
-      case AdminBottomNavigationBarEnums.subject:
-        return LabelStrings.subject;
     }
   }
 

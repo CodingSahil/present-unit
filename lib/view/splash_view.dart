@@ -9,6 +9,7 @@ import 'package:present_unit/helpers/database/storage_keys.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
 import 'package:present_unit/helpers/extension/string_print.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
+import 'package:present_unit/models/class_list/class_list_models.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
 import 'package:present_unit/models/faculty/faculty_model.dart';
 import 'package:present_unit/models/navigation_models/common_models/authentication_classes.dart';
@@ -46,20 +47,24 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
         var facultyDetails = await getStorage.read(
           StorageKeys.facultyDetails,
         );
+        var studentDetails = await getStorage.read(
+          StorageKeys.studentDetails,
+        );
         var userType = await getStorage.read(
           StorageKeys.userType,
         );
 
-        adminDetails.toString().logOnString('adminDetails');
         '$userType && ${userType.runtimeType}'.logOnString('userType');
         if (adminDetails != null) {
           userDetails = UserDetails(
             admin: Admin.fromJson(
               jsonDecode(
                 adminDetails,
-              ),'',
+              ),
+              '',
             ),
             faculty: null,
+            student: null,
             userType: fetchUserType(
               userTypeString: userType.toString(),
             ),
@@ -72,7 +77,7 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
           );
           loader(false);
 
-          if (adminDetails != null && adminDetails.isNotEmpty) {
+          if (adminDetails != null && adminDetails.isNotEmpty && userDetails != null && userDetails!.admin != null) {
             Get.offAllNamed(Routes.adminDashboard);
           } else {
             Get.offAllNamed(Routes.login);
@@ -82,6 +87,32 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
             admin: null,
             faculty: Faculty.fromJson(
               jsonDecode(facultyDetails),
+              '',
+            ),
+            student: null,
+            userType: fetchUserType(
+              userTypeString: userType.toString(),
+            ),
+          );
+
+          await Future.delayed(
+            const Duration(
+              milliseconds: 1500,
+            ),
+          );
+          loader(false);
+
+          if (facultyDetails != null && facultyDetails.isNotEmpty && userDetails != null && userDetails!.faculty != null) {
+            Get.offAllNamed(Routes.facultyDashboard);
+          } else {
+            Get.offAllNamed(Routes.login);
+          }
+        } else if (studentDetails != null) {
+          userDetails = UserDetails(
+            admin: null,
+            faculty: null,
+            student: Student.fromJson(
+              jsonDecode(studentDetails),
               '',
             ),
             userType: fetchUserType(
@@ -96,8 +127,8 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
           );
           loader(false);
 
-          if (facultyDetails != null && facultyDetails.isNotEmpty && userDetails != null) {
-            Get.offAllNamed(Routes.facultyDashboard);
+          if (studentDetails != null && studentDetails.isNotEmpty && userDetails != null && userDetails!.student != null) {
+            Get.offAllNamed(Routes.studentDashboardView);
           } else {
             Get.offAllNamed(Routes.login);
           }

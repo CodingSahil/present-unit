@@ -1,4 +1,5 @@
 import 'package:present_unit/helpers/enum/common_enums.dart';
+import 'package:present_unit/models/class_list/class_list_models.dart';
 import 'package:present_unit/models/college_registration/college_registration_models.dart';
 import 'package:present_unit/models/faculty/faculty_model.dart';
 
@@ -6,17 +7,20 @@ class UserDetails {
   UserDetails({
     required this.admin,
     required this.faculty,
+    required this.student,
     required this.userType,
   });
 
   UserDetails copyWith({
     Admin? admin,
     Faculty? faculty,
+    Student? student,
     UserType? userType,
   }) {
     return UserDetails(
       admin: admin ?? this.admin,
       faculty: faculty ?? this.faculty,
+      student: student ?? this.student,
       userType: userType ?? this.userType,
     );
   }
@@ -24,12 +28,14 @@ class UserDetails {
   factory UserDetails.clean() => UserDetails(
         admin: null,
         faculty: null,
+        student: null,
         userType: UserType.none,
       );
 
-  Admin? admin;
-  Faculty? faculty;
-  UserType? userType;
+  final Admin? admin;
+  final Faculty? faculty;
+  final Student? student;
+  final UserType? userType;
 }
 
 UserType fetchUserType({

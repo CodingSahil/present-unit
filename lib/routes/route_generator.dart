@@ -22,6 +22,7 @@ import 'package:present_unit/view/faculty/dashboard/lecture_common_list_view.dar
 import 'package:present_unit/view/login_view.dart';
 import 'package:present_unit/view/pdf_view.dart';
 import 'package:present_unit/view/splash_view.dart';
+import 'package:present_unit/view/student/dashboard/student_dashboard_view.dart';
 
 class RouteGenerator {
   static Route<dynamic>? onGenerate(RouteSettings settings) {
@@ -183,6 +184,11 @@ class RouteGenerator {
           builder: (context) => AssignmentCommonListView(
             arguments: arguments,
           ),
+        );
+
+      case Routes.studentDashboardView:
+        return MaterialPageRoute(
+          builder: (context) => const StudentDashboardView(),
         );
 
       default:

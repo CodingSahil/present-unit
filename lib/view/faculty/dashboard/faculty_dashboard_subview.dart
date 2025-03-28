@@ -264,24 +264,12 @@ class LectureDetailsOnHomePage extends StatelessWidget {
                   color: AppColors.black,
                 ),
               ),
-              // Container(
-              //   width: Dimens.width1,
-              //   height: Dimens.height30,
-              //   decoration: BoxDecoration(
-              //     color: AppColors.black.withAlpha(
-              //       (255 * 0.4).toInt(),
-              //     ),
-              //     borderRadius: BorderRadius.circular(
-              //       Dimens.radius10,
-              //     ),
-              //   ),
-              // ),
-              // const Spacer(),
-              SizedBox(width: Dimens.width24),
+              SizedBox(width: Dimens.width12),
               Expanded(
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    AppTextTheme.textSize15(
+                    AppTextTheme.textSize14(
                       label: startTime,
                       color: AppColors.black,
                     ),
@@ -292,7 +280,7 @@ class LectureDetailsOnHomePage extends StatelessWidget {
                       size: Dimens.height24,
                     ),
                     SizedBox(width: Dimens.width8),
-                    AppTextTheme.textSize15(
+                    AppTextTheme.textSize14(
                       label: endTime,
                       color: AppColors.black,
                     ),

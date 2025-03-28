@@ -6,7 +6,6 @@ import 'package:present_unit/controller/admin/class_list_controller.dart';
 import 'package:present_unit/controller/admin/course_controller.dart';
 import 'package:present_unit/controller/admin/faculty_controller.dart';
 import 'package:present_unit/controller/admin/subject_controller.dart';
-import 'package:present_unit/helper-widgets/bottom_nav_bar.dart';
 import 'package:present_unit/helper-widgets/buttons/submit_button.dart';
 import 'package:present_unit/helper-widgets/loader/loader.dart';
 import 'package:present_unit/helpers/assets_path/assets_path.dart';
@@ -54,11 +53,8 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
     classListController = Get.find<ClassListController>();
     subjectController = Get.find<SubjectController>();
 
-
-
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
-
         loader(true);
         await courseController.getListOfCourse();
         await facultyController.getListOfFaculty();
@@ -79,12 +75,8 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
         return LabelStrings.home;
       case AdminBottomNavigationBarEnums.course:
         return LabelStrings.course;
-      case AdminBottomNavigationBarEnums.classList:
-        return LabelStrings.classList;
       case AdminBottomNavigationBarEnums.faculty:
         return LabelStrings.faculty;
-      case AdminBottomNavigationBarEnums.subject:
-        return LabelStrings.subject;
     }
   }
 
@@ -96,12 +88,8 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
         return AssetsPaths.homeSVG;
       case AdminBottomNavigationBarEnums.course:
         return AssetsPaths.courseSVG;
-      case AdminBottomNavigationBarEnums.classList:
-        return AssetsPaths.homeSVG;
       case AdminBottomNavigationBarEnums.faculty:
         return AssetsPaths.facultySVG;
-      case AdminBottomNavigationBarEnums.subject:
-        return AssetsPaths.homeSVG;
     }
   }
 
@@ -354,16 +342,14 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                                 height: Dimens.height34,
                                 width: Dimens.width34,
                                 colorFilter: ColorFilter.mode(
-                                  AppColors.black
-                                      .withAlpha((255 * 0.4).toInt()),
+                                  AppColors.black.withAlpha((255 * 0.4).toInt()),
                                   BlendMode.srcIn,
                                 ),
                               ),
                               SizedBox(width: Dimens.width24),
                               AppTextTheme.textSize16(
                                 label: 'Change Password',
-                                color: AppColors.black
-                                    .withAlpha((255 * 0.4).toInt()),
+                                color: AppColors.black.withAlpha((255 * 0.4).toInt()),
                               ),
                             ],
                           ),
@@ -418,19 +404,85 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
           ),
         ),
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        children: [
-          iconAndTitleHelper(
-            bottomNavigationBarEnums: AdminBottomNavigationBarEnums.home,
-            numberOfTab: 3,
+      bottomNavigationBar: NavigationBar(
+        backgroundColor: AppColors.bottomNavigationBarColor,
+        indicatorColor: AppColors.primaryColor,
+        selectedIndex: selectedIndex,
+        onDestinationSelected: (value) => setState(() {
+          selectedIndex = value;
+          if (value == 0) {
+            selectTab = AdminBottomNavigationBarEnums.home;
+          }
+          if (value == 1) {
+            selectTab = AdminBottomNavigationBarEnums.course;
+          }
+          if (value == 2) {
+            selectTab = AdminBottomNavigationBarEnums.faculty;
+          }
+        }),
+        destinations: [
+          NavigationDestination(
+            icon: SvgPicture.asset(
+              AssetsPaths.homeSVG,
+              height: Dimens.height40,
+              width: Dimens.width40,
+              colorFilter: ColorFilter.mode(
+                AppColors.unselectedColor,
+                BlendMode.srcIn,
+              ),
+            ),
+            selectedIcon: SvgPicture.asset(
+              AssetsPaths.homeSVG,
+              height: Dimens.height40,
+              width: Dimens.width40,
+              colorFilter: ColorFilter.mode(
+                AppColors.white,
+                BlendMode.srcIn,
+              ),
+            ),
+            label: 'Home',
           ),
-          iconAndTitleHelper(
-            bottomNavigationBarEnums: AdminBottomNavigationBarEnums.course,
-            numberOfTab: 3,
+          NavigationDestination(
+            icon: SvgPicture.asset(
+              AssetsPaths.courseSVG,
+              height: Dimens.height40,
+              width: Dimens.width40,
+              colorFilter: ColorFilter.mode(
+                AppColors.unselectedColor,
+                BlendMode.srcIn,
+              ),
+            ),
+            selectedIcon: SvgPicture.asset(
+              AssetsPaths.courseSVG,
+              height: Dimens.height40,
+              width: Dimens.width40,
+              colorFilter: ColorFilter.mode(
+                AppColors.white,
+                BlendMode.srcIn,
+              ),
+            ),
+            label: 'Course',
           ),
-          iconAndTitleHelper(
-            bottomNavigationBarEnums: AdminBottomNavigationBarEnums.faculty,
-            numberOfTab: 3,
+          NavigationDestination(
+            icon: SvgPicture.asset(
+              AssetsPaths.facultySVG,
+              height: Dimens.height40,
+              width: Dimens.width40,
+              colorFilter: ColorFilter.mode(
+                AppColors.unselectedColor,
+                BlendMode.srcIn,
+              ),
+            ),
+            selectedIcon: SvgPicture.asset(
+              AssetsPaths.facultySVG,
+              height: Dimens.height40,
+              width: Dimens.width40,
+              colorFilter: ColorFilter.mode(
+                AppColors.white,
+                BlendMode.srcIn,
+              ),
+            ),
+            label: 'Faculty',
           ),
         ],
       ),
@@ -535,22 +587,6 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
       case AdminBottomNavigationBarEnums.faculty:
         return const FacultyView(
           isInDashboard: true,
-        );
-
-      default:
-        return AdminDashboardHelperView(
-          selectTab: bottomNavigationBarEnums,
-          admin: admin,
-          totalStudents: totalStudents,
-          totalCourses: totalCourses,
-          totalFaculty: totalFaculty,
-          totalSubject: totalSubject,
-          totalClass: totalClass,
-          onSelectionOfNewTab: (passedValue) {
-            setState(() {
-              selectTab = passedValue;
-            });
-          },
         );
     }
   }

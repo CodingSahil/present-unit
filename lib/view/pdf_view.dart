@@ -30,6 +30,7 @@ class _PdfViewState extends State<PdfView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.scaffoldBgColor,
       appBar: commonAppBarPreferred(
         label: 'PDF Viewer',
       ),

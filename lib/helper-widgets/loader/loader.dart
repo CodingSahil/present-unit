@@ -26,16 +26,23 @@ class Loader extends StatelessWidget {
 class ButtonLoader extends StatelessWidget {
   const ButtonLoader({
     super.key,
+    this.loaderColor,
+    this.height,
+    this.width,
   });
+
+  final Color? loaderColor;
+  final double? height;
+  final double? width;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: Dimens.height24,
-      width: Dimens.width24,
+      height: height ?? Dimens.height24,
+      width: width ?? Dimens.width24,
       child: Center(
         child: Loader(
-          color: AppColors.white,
+          color: loaderColor ?? AppColors.white,
         ),
       ),
     );

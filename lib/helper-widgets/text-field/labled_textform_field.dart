@@ -117,6 +117,7 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
       decoration: InputDecoration(
         contentPadding: widget.contentPadding,
         filled: !widget.enable,
+        fillColor: Colors.transparent,
         labelText: widget.labelText != null && widget.labelText!.isNotEmpty ? '${widget.labelText} ${widget.isOptionalFields ? '(Optional)' : ''}' : null,
         hintText: widget.hintText,
         errorText: widget.isError ? widget.errorMessage ?? '${widget.hintText} is required' : null,
@@ -228,10 +229,8 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
           borderRadius: BorderRadius.circular(
             Dimens.radius20,
           ),
-          borderSide: BorderSide(
-            color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
-            width: Dimens.width1,
-          ),
+
+          borderSide: BorderSide.none,
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(

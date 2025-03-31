@@ -14,6 +14,7 @@ import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/date-time-convert/date_time_conversion.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
 import 'package:present_unit/helpers/extension/string_print.dart';
+import 'package:present_unit/helpers/get_new_id.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
 import 'package:present_unit/models/class_list/class_list_models.dart';
 import 'package:present_unit/models/class_list_for_attendance/class_list_for_attendance.dart';
@@ -135,6 +136,7 @@ class _AddEditClassesWithAttendanceViewState extends State<AddEditClassesWithAtt
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.scaffoldBgColor,
       appBar: commonAppBarPreferred(
         label: widget.arguments != null && widget.arguments is ClassesForAttendanceModel ? 'Edit Lecture' : 'Add Lecture',
         isAdd: false,
@@ -273,29 +275,47 @@ class _AddEditClassesWithAttendanceViewState extends State<AddEditClassesWithAtt
                   SizedBox(height: Dimens.height36),
 
                   /// select date
+
                   GestureDetector(
                     behavior: HitTestBehavior.translucent,
                     onTap: () async {
-                      selectedDate = await showDatePicker(
+                      if (selectedDate != null) {
+                        selectedDate!.difference(DateTime.now()).inDays.toString().logOnString('difference => ');
+                      }
+                      DateTime? result = await showDatePicker(
                         context: context,
-                        firstDate: DateTime.now(),
+                        firstDate: selectedDate != null && selectedDate!.difference(DateTime.now()).inDays < 0 ? selectedDate! : DateTime.now(),
                         lastDate: DateTime(DateTime.now().year + 1),
                         currentDate: selectedDate,
                         initialDate: selectedDate,
                       );
-                      if (selectedDate != null) {
-                        dateOfLectureController.text = DateTimeConversion.convertDateIntoString(selectedDate!);
+                      if (result != null) {
+                        selectedDate = result;
+                        if (selectedDate != null) {
+                          dateOfLectureController.text = DateTimeConversion.convertDateIntoString(selectedDate!);
+                        }
+                        setState(() {});
                       }
-                      setState(() {});
                     },
-                    child: LabeledTextFormField(
-                      controller: dateOfLectureController,
-                      hintText: 'Select Lecture Date',
-                      enable: false,
-                      suffix: Icon(
-                        Icons.calendar_month_rounded,
-                        size: Dimens.height32,
-                        color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(
+                          Dimens.radius16,
+                        ),
+                        border: Border.all(
+                          color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
+                          width: 0.5,
+                        ),
+                      ),
+                      child: LabeledTextFormField(
+                        controller: dateOfLectureController,
+                        hintText: 'Select Lecture Date',
+                        enable: false,
+                        suffix: Icon(
+                          Icons.calendar_month_rounded,
+                          size: Dimens.height32,
+                          color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
+                        ),
                       ),
                     ),
                   ),
@@ -317,14 +337,25 @@ class _AddEditClassesWithAttendanceViewState extends State<AddEditClassesWithAtt
                             }
                             setState(() {});
                           },
-                          child: LabeledTextFormField(
-                            controller: startTimeOfLectureController,
-                            hintText: 'Select Start Time',
-                            enable: false,
-                            suffix: Icon(
-                              Icons.access_time_rounded,
-                              size: Dimens.height32,
-                              color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                Dimens.radius16,
+                              ),
+                              border: Border.all(
+                                color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
+                                width: 0.5,
+                              ),
+                            ),
+                            child: LabeledTextFormField(
+                              controller: startTimeOfLectureController,
+                              hintText: 'Select Start Time',
+                              enable: false,
+                              suffix: Icon(
+                                Icons.access_time_rounded,
+                                size: Dimens.height32,
+                                color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
+                              ),
                             ),
                           ),
                         ),
@@ -343,14 +374,25 @@ class _AddEditClassesWithAttendanceViewState extends State<AddEditClassesWithAtt
                             }
                             setState(() {});
                           },
-                          child: LabeledTextFormField(
-                            controller: endTimeOfLectureController,
-                            hintText: 'Select End Time',
-                            enable: false,
-                            suffix: Icon(
-                              Icons.access_time_rounded,
-                              size: Dimens.height32,
-                              color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                Dimens.radius16,
+                              ),
+                              border: Border.all(
+                                color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
+                                width: 0.5,
+                              ),
+                            ),
+                            child: LabeledTextFormField(
+                              controller: endTimeOfLectureController,
+                              hintText: 'Select End Time',
+                              enable: false,
+                              suffix: Icon(
+                                Icons.access_time_rounded,
+                                size: Dimens.height32,
+                                color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
+                              ),
                             ),
                           ),
                         ),
@@ -370,7 +412,9 @@ class _AddEditClassesWithAttendanceViewState extends State<AddEditClassesWithAtt
                           '${selectedSubjectList?.name.replaceAll("-", "_").replaceAll(" ", "_")}_${DateTimeConversion.convertDateIntoString(selectedDate!).replaceAll("-", "_")}_${userDetails?.faculty?.name.replaceAll(" ", "_")}';
                       classesForAttendanceModel = ClassesForAttendanceModel(
                         documentID: documentID,
-                        id: classesWithAttendanceController.globalClassesForAttendanceModel.length + 1,
+                        id: classesWithAttendanceController.globalClassesForAttendanceModel.isNotEmpty
+                            ? int.parse(getNewID(classesWithAttendanceController.globalClassesForAttendanceModel.map((e) => e.id).toList()).toString())
+                            : 1,
                         faculty: faculty ?? Faculty.empty(),
                         subject: classesWithAttendanceController.subjectList.singleWhere(
                           (element) => element.id == selectedSubjectList?.id,
@@ -391,16 +435,86 @@ class _AddEditClassesWithAttendanceViewState extends State<AddEditClassesWithAtt
                         tasks: tasks,
                         description: descriptionController.text,
                       );
+
                       if (widget.arguments != null && widget.arguments is ClassesForAttendanceModel && classesForAttendanceModel != null) {
-                        await classesWithAttendanceController.updateLecture(classesForAttendanceModel!);
-                        Get.back(
-                          result: true,
-                        );
+                        DateTime lectureDateForAttendance = DateTimeConversion.convertStringToDate(classesForAttendanceModel!.lectureDate);
+                        TimeOfDay startingTimeForAttendance = DateTimeConversion.convertStringToTime(classesForAttendanceModel!.startingTime);
+                        TimeOfDay endingTimeForAttendance = DateTimeConversion.convertStringToTime(classesForAttendanceModel!.endingTime);
+
+                        if (classesWithAttendanceController.classesForAttendanceModel.any((element) {
+                          int index = classesWithAttendanceController.classesForAttendanceModel.indexOf(element);
+
+                          DateTime lectureDateTemp = DateTimeConversion.convertStringToDate(element.lectureDate);
+                          TimeOfDay startingTimeTemp = DateTimeConversion.convertStringToTime(element.startingTime);
+                          TimeOfDay endingTimeTemp = DateTimeConversion.convertStringToTime(element.endingTime);
+
+                          bool isLectureDateSame =
+                              lectureDateForAttendance.day == lectureDateTemp.day && lectureDateForAttendance.month == lectureDateTemp.month && lectureDateForAttendance.year == lectureDateTemp.year;
+                          bool isLectureInBetween = checkSameLectureTiming(
+                            index: index,
+                            startTimeFromList: startingTimeTemp,
+                            endTimeFromList: endingTimeTemp,
+                            newStartTime: startingTimeForAttendance,
+                            newEndTime: endingTimeForAttendance,
+                          );
+
+                          return element.id != classesForAttendanceModel!.id &&
+                              element.faculty.id == classesForAttendanceModel!.faculty.id &&
+                              element.subject.id == classesForAttendanceModel!.subject.id &&
+                              element.classDetails.id == classesForAttendanceModel!.classDetails.id &&
+                              isLectureDateSame &&
+                              isLectureInBetween &&
+                              element.isLectureCompleted == classesForAttendanceModel!.isLectureCompleted;
+                        })) {
+                          showErrorSnackBar(
+                            context: context,
+                            title: 'A lecture is already scheduled for this date and time for the class',
+                          );
+                          return;
+                        } else {
+                          await classesWithAttendanceController.updateLecture(classesForAttendanceModel!);
+                          Get.back(
+                            result: true,
+                          );
+                        }
                       } else if (classesForAttendanceModel != null) {
-                        await classesWithAttendanceController.addLecture(classesForAttendanceModel!);
-                        Get.back(
-                          result: true,
-                        );
+                        DateTime lectureDateForAttendance = DateTimeConversion.convertStringToDate(classesForAttendanceModel!.lectureDate);
+                        TimeOfDay startingTimeForAttendance = DateTimeConversion.convertStringToTime(classesForAttendanceModel!.startingTime);
+                        TimeOfDay endingTimeForAttendance = DateTimeConversion.convertStringToTime(classesForAttendanceModel!.endingTime);
+
+                        if (classesWithAttendanceController.classesForAttendanceModel.any((element) {
+                          int index = classesWithAttendanceController.classesForAttendanceModel.indexOf(element);
+
+                          DateTime lectureDateTemp = DateTimeConversion.convertStringToDate(element.lectureDate);
+                          TimeOfDay startingTimeTemp = DateTimeConversion.convertStringToTime(element.startingTime);
+                          TimeOfDay endingTimeTemp = DateTimeConversion.convertStringToTime(element.endingTime);
+
+                          bool isLectureDateSame =
+                              lectureDateForAttendance.day == lectureDateTemp.day && lectureDateForAttendance.month == lectureDateTemp.month && lectureDateForAttendance.year == lectureDateTemp.year;
+                          bool isLectureInBetween = checkSameLectureTiming(
+                            index: index,
+                            startTimeFromList: startingTimeTemp,
+                            endTimeFromList: endingTimeTemp,
+                            newStartTime: startingTimeForAttendance,
+                            newEndTime: endingTimeForAttendance,
+                          );
+
+                          return element.id != classesForAttendanceModel!.id &&
+                              element.faculty.id == classesForAttendanceModel!.faculty.id &&
+                              element.subject.id == classesForAttendanceModel!.subject.id &&
+                              element.classDetails.id == classesForAttendanceModel!.classDetails.id &&
+                              isLectureDateSame &&
+                              isLectureInBetween &&
+                              element.isLectureCompleted == classesForAttendanceModel!.isLectureCompleted;
+                        })) {
+                          showErrorSnackBar(context: context, title: 'A lecture is already scheduled for this date and time for the class');
+                          return;
+                        } else {
+                          // await classesWithAttendanceController.addLecture(classesForAttendanceModel!);
+                          // Get.back(
+                          //   result: true,
+                          // );
+                        }
                       } else {
                         showErrorSnackBar(
                           context: context,
@@ -425,5 +539,45 @@ class _AddEditClassesWithAttendanceViewState extends State<AddEditClassesWithAtt
               ),
       ),
     );
+  }
+
+  bool checkSameLectureTiming({
+    required int index,
+    required TimeOfDay startTimeFromList,
+    required TimeOfDay endTimeFromList,
+    required TimeOfDay newStartTime,
+    required TimeOfDay newEndTime,
+  }) {
+    '$index\nstartTimeFromList => $startTimeFromList\nendTimeFromList => $endTimeFromList\nnewStartTime => $newStartTime\nnewEndTime => $newEndTime'.logOnString('$index => ');
+    if (newStartTime.isAtSameTimeAs(startTimeFromList) && newEndTime.isAtSameTimeAs(endTimeFromList)) {
+      'Same Day and time'.logOnString('isAtSameTimeAs');
+      return true;
+    }
+
+    /// case 1 :-
+    /// fixed time 9:00 to 10:00
+    /// current time 9:15 to 10:15
+    if (newStartTime.isAfter(startTimeFromList) && newEndTime.isAfter(endTimeFromList) && newStartTime.isBefore(endTimeFromList)) {
+      'First Case'.logOnString('');
+      return true;
+    }
+
+    /// case 2
+    /// fixed time 9:00 to 10:00
+    /// current time 8:45 to 9:45
+    if (newStartTime.isBefore(startTimeFromList) && newEndTime.isBefore(endTimeFromList) && newEndTime.isAfter(startTimeFromList)) {
+      'Second Case'.logOnString('');
+      return true;
+    }
+
+    /// case 3
+    /// fixed time 9:00 to 10:00
+    /// current time 9:01 to 9:59
+    if (newStartTime.isAfter(startTimeFromList) && newEndTime.isBefore(endTimeFromList)) {
+      'Third Case'.logOnString('');
+      return true;
+    }
+
+    return false;
   }
 }

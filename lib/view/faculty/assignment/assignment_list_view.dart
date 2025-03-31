@@ -9,10 +9,12 @@ import 'package:present_unit/helpers/assets_path/assets_path.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/database/update_state_keys.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
+import 'package:present_unit/helpers/enum/common_enums.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
 import 'package:present_unit/models/assignment/assignment_model.dart';
 import 'package:present_unit/routes/routes.dart';
 import 'package:present_unit/view/faculty/classes/lecture_list_view.dart';
+import 'package:present_unit/view/splash_view.dart';
 
 class AssignmentListView extends StatefulWidget {
   const AssignmentListView({
@@ -28,14 +30,22 @@ class AssignmentListView extends StatefulWidget {
 
 class _AssignmentListViewState extends State<AssignmentListView> {
   late final AssignmentController assignmentController;
+  UserType userType = UserType.none;
 
   @override
   void initState() {
     assignmentController = Get.find<AssignmentController>();
+    if (userDetails != null && userDetails!.userType != null) {
+      userType = userDetails!.userType!;
+    }
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
-        await assignmentController.getAssignmentList();
+        if(userType == UserType.student) {
+          await assignmentController.getAssignmentListStudent();
+        } else {
+          await assignmentController.getAssignmentList();
+        }
       },
     );
     super.initState();
@@ -48,6 +58,7 @@ class _AssignmentListViewState extends State<AssignmentListView> {
       appBar: commonAppBarPreferred(
         label: 'Assignment List',
         isBack: widget.arguments != null && widget.arguments is bool && (widget.arguments is bool) == true,
+        isAdd: !(userType == UserType.student),
         onTap: () async {
           dynamic result = await Get.toNamed(Routes.addEditAssignmentView);
           if (result is bool && result == true) {
@@ -66,23 +77,41 @@ class _AssignmentListViewState extends State<AssignmentListView> {
               )
             : GetBuilder<AssignmentController>(
                 id: UpdateKeys.updateAssignmentList,
-                builder: (controller) => ListView(
-                  padding: EdgeInsets.symmetric(
-                    vertical: Dimens.height24,
-                    horizontal: Dimens.width30,
-                  ),
-                  hitTestBehavior: HitTestBehavior.translucent,
-                  children: controller.assignmentList
-                      .map(
-                        (assignment) => AssignmentDetailsCard(
-                          assignment: assignment,
-                          assignmentController: assignmentController,
-                          onRefresh: () {},
-                          onDelete: (assignment) {},
+                builder: (controller) => controller.assignmentList.isEmpty
+                    ? Center(
+                        child: AppTextTheme.textSize15(
+                          label: 'No Data',
+                          color: AppColors.black,
                         ),
                       )
-                      .toList(),
-                ),
+                    : ListView(
+                        padding: EdgeInsets.symmetric(
+                          vertical: Dimens.height24,
+                          horizontal: Dimens.width30,
+                        ),
+                        hitTestBehavior: HitTestBehavior.translucent,
+                        children: controller.assignmentList
+                            .map(
+                              (assignment) => AssignmentDetailsCard(
+                                assignment: assignment,
+                                userType: userType,
+                                assignmentController: assignmentController,
+                                onRefresh: () async {
+                                  await assignmentController.getAssignmentList();
+                                  await Future.delayed(const Duration(milliseconds: 500));
+                                  assignmentController.update([UpdateKeys.updateAssignmentList]);
+                                },
+                                onDelete: (assignment) async {
+                                  await assignmentController.deleteAssignment(assignment);
+                                  await Future.delayed(const Duration(milliseconds: 500));
+                                  await assignmentController.getAssignmentList();
+                                  await Future.delayed(const Duration(milliseconds: 500));
+                                  assignmentController.update([UpdateKeys.updateAssignmentList]);
+                                },
+                              ),
+                            )
+                            .toList(),
+                      ),
               ),
       ),
     );
@@ -93,12 +122,14 @@ class AssignmentDetailsCard extends StatefulWidget {
   const AssignmentDetailsCard({
     super.key,
     required this.assignment,
+    required this.userType,
     required this.assignmentController,
     required this.onRefresh,
     required this.onDelete,
   });
 
   final AssignmentModel assignment;
+  final UserType userType;
   final AssignmentController assignmentController;
   final void Function() onRefresh;
   final void Function(AssignmentModel assignment) onDelete;
@@ -114,6 +145,7 @@ class _AssignmentDetailsCardState extends State<AssignmentDetailsCard> with Sing
   Widget build(BuildContext context) {
     return Slidable(
       controller: slideController,
+      enabled: !(widget.userType == UserType.student),
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         extentRatio: 0.3,
@@ -170,36 +202,37 @@ class _AssignmentDetailsCardState extends State<AssignmentDetailsCard> with Sing
                     title: 'Subject',
                     value: widget.assignment.subject.name,
                   ),
-                  GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: () async {
-                      dynamic result = await Get.toNamed(
-                        Routes.addEditAssignmentView,
-                        arguments: widget.assignment,
-                      );
-                      if (result is bool && result == true) {
-                        widget.onRefresh();
-                      }
-                    },
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(
-                          AssetsPaths.simpleEditSVG,
-                          alignment: Alignment.center,
-                          width: Dimens.width28,
-                          height: Dimens.height28,
-                          colorFilter: ColorFilter.mode(
-                            AppColors.black,
-                            BlendMode.srcIn,
+                  if (widget.userType != UserType.student)
+                    GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () async {
+                        dynamic result = await Get.toNamed(
+                          Routes.addEditAssignmentView,
+                          arguments: widget.assignment,
+                        );
+                        if (result is bool && result == true) {
+                          widget.onRefresh();
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(
+                            AssetsPaths.simpleEditSVG,
+                            alignment: Alignment.center,
+                            width: Dimens.width28,
+                            height: Dimens.height28,
+                            colorFilter: ColorFilter.mode(
+                              AppColors.black,
+                              BlendMode.srcIn,
+                            ),
                           ),
-                        ),
-                        SizedBox(width: Dimens.width12),
-                        AppTextTheme.textSize14(
-                          label: 'Edit',
-                        ),
-                      ],
+                          SizedBox(width: Dimens.width12),
+                          AppTextTheme.textSize14(
+                            label: 'Edit',
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
                 ],
               ),
               Row(

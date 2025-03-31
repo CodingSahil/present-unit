@@ -276,85 +276,97 @@ class _FacultyDashboardViewState extends State<FacultyDashboardView> {
           ),
         ),
       ),
-      bottomNavigationBar: NavigationBar(
-        backgroundColor: AppColors.bottomNavigationBarColor,
-        indicatorColor: AppColors.primaryColor,
-        selectedIndex: selectedIndex,
-        onDestinationSelected: (value) => setState(() {
-          selectedIndex = value;
-          if (value == 0) {
-            selectTab = FacultyUserModules.home;
-          }
-          if (value == 1) {
-            selectTab = FacultyUserModules.classes;
-          }
-          if (value == 2) {
-            selectTab = FacultyUserModules.assignment;
-          }
-        }),
-        destinations: [
-          NavigationDestination(
-            icon: SvgPicture.asset(
-              AssetsPaths.homeSVG,
-              height: Dimens.height40,
-              width: Dimens.width40,
-              colorFilter: ColorFilter.mode(
-                AppColors.unselectedColor,
-                BlendMode.srcIn,
-              ),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Divider(
+            height: 0.5,
+            thickness: 0.5,
+            color: AppColors.black.withAlpha(
+              (255 * 0.25).toInt(),
             ),
-            selectedIcon: SvgPicture.asset(
-              AssetsPaths.homeSVG,
-              height: Dimens.height40,
-              width: Dimens.width40,
-              colorFilter: ColorFilter.mode(
-                AppColors.white,
-                BlendMode.srcIn,
-              ),
-            ),
-            label: 'Home',
           ),
-          NavigationDestination(
-            icon: SvgPicture.asset(
-              AssetsPaths.classesSVG,
-              height: Dimens.height40,
-              width: Dimens.width40,
-              colorFilter: ColorFilter.mode(
-                AppColors.unselectedColor,
-                BlendMode.srcIn,
+          NavigationBar(
+            backgroundColor: AppColors.bottomNavigationBarColor,
+            indicatorColor: AppColors.primaryColor,
+            selectedIndex: selectedIndex,
+            onDestinationSelected: (value) => setState(() {
+              selectedIndex = value;
+              if (value == 0) {
+                selectTab = FacultyUserModules.home;
+              }
+              if (value == 1) {
+                selectTab = FacultyUserModules.classes;
+              }
+              if (value == 2) {
+                selectTab = FacultyUserModules.assignment;
+              }
+            }),
+            destinations: [
+              NavigationDestination(
+                icon: SvgPicture.asset(
+                  AssetsPaths.homeSVG,
+                  height: Dimens.height40,
+                  width: Dimens.width40,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.unselectedColor,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                selectedIcon: SvgPicture.asset(
+                  AssetsPaths.homeSVG,
+                  height: Dimens.height40,
+                  width: Dimens.width40,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                label: 'Home',
               ),
-            ),
-            selectedIcon: SvgPicture.asset(
-              AssetsPaths.classesSVG,
-              height: Dimens.height40,
-              width: Dimens.width40,
-              colorFilter: ColorFilter.mode(
-                AppColors.white,
-                BlendMode.srcIn,
+              NavigationDestination(
+                icon: SvgPicture.asset(
+                  AssetsPaths.classesSVG,
+                  height: Dimens.height40,
+                  width: Dimens.width40,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.unselectedColor,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                selectedIcon: SvgPicture.asset(
+                  AssetsPaths.classesSVG,
+                  height: Dimens.height40,
+                  width: Dimens.width40,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                label: 'Lecture',
               ),
-            ),
-            label: 'Lecture',
-          ),
-          NavigationDestination(
-            icon: SvgPicture.asset(
-              AssetsPaths.assignmentSVG,
-              height: Dimens.height40,
-              width: Dimens.width40,
-              colorFilter: ColorFilter.mode(
-                AppColors.unselectedColor,
-                BlendMode.srcIn,
+              NavigationDestination(
+                icon: SvgPicture.asset(
+                  AssetsPaths.assignmentSVG,
+                  height: Dimens.height40,
+                  width: Dimens.width40,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.unselectedColor,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                selectedIcon: SvgPicture.asset(
+                  AssetsPaths.assignmentSVG,
+                  height: Dimens.height40,
+                  width: Dimens.width40,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                label: 'Assignment',
               ),
-            ),
-            selectedIcon: SvgPicture.asset(
-              AssetsPaths.assignmentSVG,
-              height: Dimens.height40,
-              width: Dimens.width40,
-              colorFilter: ColorFilter.mode(
-                AppColors.white,
-                BlendMode.srcIn,
-              ),
-            ),
-            label: 'Assignment',
+            ],
           ),
         ],
       ),
@@ -364,25 +376,6 @@ class _FacultyDashboardViewState extends State<FacultyDashboardView> {
   Widget viewForSelectedTab({
     required FacultyUserModules bottomNavigationBarEnums,
   }) {
-    // List<int> studentList = classListController.classList
-    //     .map(
-    //       (e) => e.studentList?.length ?? 0,
-    // )
-    //     .toList();
-    // num totalStudents = studentList.isNotEmpty
-    //     ? num.parse(
-    //   studentList
-    //       .reduce(
-    //         (value, element) => value + element,
-    //   )
-    //       .toString(),
-    // )
-    //     : 0;
-    // num totalCourses = courseController.courseList.length;
-    // num totalFaculty = facultyController.facultyList.length;
-    // num totalSubject = subjectController.subjectList.length;
-    // num totalClass = classListController.classList.length;
-
     switch (bottomNavigationBarEnums) {
       case FacultyUserModules.home:
         return const FacultyDashboardSubview();

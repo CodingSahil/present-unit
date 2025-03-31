@@ -22,6 +22,7 @@ class ClassesWithAttendanceController extends GetxController {
   List<Subject> globalSubjectList = [];
   List<Subject> subjectList = [];
   Faculty? faculty;
+  Student? student;
 
   Future<void> getClassesList({
     bool isLoaderRequire = true,
@@ -38,6 +39,30 @@ class ClassesWithAttendanceController extends GetxController {
       classesForAttendanceModel = globalClassesForAttendanceModel
           .where(
             (e) => e.faculty.id == faculty!.id,
+          )
+          .toList();
+      classesForAttendanceModel.sort((a, b) => a.id.compareTo(b.id));
+    }
+    if (isLoaderRequire) loader(false);
+  }
+
+  Future<void> getClassesListStudent({
+    bool isLoaderRequire = true,
+  }) async {
+    if (userDetails != null && userDetails!.student != null) {
+      student = userDetails!.student!;
+    }
+    if (isLoaderRequire) loader(true);
+    globalClassesForAttendanceModel = await getListFromFirebase<ClassesForAttendanceModel>(
+      collection: CollectionStrings.classListForAttendance,
+      fromJson: ClassesForAttendanceModel.fromJson,
+    );
+    if (globalClassesForAttendanceModel.isNotEmpty) {
+      classesForAttendanceModel = globalClassesForAttendanceModel
+          .where(
+            (e) => e.studentList.any(
+              (element) => element.id == student?.id,
+            ),
           )
           .toList();
       classesForAttendanceModel.sort((a, b) => a.id.compareTo(b.id));

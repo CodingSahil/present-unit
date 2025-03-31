@@ -22,6 +22,7 @@ class AssignmentController extends GetxController {
   List<ClassListModel> globalClassList = [];
   List<ClassListModel> classList = [];
   Faculty? faculty;
+  Student? student;
 
   Future<void> getAssignmentList({
     bool isLoaderRequire = true,
@@ -37,7 +38,31 @@ class AssignmentController extends GetxController {
     if (globalAssignmentList.isNotEmpty) {
       assignmentList = globalAssignmentList
           .where(
-            (e) => e.faculty.id == faculty!.id,
+            (e) => e.faculty.id == faculty?.id,
+          )
+          .toList();
+      assignmentList.sort((a, b) => a.id.compareTo(b.id));
+    }
+    if (isLoaderRequire) loader(false);
+  }
+
+  Future<void> getAssignmentListStudent({
+    bool isLoaderRequire = true,
+  }) async {
+    if (userDetails != null && userDetails!.student != null) {
+      student = userDetails!.student!;
+    }
+    if (isLoaderRequire) loader(true);
+    globalAssignmentList = await getListFromFirebase<AssignmentModel>(
+      collection: CollectionStrings.assignmentList,
+      fromJson: AssignmentModel.fromJson,
+    );
+    if (globalAssignmentList.isNotEmpty) {
+      assignmentList = globalAssignmentList
+          .where(
+            (e) => e.studentList.any(
+              (element) => element.id == student?.id,
+            ),
           )
           .toList();
       assignmentList.sort((a, b) => a.id.compareTo(b.id));
@@ -118,6 +143,15 @@ class AssignmentController extends GetxController {
       collection: CollectionStrings.assignmentList,
       documentName: request.documentID,
       newMap: request.toJson(),
+    );
+    submitLoader(false);
+  }
+
+  Future<void> deleteAssignment(AssignmentModel request) async {
+    submitLoader(true);
+    await deleteAnObject(
+      collection: CollectionStrings.assignmentList,
+      documentName: request.documentID,
     );
     submitLoader(false);
   }

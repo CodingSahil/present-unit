@@ -277,17 +277,23 @@ class _AddEditAssignmentViewState extends State<AddEditAssignmentView> {
                   GestureDetector(
                     behavior: HitTestBehavior.translucent,
                     onTap: () async {
-                      selectedDate = await showDatePicker(
+                      if (selectedDate != null) {
+                        selectedDate!.difference(DateTime.now()).inDays.toString().logOnString('difference => ');
+                      }
+                      DateTime? result = await showDatePicker(
                         context: context,
-                        firstDate: DateTime.now(),
+                        firstDate: selectedDate != null && selectedDate!.difference(DateTime.now()).inDays < 0 ? selectedDate! : DateTime.now(),
                         lastDate: DateTime(DateTime.now().year + 1),
                         currentDate: selectedDate,
                         initialDate: selectedDate,
                       );
-                      if (selectedDate != null) {
-                        dateOfLectureController.text = DateTimeConversion.convertDateIntoString(selectedDate!);
+                      if (result != null) {
+                        selectedDate = result;
+                        if (selectedDate != null) {
+                          dateOfLectureController.text = DateTimeConversion.convertDateIntoString(selectedDate!);
+                        }
+                        setState(() {});
                       }
-                      setState(() {});
                     },
                     child: LabeledTextFormField(
                       controller: dateOfLectureController,

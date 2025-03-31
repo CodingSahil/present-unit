@@ -10,10 +10,12 @@ import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/database/update_state_keys.dart';
 import 'package:present_unit/helpers/date-time-convert/date_time_conversion.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
+import 'package:present_unit/helpers/enum/common_enums.dart';
 import 'package:present_unit/helpers/extension/string_print.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
 import 'package:present_unit/models/class_list_for_attendance/class_list_for_attendance.dart';
 import 'package:present_unit/routes/routes.dart';
+import 'package:present_unit/view/splash_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ClassListForAttendanceView extends StatefulWidget {
@@ -30,14 +32,22 @@ class ClassListForAttendanceView extends StatefulWidget {
 
 class _ClassListForAttendanceViewState extends State<ClassListForAttendanceView> {
   late final ClassesWithAttendanceController classesWithAttendanceController;
+  UserType userType = UserType.none;
 
   @override
   void initState() {
     classesWithAttendanceController = Get.find<ClassesWithAttendanceController>();
+    if (userDetails != null && userDetails!.userType != null) {
+      userType = userDetails!.userType!;
+    }
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
-        await classesWithAttendanceController.getClassesList();
+        if (userType == UserType.student) {
+          await classesWithAttendanceController.getClassesListStudent();
+        } else {
+          await classesWithAttendanceController.getClassesList();
+        }
       },
     );
     super.initState();
@@ -49,6 +59,7 @@ class _ClassListForAttendanceViewState extends State<ClassListForAttendanceView>
       backgroundColor: AppColors.scaffoldBgColor,
       appBar: commonAppBarPreferred(
         label: 'Class List',
+        isAdd: !(userType == UserType.student),
         isBack: widget.arguments != null && widget.arguments is bool && (widget.arguments is bool) == true,
         onTap: () async {
           dynamic result = await Get.toNamed(Routes.addEditClassesWithAttendanceView);
@@ -82,10 +93,15 @@ class _ClassListForAttendanceViewState extends State<ClassListForAttendanceView>
                             horizontal: Dimens.width30,
                           ),
                           hitTestBehavior: HitTestBehavior.translucent,
-                          children: classesWithAttendanceController.classesForAttendanceModel.map(
+                          children: classesWithAttendanceController.classesForAttendanceModel
+                              .where(
+                            (element) => !element.isLectureCompleted,
+                          )
+                              .map(
                             (lecture) {
                               return ClassesWithAttendanceView(
                                 lecture: lecture,
+                                userType: userType,
                                 classesWithAttendanceController: classesWithAttendanceController,
                                 onRefresh: (isLoaderRequire) async {
                                   await classesWithAttendanceController.getClassesList(isLoaderRequire: isLoaderRequire);
@@ -116,12 +132,14 @@ class ClassesWithAttendanceView extends StatefulWidget {
   const ClassesWithAttendanceView({
     super.key,
     required this.lecture,
+    required this.userType,
     required this.classesWithAttendanceController,
     required this.onRefresh,
     required this.onDelete,
   });
 
   final ClassesForAttendanceModel lecture;
+  final UserType userType;
   final ClassesWithAttendanceController classesWithAttendanceController;
   final void Function(bool isLoaderRequire) onRefresh;
   final void Function(ClassesForAttendanceModel lecture) onDelete;
@@ -136,6 +154,7 @@ class _ClassesWithAttendanceViewState extends State<ClassesWithAttendanceView> w
   late DateTime endTime;
   int differenceInMinutes = 0;
   RxBool deleteLoader = false.obs;
+  RxBool completeLoader = false.obs;
 
   @override
   void initState() {
@@ -150,6 +169,7 @@ class _ClassesWithAttendanceViewState extends State<ClassesWithAttendanceView> w
   Widget build(BuildContext context) {
     return Slidable(
       controller: slideController,
+      enabled: !(widget.userType == UserType.student),
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         extentRatio: 0.3,
@@ -207,36 +227,62 @@ class _ClassesWithAttendanceViewState extends State<ClassesWithAttendanceView> w
                     title: 'Subject',
                     value: widget.lecture.subject.name,
                   ),
-                  GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: () async {
-                      dynamic result = await Get.toNamed(
-                        Routes.addEditClassesWithAttendanceView,
-                        arguments: widget.lecture,
-                      );
-                      if (result is bool && result == true) {
-                        widget.onRefresh(true);
-                      }
-                    },
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(
-                          AssetsPaths.simpleEditSVG,
-                          alignment: Alignment.center,
-                          width: Dimens.width28,
-                          height: Dimens.height28,
-                          colorFilter: ColorFilter.mode(
-                            AppColors.black,
-                            BlendMode.srcIn,
+                  if (widget.userType != UserType.student)
+                    GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () async {
+                        dynamic result = await Get.toNamed(
+                          Routes.addEditClassesWithAttendanceView,
+                          arguments: widget.lecture,
+                        );
+                        if (result is bool && result == true) {
+                          widget.onRefresh(true);
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(
+                            AssetsPaths.simpleEditSVG,
+                            alignment: Alignment.center,
+                            width: Dimens.width28,
+                            height: Dimens.height28,
+                            colorFilter: ColorFilter.mode(
+                              AppColors.black,
+                              BlendMode.srcIn,
+                            ),
                           ),
+                          SizedBox(width: Dimens.width12),
+                          AppTextTheme.textSize14(
+                            label: 'Edit',
+                          ),
+                        ],
+                      ),
+                    )
+                  else if (widget.classesWithAttendanceController.student != null &&
+                      widget.lecture.mentionInNotesList.any(
+                        (element) => element.studentDetails.id == widget.classesWithAttendanceController.student!.id,
+                      ))
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: Dimens.width20,
+                        vertical: Dimens.height6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.lightRed,
+                        borderRadius: BorderRadius.circular(
+                          Dimens.radius25,
                         ),
-                        SizedBox(width: Dimens.width12),
-                        AppTextTheme.textSize14(
-                          label: 'Edit',
-                        ),
-                      ],
-                    ),
-                  ),
+                      ),
+                      alignment: Alignment.center,
+                      child: AppTextTheme.textSize12(
+                        label: '${widget.lecture.mentionInNotesList.where(
+                              (element) => element.studentDetails.id == widget.classesWithAttendanceController.student!.id,
+                            ).length} Mention',
+                        color: AppColors.white,
+                      ),
+                    )
+                  else
+                    const SizedBox.shrink(),
                 ],
               ),
               Row(
@@ -318,6 +364,57 @@ class _ClassesWithAttendanceViewState extends State<ClassesWithAttendanceView> w
                   ),
                 ],
               ),
+              const SizedBox(),
+              Divider(
+                height: 1,
+                thickness: 0.5,
+                color: AppColors.black.withAlpha(
+                  (255 * 0.5).toInt(),
+                ),
+              ),
+              const SizedBox(),
+              SizedBox(
+                height: Dimens.height40,
+                width: MediaQuery.sizeOf(context).width,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () async {
+                    completeLoader(true);
+                    ClassesForAttendanceModel request = widget.lecture;
+                    request = request.copyWith(isLectureCompleted: true);
+                    await widget.classesWithAttendanceController.updateLecture(request);
+                    await Future.delayed(const Duration(milliseconds: 400));
+                    completeLoader(false);
+                    widget.onRefresh(true);
+                  },
+                  child: Obx(
+                    () => completeLoader.value
+                        ? Center(
+                            child: Loader(
+                              color: AppColors.black,
+                            ),
+                          )
+                        : Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.done,
+                                color: AppColors.black,
+                                size: Dimens.height30,
+                              ),
+                              SizedBox(width: Dimens.width16),
+                              AppTextTheme.textSize13(
+                                label: 'Complete Lecture',
+                                color: AppColors.black,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ],
+                          ),
+                  ),
+                ),
+              ),
+              SizedBox(height: Dimens.height8),
             ],
           ),
         ),

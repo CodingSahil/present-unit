@@ -7,6 +7,7 @@ class AppColors {
   static Color bottomNavigationBarColor = const Color(0xfff4f4f4);
   static Color scaffoldBgColor = const Color(0xfff3f3f3);
   static Color red = const Color(0xffff0000);
+  static Color lightRed = const Color(0xffff4040);
   static Color green = const Color(0xff2bbc30);
   static Color darkGreen = const Color(0xff56dd00);
   static Color skyBlue = const Color(0xff00c4c2);

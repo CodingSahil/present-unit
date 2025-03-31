@@ -22,6 +22,7 @@ class ClassesForAttendanceModel extends Equatable {
     this.tasks,
     this.description,
     this.mentionInNotesList = const [],
+    this.isLectureCompleted = false,
   });
 
   final String documentID;
@@ -40,6 +41,7 @@ class ClassesForAttendanceModel extends Equatable {
   final String startingTime;
   final String endingTime;
   final List<MentionInNotes> mentionInNotesList;
+  final bool isLectureCompleted;
 
   @override
   List<Object?> get props => [
@@ -59,6 +61,7 @@ class ClassesForAttendanceModel extends Equatable {
         startingTime,
         endingTime,
         mentionInNotesList,
+        isLectureCompleted,
       ];
 
   factory ClassesForAttendanceModel.fromJson(
@@ -72,16 +75,16 @@ class ClassesForAttendanceModel extends Equatable {
       faculty: Faculty.fromJson(json['faculty'] as Map<String, dynamic>, ''),
       subject: Subject.fromJson(json['subject'] as Map<String, dynamic>, ''),
       college: College.fromJson(json['college'] as Map<String, dynamic>),
-      studentList: (json['studentList'] as List).map((e) => Student.fromJson(e as Map<String, dynamic>,'')).toList(),
+      studentList: (json['studentList'] as List).map((e) => Student.fromJson(e as Map<String, dynamic>, '')).toList(),
       presentStudentList: (json['presentStudentList'] as List<dynamic>?)
               ?.map(
-                (e) => Student.fromJson(e as Map<String, dynamic>,''),
+                (e) => Student.fromJson(e as Map<String, dynamic>, ''),
               )
               .toList() ??
           [],
       absentStudentList: (json['absentStudentList'] as List<dynamic>?)
               ?.map(
-                (e) => Student.fromJson(e as Map<String, dynamic>,''),
+                (e) => Student.fromJson(e as Map<String, dynamic>, ''),
               )
               .toList() ??
           [],
@@ -104,6 +107,7 @@ class ClassesForAttendanceModel extends Equatable {
               )
               .toList() ??
           [],
+      isLectureCompleted: json['isLectureCompleted'] != null ? json['isLectureCompleted'] as bool? ?? false : false,
     );
   }
 
@@ -141,25 +145,26 @@ class ClassesForAttendanceModel extends Equatable {
                 (e) => e.toJson(),
               )
               .toList(),
+        'isLectureCompleted': isLectureCompleted,
       };
 
-  ClassesForAttendanceModel copyWith({
-    int? id,
-    Faculty? faculty,
-    ClassListModel? classDetails,
-    Subject? subject,
-    College? college,
-    List<Tasks>? tasks,
-    List<Student>? studentList,
-    List<Student>? presentStudentList,
-    List<Student>? absentStudentList,
-    String? notes,
-    String? description,
-    String? lectureDate,
-    String? startingTime,
-    String? endingTime,
-    List<MentionInNotes>? mentionInNotesList,
-  }) {
+  ClassesForAttendanceModel copyWith(
+      {int? id,
+      Faculty? faculty,
+      ClassListModel? classDetails,
+      Subject? subject,
+      College? college,
+      List<Tasks>? tasks,
+      List<Student>? studentList,
+      List<Student>? presentStudentList,
+      List<Student>? absentStudentList,
+      String? notes,
+      String? description,
+      String? lectureDate,
+      String? startingTime,
+      String? endingTime,
+      List<MentionInNotes>? mentionInNotesList,
+      bool? isLectureCompleted}) {
     return ClassesForAttendanceModel(
       documentID: documentID,
       id: id ?? this.id,
@@ -177,6 +182,7 @@ class ClassesForAttendanceModel extends Equatable {
       startingTime: startingTime ?? this.startingTime,
       endingTime: endingTime ?? this.endingTime,
       mentionInNotesList: mentionInNotesList ?? this.mentionInNotesList,
+      isLectureCompleted: isLectureCompleted ?? this.isLectureCompleted,
     );
   }
 }
@@ -243,7 +249,7 @@ class MentionInNotes extends Equatable {
 
   factory MentionInNotes.fromJson(Map<String, dynamic> json) {
     return MentionInNotes(
-      studentDetails: Student.fromJson(json['studentDetails'] as Map<String, dynamic>,''),
+      studentDetails: Student.fromJson(json['studentDetails'] as Map<String, dynamic>, ''),
       mentionedAs: json['mentionedAs'] as String,
     );
   }

@@ -23,8 +23,11 @@ final RegExp passwordRegex = RegExp(
   r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$',
 );
 
-final SupabaseClient supabase = SupabaseClient(SupabaseClientKeys.supabaseUrl, SupabaseClientKeys.supabaseKey);
+final RegExp timingRegex = RegExp(
+  r'AM|PM|am|pm',
+);
 
+final SupabaseClient supabase = SupabaseClient(SupabaseClientKeys.supabaseUrl, SupabaseClientKeys.supabaseKey);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

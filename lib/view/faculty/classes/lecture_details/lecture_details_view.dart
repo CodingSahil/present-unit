@@ -13,6 +13,7 @@ import 'package:present_unit/helpers/assets_path/assets_path.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/database/update_state_keys.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
+import 'package:present_unit/helpers/enum/common_enums.dart';
 import 'package:present_unit/helpers/enum/faculty_enum.dart';
 import 'package:present_unit/helpers/extension/string_print.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
@@ -20,6 +21,7 @@ import 'package:present_unit/main.dart';
 import 'package:present_unit/models/class_list/class_list_models.dart';
 import 'package:present_unit/models/class_list_for_attendance/class_list_for_attendance.dart';
 import 'package:present_unit/view/faculty/classes/lecture_list_view.dart';
+import 'package:present_unit/view/splash_view.dart';
 
 class LectureDetailsView extends StatefulWidget {
   const LectureDetailsView({
@@ -42,6 +44,8 @@ class _LectureDetailsViewState extends State<LectureDetailsView> with SingleTick
   List<MentionInNotes> mentionInNotesList = [];
   List<Student> studentList = [];
   int tabIndex = 1;
+  UserType userType = UserType.none;
+  bool isNotStudent = false;
 
   @override
   void initState() {
@@ -53,6 +57,12 @@ class _LectureDetailsViewState extends State<LectureDetailsView> with SingleTick
       length: 3,
       vsync: this,
     );
+
+    if (userDetails != null && userDetails!.userType != null && userDetails!.userType! != UserType.none) {
+      userType = userDetails!.userType!;
+      isNotStudent = userType != UserType.student;
+    }
+
     if (widget.arguments != null && widget.arguments is ClassesForAttendanceModel) {
       classesForAttendanceModel = widget.arguments as ClassesForAttendanceModel;
       if (classesForAttendanceModel != null && classesForAttendanceModel!.mentionInNotesList.isNotEmpty) {
@@ -84,7 +94,7 @@ class _LectureDetailsViewState extends State<LectureDetailsView> with SingleTick
         backgroundColor: AppColors.scaffoldBgColor,
         appBar: commonAppBarPreferred(
           label: 'Lecture Details',
-          isSave: tabIndex == 0,
+          isSave: tabIndex == 0 && isNotStudent,
           saveWidget: Obx(
             () => classesWithAttendanceController.submitLoader.value
                 ? Center(
@@ -161,15 +171,6 @@ class _LectureDetailsViewState extends State<LectureDetailsView> with SingleTick
             taskForLectureDetailsView(),
             attendanceForLectureDetailsView(),
             notesForLectureDetailsView(),
-            // TaskForLectureDetailsView(
-            //   classesForAttendanceModel: classesForAttendanceModel != null ? classesForAttendanceModel! : ClassesForAttendanceModel.empty(),
-            // ),
-            // AttendanceForLectureDetailsView(
-            //   classesForAttendanceModel: classesForAttendanceModel != null ? classesForAttendanceModel! : ClassesForAttendanceModel.empty(),
-            // ),
-            // NotesForLectureDetailsView(
-            //   classesForAttendanceModel: classesForAttendanceModel != null ? classesForAttendanceModel! : ClassesForAttendanceModel.empty(),
-            // ),
           ],
         ),
       ),
@@ -314,11 +315,13 @@ class _LectureDetailsViewState extends State<LectureDetailsView> with SingleTick
                                     horizontal: VisualDensity.minimumDensity,
                                   ),
                                   onChanged: (value) {
-                                    setState(() {
-                                      if (value != null) {
-                                        classesForAttendanceModel!.tasks![index] = classesForAttendanceModel!.tasks![index].copyWith(completed: value);
-                                      }
-                                    });
+                                    if (isNotStudent) {
+                                      setState(() {
+                                        if (value != null) {
+                                          classesForAttendanceModel!.tasks![index] = classesForAttendanceModel!.tasks![index].copyWith(completed: value);
+                                        }
+                                      });
+                                    }
                                   },
                                 ),
                                 SizedBox(width: Dimens.width12),
@@ -329,123 +332,125 @@ class _LectureDetailsViewState extends State<LectureDetailsView> with SingleTick
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
-                                SizedBox(width: Dimens.width12),
-                                GestureDetector(
-                                  behavior: HitTestBehavior.translucent,
-                                  onTap: () async {
-                                    bool isError = false;
-                                    taskInputInDialogController.text = item.task;
-                                    await showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return StatefulBuilder(
-                                          builder: (context, setInnerState) => AlertDialog(
-                                            backgroundColor: AppColors.white,
-                                            title: AppTextTheme.textSize16(
-                                              label: 'Add Task',
-                                              color: AppColors.black,
-                                            ),
-                                            content: LabeledTextFormField(
-                                              controller: taskInputInDialogController,
-                                              hintText: '',
-                                              isError: isError,
-                                              errorMessage: isError ? "Enter your task" : '',
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  taskInputInDialogController.clear();
-                                                  Navigator.pop(context);
-                                                },
-                                                child: AppTextTheme.textSize16(
-                                                  label: 'Cancel',
-                                                  color: AppColors.black,
-                                                ),
+                                if (isNotStudent) ...[
+                                  SizedBox(width: Dimens.width12),
+                                  GestureDetector(
+                                    behavior: HitTestBehavior.translucent,
+                                    onTap: () async {
+                                      bool isError = false;
+                                      taskInputInDialogController.text = item.task;
+                                      await showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return StatefulBuilder(
+                                            builder: (context, setInnerState) => AlertDialog(
+                                              backgroundColor: AppColors.white,
+                                              title: AppTextTheme.textSize16(
+                                                label: 'Add Task',
+                                                color: AppColors.black,
                                               ),
-                                              GestureDetector(
-                                                behavior: HitTestBehavior.translucent,
-                                                onTap: () async {
-                                                  if (taskInputInDialogController.text.isEmpty) {
-                                                    setInnerState(() {
-                                                      isError = true;
-                                                    });
-                                                  } else {
-                                                    setInnerState(() {
-                                                      isError = false;
-                                                    });
-                                                    FocusScope.of(context).unfocus();
-                                                    if (classesForAttendanceModel != null && classesForAttendanceModel!.tasks != null && classesForAttendanceModel!.tasks!.isNotEmpty) {
-                                                      classesForAttendanceModel!.tasks![item.index] = classesForAttendanceModel!.tasks![item.index].copyWith(
-                                                        task: taskInputInDialogController.text.trim(),
-                                                      );
-                                                      '${classesForAttendanceModel!.tasks!.map(
-                                                                (e) => jsonEncode(e.toJson()),
-                                                              ).toList()}'
-                                                          .logOnString('tasks => ');
-                                                      await classesWithAttendanceController.updateLecture(classesForAttendanceModel!);
-                                                    }
+                                              content: LabeledTextFormField(
+                                                controller: taskInputInDialogController,
+                                                hintText: '',
+                                                isError: isError,
+                                                errorMessage: isError ? "Enter your task" : '',
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
                                                     taskInputInDialogController.clear();
-                                                    setState(() {});
                                                     Navigator.pop(context);
-                                                    showSuccessSnackBar(
-                                                      context: context,
-                                                      title: 'Task updated!',
-                                                      durationInMilliseconds: 1200,
-                                                    );
-                                                  }
-                                                },
-                                                child: Container(
-                                                  alignment: Alignment.center,
-                                                  height: Dimens.height70,
-                                                  width: Dimens.width160,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(
-                                                      Dimens.radius20,
-                                                    ),
-                                                    color: AppColors.primaryColor,
-                                                  ),
-                                                  child: Obx(
-                                                    () => classesWithAttendanceController.submitLoader.value
-                                                        ? const ButtonLoader()
-                                                        : AppTextTheme.textSize16(
-                                                            label: 'Submit',
-                                                            color: AppColors.white,
-                                                          ),
+                                                  },
+                                                  child: AppTextTheme.textSize16(
+                                                    label: 'Cancel',
+                                                    color: AppColors.black,
                                                   ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    );
-                                    setState(() {});
-                                  },
-                                  child: SvgPicture.asset(
-                                    AssetsPaths.editSVG,
-                                    alignment: Alignment.center,
-                                    width: Dimens.width34,
-                                    height: Dimens.height34,
-                                    colorFilter: ColorFilter.mode(
-                                      AppColors.black,
-                                      BlendMode.srcIn,
+                                                GestureDetector(
+                                                  behavior: HitTestBehavior.translucent,
+                                                  onTap: () async {
+                                                    if (taskInputInDialogController.text.isEmpty) {
+                                                      setInnerState(() {
+                                                        isError = true;
+                                                      });
+                                                    } else {
+                                                      setInnerState(() {
+                                                        isError = false;
+                                                      });
+                                                      FocusScope.of(context).unfocus();
+                                                      if (classesForAttendanceModel != null && classesForAttendanceModel!.tasks != null && classesForAttendanceModel!.tasks!.isNotEmpty) {
+                                                        classesForAttendanceModel!.tasks![item.index] = classesForAttendanceModel!.tasks![item.index].copyWith(
+                                                          task: taskInputInDialogController.text.trim(),
+                                                        );
+                                                        '${classesForAttendanceModel!.tasks!.map(
+                                                                  (e) => jsonEncode(e.toJson()),
+                                                                ).toList()}'
+                                                            .logOnString('tasks => ');
+                                                        await classesWithAttendanceController.updateLecture(classesForAttendanceModel!);
+                                                      }
+                                                      taskInputInDialogController.clear();
+                                                      setState(() {});
+                                                      Navigator.pop(context);
+                                                      showSuccessSnackBar(
+                                                        context: context,
+                                                        title: 'Task updated!',
+                                                        durationInMilliseconds: 1200,
+                                                      );
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                    alignment: Alignment.center,
+                                                    height: Dimens.height70,
+                                                    width: Dimens.width160,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(
+                                                        Dimens.radius20,
+                                                      ),
+                                                      color: AppColors.primaryColor,
+                                                    ),
+                                                    child: Obx(
+                                                      () => classesWithAttendanceController.submitLoader.value
+                                                          ? const ButtonLoader()
+                                                          : AppTextTheme.textSize16(
+                                                              label: 'Submit',
+                                                              color: AppColors.white,
+                                                            ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      );
+                                      setState(() {});
+                                    },
+                                    child: SvgPicture.asset(
+                                      AssetsPaths.editSVG,
+                                      alignment: Alignment.center,
+                                      width: Dimens.width34,
+                                      height: Dimens.height34,
+                                      colorFilter: ColorFilter.mode(
+                                        AppColors.black,
+                                        BlendMode.srcIn,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(width: Dimens.width24),
-                                GestureDetector(
-                                  behavior: HitTestBehavior.translucent,
-                                  onTap: () {
-                                    setState(() {
-                                      classesForAttendanceModel!.tasks!.removeAt(index);
-                                    });
-                                  },
-                                  child: Icon(
-                                    Icons.delete,
-                                    color: AppColors.red,
-                                    size: Dimens.height38,
+                                  SizedBox(width: Dimens.width24),
+                                  GestureDetector(
+                                    behavior: HitTestBehavior.translucent,
+                                    onTap: () {
+                                      setState(() {
+                                        classesForAttendanceModel!.tasks!.removeAt(index);
+                                      });
+                                    },
+                                    child: Icon(
+                                      Icons.delete,
+                                      color: AppColors.red,
+                                      size: Dimens.height38,
+                                    ),
                                   ),
-                                ),
+                                ],
                                 SizedBox(width: Dimens.width12),
                               ],
                             ),
@@ -469,129 +474,130 @@ class _LectureDetailsViewState extends State<LectureDetailsView> with SingleTick
                   ),
                 ),
         ),
-        GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () async {
-            bool isError = false;
-            log('isError => $isError');
-            taskInputInDialogController.text = '';
-            await showDialog(
-              context: context,
-              builder: (context) {
-                return StatefulBuilder(
-                  builder: (context, setInnerState) => AlertDialog(
-                    backgroundColor: AppColors.white,
-                    title: AppTextTheme.textSize16(
-                      label: 'Add Task',
-                      color: AppColors.black,
-                    ),
-                    content: LabeledTextFormField(
-                      controller: taskInputInDialogController,
-                      hintText: '',
-                      isError: isError,
-                      errorMessage: isError ? "Enter your task" : '',
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          taskInputInDialogController.clear();
-                          Navigator.pop(context);
-                        },
-                        child: AppTextTheme.textSize16(
-                          label: 'Cancel',
-                          color: AppColors.black,
-                        ),
+        if (isNotStudent)
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () async {
+              bool isError = false;
+              log('isError => $isError');
+              taskInputInDialogController.text = '';
+              await showDialog(
+                context: context,
+                builder: (context) {
+                  return StatefulBuilder(
+                    builder: (context, setInnerState) => AlertDialog(
+                      backgroundColor: AppColors.white,
+                      title: AppTextTheme.textSize16(
+                        label: 'Add Task',
+                        color: AppColors.black,
                       ),
-                      GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onTap: () async {
-                          if (taskInputInDialogController.text.isEmpty) {
-                            setInnerState(() {
-                              isError = true;
-                            });
-                          } else {
-                            setInnerState(() {
-                              isError = false;
-                            });
-                            FocusScope.of(context).unfocus();
-                            if (classesForAttendanceModel != null && classesForAttendanceModel!.tasks != null && classesForAttendanceModel!.tasks!.isNotEmpty) {
-                              classesForAttendanceModel!.tasks!.add(
-                                Tasks(
-                                  task: taskInputInDialogController.text.trim(),
-                                  completed: false,
-                                  index: classesForAttendanceModel!.tasks!.length,
-                                ),
-                              );
-                              '${classesForAttendanceModel!.tasks!.map(
-                                        (e) => jsonEncode(e.toJson()),
-                                      ).toList()}'
-                                  .logOnString('tasks => ');
-                              await classesWithAttendanceController.updateLecture(classesForAttendanceModel!);
-
-                              taskInputInDialogController.clear();
-                              setState(() {});
-                              Navigator.pop(context);
-                              showSuccessSnackBar(
-                                context: context,
-                                title: 'Task added!!',
-                                durationInMilliseconds: 1200,
-                              );
-                            }
-                          }
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          height: Dimens.height70,
-                          width: Dimens.width160,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                              Dimens.radius20,
-                            ),
-                            color: AppColors.primaryColor,
+                      content: LabeledTextFormField(
+                        controller: taskInputInDialogController,
+                        hintText: '',
+                        isError: isError,
+                        errorMessage: isError ? "Enter your task" : '',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            taskInputInDialogController.clear();
+                            Navigator.pop(context);
+                          },
+                          child: AppTextTheme.textSize16(
+                            label: 'Cancel',
+                            color: AppColors.black,
                           ),
-                          child: Obx(
-                            () => classesWithAttendanceController.submitLoader.value
-                                ? const ButtonLoader()
-                                : AppTextTheme.textSize16(
-                                    label: 'Submit',
-                                    color: AppColors.white,
+                        ),
+                        GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () async {
+                            if (taskInputInDialogController.text.isEmpty) {
+                              setInnerState(() {
+                                isError = true;
+                              });
+                            } else {
+                              setInnerState(() {
+                                isError = false;
+                              });
+                              FocusScope.of(context).unfocus();
+                              if (classesForAttendanceModel != null && classesForAttendanceModel!.tasks != null && classesForAttendanceModel!.tasks!.isNotEmpty) {
+                                classesForAttendanceModel!.tasks!.add(
+                                  Tasks(
+                                    task: taskInputInDialogController.text.trim(),
+                                    completed: false,
+                                    index: classesForAttendanceModel!.tasks!.length,
                                   ),
+                                );
+                                '${classesForAttendanceModel!.tasks!.map(
+                                          (e) => jsonEncode(e.toJson()),
+                                        ).toList()}'
+                                    .logOnString('tasks => ');
+                                await classesWithAttendanceController.updateLecture(classesForAttendanceModel!);
+
+                                taskInputInDialogController.clear();
+                                setState(() {});
+                                Navigator.pop(context);
+                                showSuccessSnackBar(
+                                  context: context,
+                                  title: 'Task added!!',
+                                  durationInMilliseconds: 1200,
+                                );
+                              }
+                            }
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            height: Dimens.height70,
+                            width: Dimens.width160,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                Dimens.radius20,
+                              ),
+                              color: AppColors.primaryColor,
+                            ),
+                            child: Obx(
+                              () => classesWithAttendanceController.submitLoader.value
+                                  ? const ButtonLoader()
+                                  : AppTextTheme.textSize16(
+                                      label: 'Submit',
+                                      color: AppColors.white,
+                                    ),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  );
+                },
+              );
+              setState(() {});
+            },
+            child: Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor,
+                borderRadius: BorderRadius.circular(Dimens.radius25),
+              ),
+              margin: EdgeInsets.symmetric(horizontal: Dimens.width40),
+              height: Dimens.height96,
+              width: MediaQuery.sizeOf(context).width,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add,
+                    color: AppColors.white,
+                    size: Dimens.height30,
                   ),
-                );
-              },
-            );
-            setState(() {});
-          },
-          child: Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: AppColors.primaryColor,
-              borderRadius: BorderRadius.circular(Dimens.radius25),
-            ),
-            margin: EdgeInsets.symmetric(horizontal: Dimens.width40),
-            height: Dimens.height96,
-            width: MediaQuery.sizeOf(context).width,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.add,
-                  color: AppColors.white,
-                  size: Dimens.height30,
-                ),
-                SizedBox(width: Dimens.width20),
-                AppTextTheme.textSize14(
-                  label: 'Add New Task',
-                  color: AppColors.white,
-                ),
-              ],
+                  SizedBox(width: Dimens.width20),
+                  AppTextTheme.textSize14(
+                    label: 'Add New Task',
+                    color: AppColors.white,
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
         SizedBox(height: Dimens.height40 + (isIOS ? Dimens.height36 : 0)),
       ],
     );
@@ -615,6 +621,7 @@ class _LectureDetailsViewState extends State<LectureDetailsView> with SingleTick
                         return StudentCardForLecture(
                           index: index,
                           student: student,
+                          isNotStudent: isNotStudent,
                           isPresent: classesForAttendanceModel!.presentStudentList != null &&
                               classesForAttendanceModel!.presentStudentList!.isNotEmpty &&
                               classesForAttendanceModel!.presentStudentList!.any(
@@ -625,6 +632,7 @@ class _LectureDetailsViewState extends State<LectureDetailsView> with SingleTick
                               classesForAttendanceModel!.absentStudentList!.any(
                                 (element) => element.id == student.id,
                               ),
+                          isLoggedInStudent: !isNotStudent && classesWithAttendanceController.student != null && classesWithAttendanceController.student!.id == student.id,
                           onPresent: (student) {
                             if (classesForAttendanceModel != null) {
                               List<Student> presentStudentList = classesForAttendanceModel!.presentStudentList ?? [];
@@ -674,13 +682,35 @@ class _LectureDetailsViewState extends State<LectureDetailsView> with SingleTick
                     ).toList(),
                   ),
                 ),
-                if ((classesForAttendanceModel!.presentStudentList ?? []).isNotEmpty || (classesForAttendanceModel!.absentStudentList ?? []).isNotEmpty) ...[
+                if (isNotStudent && ((classesForAttendanceModel!.presentStudentList ?? []).isNotEmpty || (classesForAttendanceModel!.absentStudentList ?? []).isNotEmpty)) ...[
                   GestureDetector(
                     behavior: HitTestBehavior.translucent,
                     onTap: () async {
                       'onTap'.logOnString('');
                       if (classesForAttendanceModel != null) {
+                        List<Student> studentList = classesForAttendanceModel!.studentList;
+                        List<Student> presentStudentList = classesForAttendanceModel!.presentStudentList ?? [];
+                        List<Student> absentStudentList = classesForAttendanceModel!.absentStudentList ?? [];
+
+                        for (var student in studentList) {
+                          bool isStudentInPresentList = presentStudentList.any((element) => element.id == student.id);
+                          bool isStudentInAbsentList = absentStudentList.any((element) => element.id == student.id);
+
+                          if (!isStudentInPresentList && !isStudentInAbsentList) {
+                            absentStudentList.add(student);
+                          }
+                        }
+
+                        if (classesForAttendanceModel!.absentStudentList != null &&
+                            classesForAttendanceModel!.absentStudentList!.isNotEmpty &&
+                            absentStudentList.isNotEmpty &&
+                            classesForAttendanceModel!.absentStudentList!.length != absentStudentList.length) {
+                          classesForAttendanceModel = classesForAttendanceModel!.copyWith(absentStudentList: absentStudentList);
+                        }
+
                         await classesWithAttendanceController.updateLecture(classesForAttendanceModel!);
+                        await Future.delayed(const Duration(milliseconds: 200));
+                        Get.back<bool>(result: true);
                       }
                     },
                     child: Container(
@@ -733,209 +763,182 @@ class _LectureDetailsViewState extends State<LectureDetailsView> with SingleTick
       id: UpdateKeys.updateNotesSection,
       builder: (controller) => Stack(
         children: [
-          floatingCustomButton(
-            onTap: () async {
-              if (classesForAttendanceModel != null && !classesWithAttendanceController.submitLoader.value) {
-                classesForAttendanceModel = classesForAttendanceModel!.copyWith(
-                  notes: notesController.text,
-                  mentionInNotesList: mentionInNotesList,
-                );
-                await classesWithAttendanceController.updateLecture(classesForAttendanceModel!);
-              }
-            },
-            child: Obx(
-              () => classesWithAttendanceController.submitLoader.value
-                  ? const ButtonLoader()
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+          if (isNotStudent)
+            floatingCustomButton(
+              onTap: () async {
+                if (classesForAttendanceModel != null && !classesWithAttendanceController.submitLoader.value) {
+                  classesForAttendanceModel = classesForAttendanceModel!.copyWith(
+                    notes: notesController.text,
+                    mentionInNotesList: mentionInNotesList,
+                  );
+                  await classesWithAttendanceController.updateLecture(classesForAttendanceModel!);
+                }
+              },
+              child: Obx(
+                () => classesWithAttendanceController.submitLoader.value
+                    ? const ButtonLoader()
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.check,
+                            color: AppColors.white,
+                            size: Dimens.height30,
+                          ),
+                          SizedBox(width: Dimens.width20),
+                          AppTextTheme.textSize15(
+                            label: 'Save',
+                            color: AppColors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ],
+                      ),
+              ),
+              showButton: notesController.text.isNotEmpty,
+              isShowIcon: true,
+            ),
+          Stack(
+            children: [
+              SizedBox(
+                height: MediaQuery.sizeOf(context).height * 0.5,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: Dimens.height30,
+                    horizontal: Dimens.width30,
+                  ),
+                  child: LabeledTextFormField(
+                    controller: notesController,
+                    hintText: 'Write notes...',
+                    showBorder: false,
+                    enable: isNotStudent,
+                    maxLines: MediaQuery.sizeOf(context).height.toInt(),
+                    onChanged: (value) {
+                      int numberOfMention = 0;
+                      if (value.isNotEmpty) {
+                        for (int i = 0; i < value.length; i++) {
+                          if (value[i] == "@") {
+                            numberOfMention += 1;
+                          }
+                        }
+                        if (numberOfMention == mentionInNotesList.length) {
+                          'all student is mentioned'.logOnString('success');
+                        } else {
+                          'student is under mentioning'.logOnString('under process');
+                        }
+                        lastIndex = value.lastIndexOf("@");
+                        if (lastIndex != -1) {
+                          mentionedStudent = value.substring(lastIndex);
+                          Future.delayed(const Duration(milliseconds: 500));
+                          searchListQuery(
+                            name: mentionedStudent.replaceAll("@", ""),
+                            controller: controller,
+                          );
+                        } else {
+                          mentionedStudent = '';
+                          studentList = [];
+                        }
+                      }
+                      controller.update([UpdateKeys.updateNotesSection]);
+                    },
+                    onFieldSubmitted: (value) {
+                      controller.update([UpdateKeys.updateNotesSection]);
+                    },
+                  ),
+                ),
+              ),
+              if (studentList.isNotEmpty)
+                Positioned(
+                  bottom: 0,
+                  child: SizedBox(
+                    width: MediaQuery.sizeOf(context).width,
+                    child: Column(
                       children: [
-                        Icon(
-                          Icons.check,
-                          color: AppColors.white,
-                          size: Dimens.height30,
+                        Divider(
+                          height: 1,
+                          thickness: 0.5,
+                          color: AppColors.black,
                         ),
-                        SizedBox(width: Dimens.width20),
-                        AppTextTheme.textSize15(
-                          label: 'Save',
-                          color: AppColors.white,
-                          fontWeight: FontWeight.w600,
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: Dimens.width30,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.circular(Dimens.radius18),
+                          ),
+                          height: MediaQuery.sizeOf(context).height * 0.25,
+                          child: ListView(
+                            children: studentList.map(
+                              (student) {
+                                int index = studentList.indexOf(student);
+                                return GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
+                                  onTap: () {
+                                    String name = student.name.replaceAll(" ", "_").toLowerCase();
+                                    String filteredNotes = notesController.text.substring(0, lastIndex);
+                                    filteredNotes += '@$name ';
+                                    notesController.text = filteredNotes;
+                                    mentionInNotesList.add(
+                                      MentionInNotes(
+                                        studentDetails: student,
+                                        mentionedAs: name,
+                                      ),
+                                    );
+                                    mentionedStudent = '';
+                                    studentList = [];
+                                    controller.update([UpdateKeys.updateNotesSection]);
+                                    name.logOnString('name => ');
+                                  },
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: MediaQuery.sizeOf(context).width,
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: Dimens.height20,
+                                          horizontal: Dimens.width24,
+                                        ),
+                                        margin: EdgeInsets.symmetric(
+                                          vertical: Dimens.height16,
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            AppTextTheme.textSize15(
+                                              label: student.name,
+                                              color: AppColors.black,
+                                            ),
+                                            Icon(
+                                              Icons.arrow_forward_ios_rounded,
+                                              color: AppColors.black.withAlpha(
+                                                (255 * 0.5).toInt(),
+                                              ),
+                                              size: Dimens.height24,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      if (index != studentList.length - 1)
+                                        Divider(
+                                          height: 1,
+                                          thickness: 0.5,
+                                          color: AppColors.black.withAlpha(
+                                            (255 * 0.25).toInt(),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ).toList(),
+                          ),
                         ),
                       ],
                     ),
-            ),
-            showButton: notesController.text.isNotEmpty,
-            isShowIcon: true,
-          ),
-          // Positioned(
-          //   bottom: Dimens.height75 + (isIOS ? Dimens.height25 : 0),
-          //   right: Dimens.width40,
-          //   child: notesController.text.isNotEmpty
-          //       ? GestureDetector(
-          //           behavior: HitTestBehavior.translucent,
-          //           onTap: () async {
-          //             if (classesForAttendanceModel != null && !classesWithAttendanceController.submitLoader.value) {
-          //               classesForAttendanceModel = classesForAttendanceModel!.copyWith(
-          //                 notes: notesController.text,
-          //                 mentionInNotesList: mentionInNotesList,
-          //               );
-          //               await classesWithAttendanceController.updateLecture(classesForAttendanceModel!);
-          //             }
-          //           },
-          //           child: Container(
-          //             alignment: Alignment.center,
-          //             decoration: BoxDecoration(
-          //               color: AppColors.primaryColor,
-          //               borderRadius: BorderRadius.circular(Dimens.radius25),
-          //             ),
-          //             height: Dimens.height96,
-          //             width: Dimens.width160,
-          //             child: Obx(
-          //               () => classesWithAttendanceController.submitLoader.value
-          //                   ? const ButtonLoader()
-          //                   : AppTextTheme.textSize15(
-          //                       label: 'Save',
-          //                       color: AppColors.white,
-          //                       fontWeight: FontWeight.w600,
-          //                     ),
-          //             ),
-          //           ),
-          //         )
-          //       : const SizedBox.shrink(),
-          // ),
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: MediaQuery.sizeOf(context).height * 0.5,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: Dimens.height30,
-                      horizontal: Dimens.width30,
-                    ),
-                    child: LabeledTextFormField(
-                      controller: notesController,
-                      hintText: 'Write notes...',
-                      showBorder: false,
-                      maxLines: MediaQuery.sizeOf(context).height.toInt(),
-                      onChanged: (value) {
-                        int numberOfMention = 0;
-                        if (value.isNotEmpty) {
-                          for (int i = 0; i < value.length; i++) {
-                            if (value[i] == "@") {
-                              numberOfMention += 1;
-                            }
-                          }
-                          if (numberOfMention == mentionInNotesList.length) {
-                            'all student is mentioned'.logOnString('success');
-                          } else {
-                            'student is under mentioning'.logOnString('under process');
-                          }
-                          lastIndex = value.lastIndexOf("@");
-                          if (lastIndex != -1) {
-                            mentionedStudent = value.substring(lastIndex);
-                            Future.delayed(const Duration(milliseconds: 500));
-                            searchListQuery(
-                              name: mentionedStudent.replaceAll("@", ""),
-                              controller: controller,
-                            );
-                          } else {
-                            mentionedStudent = '';
-                            studentList = [];
-                          }
-                        }
-                        controller.update([UpdateKeys.updateNotesSection]);
-                      },
-                      onFieldSubmitted: (value) {
-                        controller.update([UpdateKeys.updateNotesSection]);
-                      },
-                    ),
                   ),
                 ),
-                if (studentList.isNotEmpty) ...[
-                  Divider(
-                    height: 1,
-                    thickness: 0.5,
-                    color: AppColors.black,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: Dimens.width30,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(Dimens.radius18),
-                    ),
-                    height: MediaQuery.sizeOf(context).height * 0.25,
-                    child: ListView(
-                      children: studentList.map(
-                        (student) {
-                          int index = studentList.indexOf(student);
-                          return GestureDetector(
-                            behavior: HitTestBehavior.translucent,
-                            onTap: () {
-                              String name = student.name.replaceAll(" ", "_").toLowerCase();
-                              String filteredNotes = notesController.text.substring(0, lastIndex);
-                              filteredNotes += '@$name ';
-                              notesController.text = filteredNotes;
-                              mentionInNotesList.add(
-                                MentionInNotes(
-                                  studentDetails: student,
-                                  mentionedAs: name,
-                                ),
-                              );
-                              mentionedStudent = '';
-                              studentList = [];
-                              controller.update([UpdateKeys.updateNotesSection]);
-                              name.logOnString('name => ');
-                            },
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  width: MediaQuery.sizeOf(context).width,
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: Dimens.height20,
-                                    horizontal: Dimens.width24,
-                                  ),
-                                  margin: EdgeInsets.symmetric(
-                                    vertical: Dimens.height16,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      AppTextTheme.textSize15(
-                                        label: student.name,
-                                        color: AppColors.black,
-                                      ),
-                                      Icon(
-                                        Icons.arrow_forward_ios_rounded,
-                                        color: AppColors.black.withAlpha(
-                                          (255 * 0.5).toInt(),
-                                        ),
-                                        size: Dimens.height24,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                if (index != studentList.length - 1)
-                                  Divider(
-                                    height: 1,
-                                    thickness: 0.5,
-                                    color: AppColors.black.withAlpha(
-                                      (255 * 0.25).toInt(),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          );
-                        },
-                      ).toList(),
-                    ),
-                  ),
-                ],
-              ],
-            ),
+            ],
           ),
         ],
       ),
@@ -986,16 +989,20 @@ class StudentCardForLecture extends StatefulWidget {
     super.key,
     required this.index,
     required this.student,
+    required this.isNotStudent,
     required this.isPresent,
     required this.isAbsent,
     required this.onPresent,
     required this.onAbsent,
+    this.isLoggedInStudent = false,
   });
 
   final int index;
   final Student student;
+  final bool isNotStudent;
   final bool isPresent;
   final bool isAbsent;
+  final bool isLoggedInStudent;
   final void Function(Student student) onPresent;
   final void Function(Student student) onAbsent;
 
@@ -1020,31 +1027,37 @@ class _StudentCardForLectureState extends State<StudentCardForLecture> {
   }
 
   void _onHorizontalDragStart(DragStartDetails details) {
-    _dragStartX = details.globalPosition.dx;
+    if (widget.isNotStudent) {
+      _dragStartX = details.globalPosition.dx;
+    }
   }
 
   void _onHorizontalDragUpdate(DragUpdateDetails details, int index) {
-    setState(() {
-      cardOffset = details.globalPosition.dx - _dragStartX;
-    });
+    if (widget.isNotStudent) {
+      setState(() {
+        cardOffset = details.globalPosition.dx - _dragStartX;
+      });
+    }
   }
 
   void _onHorizontalDragEnd(int index, DragEndDetails details) {
     double dragDistance = cardOffset;
     double velocity = details.primaryVelocity ?? 0.0;
 
-    setState(() {
-      if (dragDistance > 80 || velocity > 800) {
-        'Swiped Right → Present'.logOnString('Student Status => ');
-        studentStatus = StudentStatus.present;
-        widget.onPresent(widget.student);
-      } else if (dragDistance < -80 || velocity < -800) {
-        'Swiped Right → Absent'.logOnString('Student Status => ');
-        studentStatus = StudentStatus.absent;
-        widget.onAbsent(widget.student);
-      }
-      cardOffset = 0;
-    });
+    if (widget.isNotStudent) {
+      setState(() {
+        if (dragDistance > 80 || velocity > 800) {
+          'Swiped Right → Present'.logOnString('Student Status => ');
+          studentStatus = StudentStatus.present;
+          widget.onPresent(widget.student);
+        } else if (dragDistance < -80 || velocity < -800) {
+          'Swiped Right → Absent'.logOnString('Student Status => ');
+          studentStatus = StudentStatus.absent;
+          widget.onAbsent(widget.student);
+        }
+        cardOffset = 0;
+      });
+    }
   }
 
   @override
@@ -1115,6 +1128,10 @@ class _StudentCardForLectureState extends State<StudentCardForLecture> {
                     : AppColors.white,
             borderRadius: BorderRadius.circular(
               Dimens.radius18,
+            ),
+            border: Border.all(
+              width: 1,
+              color: widget.isLoggedInStudent ? AppColors.primaryColor : Colors.transparent,
             ),
           ),
           child: Column(

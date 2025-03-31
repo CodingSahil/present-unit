@@ -404,85 +404,97 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
           ),
         ),
       ),
-      bottomNavigationBar: NavigationBar(
-        backgroundColor: AppColors.bottomNavigationBarColor,
-        indicatorColor: AppColors.primaryColor,
-        selectedIndex: selectedIndex,
-        onDestinationSelected: (value) => setState(() {
-          selectedIndex = value;
-          if (value == 0) {
-            selectTab = AdminBottomNavigationBarEnums.home;
-          }
-          if (value == 1) {
-            selectTab = AdminBottomNavigationBarEnums.course;
-          }
-          if (value == 2) {
-            selectTab = AdminBottomNavigationBarEnums.faculty;
-          }
-        }),
-        destinations: [
-          NavigationDestination(
-            icon: SvgPicture.asset(
-              AssetsPaths.homeSVG,
-              height: Dimens.height40,
-              width: Dimens.width40,
-              colorFilter: ColorFilter.mode(
-                AppColors.unselectedColor,
-                BlendMode.srcIn,
-              ),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Divider(
+            height: 0.5,
+            thickness: 0.5,
+            color: AppColors.black.withAlpha(
+              (255 * 0.25).toInt(),
             ),
-            selectedIcon: SvgPicture.asset(
-              AssetsPaths.homeSVG,
-              height: Dimens.height40,
-              width: Dimens.width40,
-              colorFilter: ColorFilter.mode(
-                AppColors.white,
-                BlendMode.srcIn,
-              ),
-            ),
-            label: 'Home',
           ),
-          NavigationDestination(
-            icon: SvgPicture.asset(
-              AssetsPaths.courseSVG,
-              height: Dimens.height40,
-              width: Dimens.width40,
-              colorFilter: ColorFilter.mode(
-                AppColors.unselectedColor,
-                BlendMode.srcIn,
+          NavigationBar(
+            backgroundColor: AppColors.bottomNavigationBarColor,
+            indicatorColor: AppColors.primaryColor,
+            selectedIndex: selectedIndex,
+            onDestinationSelected: (value) => setState(() {
+              selectedIndex = value;
+              if (value == 0) {
+                selectTab = AdminBottomNavigationBarEnums.home;
+              }
+              if (value == 1) {
+                selectTab = AdminBottomNavigationBarEnums.course;
+              }
+              if (value == 2) {
+                selectTab = AdminBottomNavigationBarEnums.faculty;
+              }
+            }),
+            destinations: [
+              NavigationDestination(
+                icon: SvgPicture.asset(
+                  AssetsPaths.homeSVG,
+                  height: Dimens.height40,
+                  width: Dimens.width40,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.unselectedColor,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                selectedIcon: SvgPicture.asset(
+                  AssetsPaths.homeSVG,
+                  height: Dimens.height40,
+                  width: Dimens.width40,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                label: 'Home',
               ),
-            ),
-            selectedIcon: SvgPicture.asset(
-              AssetsPaths.courseSVG,
-              height: Dimens.height40,
-              width: Dimens.width40,
-              colorFilter: ColorFilter.mode(
-                AppColors.white,
-                BlendMode.srcIn,
+              NavigationDestination(
+                icon: SvgPicture.asset(
+                  AssetsPaths.courseSVG,
+                  height: Dimens.height40,
+                  width: Dimens.width40,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.unselectedColor,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                selectedIcon: SvgPicture.asset(
+                  AssetsPaths.courseSVG,
+                  height: Dimens.height40,
+                  width: Dimens.width40,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                label: 'Course',
               ),
-            ),
-            label: 'Course',
-          ),
-          NavigationDestination(
-            icon: SvgPicture.asset(
-              AssetsPaths.facultySVG,
-              height: Dimens.height40,
-              width: Dimens.width40,
-              colorFilter: ColorFilter.mode(
-                AppColors.unselectedColor,
-                BlendMode.srcIn,
+              NavigationDestination(
+                icon: SvgPicture.asset(
+                  AssetsPaths.facultySVG,
+                  height: Dimens.height40,
+                  width: Dimens.width40,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.unselectedColor,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                selectedIcon: SvgPicture.asset(
+                  AssetsPaths.facultySVG,
+                  height: Dimens.height40,
+                  width: Dimens.width40,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                label: 'Faculty',
               ),
-            ),
-            selectedIcon: SvgPicture.asset(
-              AssetsPaths.facultySVG,
-              height: Dimens.height40,
-              width: Dimens.width40,
-              colorFilter: ColorFilter.mode(
-                AppColors.white,
-                BlendMode.srcIn,
-              ),
-            ),
-            label: 'Faculty',
+            ],
           ),
         ],
       ),

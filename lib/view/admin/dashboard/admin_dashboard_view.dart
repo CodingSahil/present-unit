@@ -586,6 +586,15 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                   onSelectionOfNewTab: (passedValue) {
                     setState(() {
                       selectTab = passedValue;
+                      if(passedValue == AdminBottomNavigationBarEnums.home){
+                        selectedIndex = 0;
+                      }
+                      if(passedValue == AdminBottomNavigationBarEnums.course){
+                        selectedIndex = 1;
+                      }
+                      if(passedValue == AdminBottomNavigationBarEnums.faculty){
+                        selectedIndex = 2;
+                      }
                     });
                   },
                 ),

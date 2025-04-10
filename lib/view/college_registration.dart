@@ -48,7 +48,7 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
     passwordController = TextEditingController();
     mobileNumberController = TextEditingController();
     locationController = TextEditingController();
-    noOfDepartmentController = TextEditingController();
+    noOfDepartmentController = TextEditingController(text: '0');
     noOfCoursesController = TextEditingController();
     websiteController = TextEditingController();
 
@@ -67,8 +67,9 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
       passwordController.text.length >= 6 &&
       passwordRegex.hasMatch(passwordController.text) &&
       mobileNumberController.text.isNotEmpty &&
+      mobileNumberController.text.length == 10 &&
       locationController.text.isNotEmpty &&
-      noOfDepartmentController.text.isNotEmpty &&
+      // noOfDepartmentController.text.isNotEmpty &&
       noOfCoursesController.text.isNotEmpty &&
       websiteController.text.isNotEmpty;
 
@@ -157,30 +158,30 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
             SizedBox(height: Dimens.height36),
 
             /// no of dept text-form-field
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppTextTheme.textSize16(
-                  label: LabelStrings.noOfDepartments,
-                  color: AppColors.black,
-                ),
-                SizedBox(height: Dimens.height8),
-                LabeledTextFormField(
-                  hintText: LabelStrings.enterNoOfDepartments,
-                  controller: noOfDepartmentController,
-                  isError: clickOnSave && noOfDepartmentController.text.isEmpty,
-                  errorMessage: '${LabelStrings.noOfDepartments} ${LabelStrings.require}',
-                  textInputType: TextInputType.number,
-                  onChanged: (value) {
-                    setState(() {});
-                  },
-                  onFieldSubmitted: (value) {
-                    setState(() {});
-                  },
-                ),
-              ],
-            ),
-            SizedBox(height: Dimens.height36),
+            // Column(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   children: [
+            //     AppTextTheme.textSize16(
+            //       label: LabelStrings.noOfDepartments,
+            //       color: AppColors.black,
+            //     ),
+            //     SizedBox(height: Dimens.height8),
+            //     LabeledTextFormField(
+            //       hintText: LabelStrings.enterNoOfDepartments,
+            //       controller: noOfDepartmentController,
+            //       isError: clickOnSave && noOfDepartmentController.text.isEmpty,
+            //       errorMessage: '${LabelStrings.noOfDepartments} ${LabelStrings.require}',
+            //       textInputType: TextInputType.number,
+            //       onChanged: (value) {
+            //         setState(() {});
+            //       },
+            //       onFieldSubmitted: (value) {
+            //         setState(() {});
+            //       },
+            //     ),
+            //   ],
+            // ),
+            // SizedBox(height: Dimens.height36),
 
             /// no of dept text-form-field
             Column(
@@ -296,8 +297,8 @@ class _CollegeRegistrationViewState extends State<CollegeRegistrationView> {
                 LabeledTextFormField(
                   hintText: LabelStrings.enterMobileNumber,
                   controller: mobileNumberController,
-                  isError: clickOnSave && mobileNumberController.text.isEmpty,
-                  errorMessage: '${LabelStrings.mobileNumber} ${LabelStrings.require}',
+                  isError: clickOnSave && (mobileNumberController.text.isEmpty || mobileNumberController.text.length < 10),
+                  errorMessage: mobileNumberController.text.length < 10 ? 'Invalid Mobile Number' : '${LabelStrings.mobileNumber} ${LabelStrings.require}',
                   textInputType: TextInputType.phone,
                   onChanged: (value) {
                     setState(() {});

@@ -103,7 +103,7 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
                     ]
                   : widget.textInputType == TextInputType.url
                       ? <TextInputFormatter>[
-                          NormalCaseTextFormatter(),
+                          AllLowerCaseCaseTextFormatter(),
                         ]
                       : <TextInputFormatter>[
                           UpperCaseTextFormatter(),
@@ -229,7 +229,6 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
           borderRadius: BorderRadius.circular(
             Dimens.radius20,
           ),
-
           borderSide: BorderSide.none,
         ),
         errorBorder: OutlineInputBorder(

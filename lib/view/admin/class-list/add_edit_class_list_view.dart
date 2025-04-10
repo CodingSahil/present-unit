@@ -20,6 +20,7 @@ import 'package:present_unit/helpers/assets_path/assets_path.dart';
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/database/storage_keys.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
+import 'package:present_unit/helpers/extension/string_print.dart';
 import 'package:present_unit/helpers/labels/label_strings.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
 import 'package:present_unit/models/class_list/class_list_models.dart';
@@ -65,7 +66,8 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
     var adminDetails = getStorage.read(StorageKeys.adminDetails);
     admin = adminDetails != null
         ? Admin.fromJson(
-            jsonDecode(adminDetails),'',
+            jsonDecode(adminDetails),
+            '',
           )
         : null;
 
@@ -331,6 +333,7 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
                                                 child: GestureDetector(
                                                   behavior: HitTestBehavior.translucent,
                                                   onTap: () async {
+                                                    studentList.isNotEmpty.toString().logOnString('studentList');
                                                     await showAddEditStudentBottomSheet(
                                                       context: context,
                                                       title: 'Edit Student',
@@ -366,6 +369,20 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
                                                       Row(
                                                         mainAxisAlignment: MainAxisAlignment.start,
                                                         children: [
+                                                          AppTextTheme.textSize14(
+                                                            label: student.rollNumber,
+                                                            color: AppColors.black,
+                                                            fontWeight: FontWeight.w400,
+                                                          ),
+                                                          SizedBox(width: Dimens.width20),
+                                                          Container(
+                                                            width: Dimens.width2,
+                                                            height: Dimens.height18,
+                                                            color: AppColors.black.withAlpha(
+                                                              (255 * 0.3).toInt(),
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: Dimens.width20),
                                                           AppTextTheme.textSize14(
                                                             label: student.mobileNumber,
                                                             color: AppColors.black,
@@ -432,10 +449,11 @@ class _AddEditClassListViewState extends State<AddEditClassListView> {
                               GestureDetector(
                                 behavior: HitTestBehavior.translucent,
                                 onTap: () async {
+                                  studentList.isNotEmpty.toString().logOnString('studentList');
                                   await showAddEditStudentBottomSheet(
                                     context: context,
                                     title: 'Add Student',
-                                    listOfItems: addEditClassListController.studentList,
+                                    listOfItems: studentList,
                                     selectValue: null,
                                     onSubmit: (selectValue) {
                                       setState(() {

@@ -364,57 +364,59 @@ class _ClassesWithAttendanceViewState extends State<ClassesWithAttendanceView> w
                   ),
                 ],
               ),
-              const SizedBox(),
-              Divider(
-                height: 1,
-                thickness: 0.5,
-                color: AppColors.black.withAlpha(
-                  (255 * 0.5).toInt(),
-                ),
-              ),
-              const SizedBox(),
-              SizedBox(
-                height: Dimens.height40,
-                width: MediaQuery.sizeOf(context).width,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () async {
-                    completeLoader(true);
-                    ClassesForAttendanceModel request = widget.lecture;
-                    request = request.copyWith(isLectureCompleted: true);
-                    await widget.classesWithAttendanceController.updateLecture(request);
-                    await Future.delayed(const Duration(milliseconds: 400));
-                    completeLoader(false);
-                    widget.onRefresh(true);
-                  },
-                  child: Obx(
-                    () => completeLoader.value
-                        ? Center(
-                            child: Loader(
-                              color: AppColors.black,
-                            ),
-                          )
-                        : Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.done,
-                                color: AppColors.black,
-                                size: Dimens.height30,
-                              ),
-                              SizedBox(width: Dimens.width16),
-                              AppTextTheme.textSize13(
-                                label: 'Complete Lecture',
-                                color: AppColors.black,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ],
-                          ),
+              if (widget.userType == UserType.faculty) ...[
+                const SizedBox(),
+                Divider(
+                  height: 1,
+                  thickness: 0.5,
+                  color: AppColors.black.withAlpha(
+                    (255 * 0.5).toInt(),
                   ),
                 ),
-              ),
-              SizedBox(height: Dimens.height8),
+                const SizedBox(),
+                SizedBox(
+                  height: Dimens.height40,
+                  width: MediaQuery.sizeOf(context).width,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () async {
+                      completeLoader(true);
+                      ClassesForAttendanceModel request = widget.lecture;
+                      request = request.copyWith(isLectureCompleted: true);
+                      await widget.classesWithAttendanceController.updateLecture(request);
+                      await Future.delayed(const Duration(milliseconds: 400));
+                      completeLoader(false);
+                      widget.onRefresh(true);
+                    },
+                    child: Obx(
+                      () => completeLoader.value
+                          ? Center(
+                              child: Loader(
+                                color: AppColors.black,
+                              ),
+                            )
+                          : Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.done,
+                                  color: AppColors.black,
+                                  size: Dimens.height30,
+                                ),
+                                SizedBox(width: Dimens.width16),
+                                AppTextTheme.textSize13(
+                                  label: 'Complete Lecture',
+                                  color: AppColors.black,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ],
+                            ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: Dimens.height8),
+              ],
             ],
           ),
         ),

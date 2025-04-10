@@ -124,7 +124,7 @@ class _AddEditAssignmentViewState extends State<AddEditAssignmentView> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor,
       appBar: commonAppBarPreferred(
-        label: assignmentModel != null ? 'Edit Assignment' : 'Add Assignment',
+        label: widget.arguments != null ? 'Edit Assignment' : 'Add Assignment',
       ),
       body: Obx(
         () => assignmentController.loader.value
@@ -185,7 +185,11 @@ class _AddEditAssignmentViewState extends State<AddEditAssignmentView> {
                             ? assignmentController.subjectList
                                 .where((element) {
                                   ClassListModel temp = assignmentController.classList.singleWhere((element) => element.id == selectedClassList?.id);
-                                  return temp.course?.id == element.course?.id;
+                                  return temp.course?.id == element.course?.id &&
+                                      faculty != null &&
+                                      faculty!.subjectList != null &&
+                                      faculty!.subjectList!.isNotEmpty &&
+                                      faculty!.subjectList!.any((e) => e.id == element.id);
                                 })
                                 .map(
                                   (e) => BottomSheetSelectionModel(
@@ -295,14 +299,25 @@ class _AddEditAssignmentViewState extends State<AddEditAssignmentView> {
                         setState(() {});
                       }
                     },
-                    child: LabeledTextFormField(
-                      controller: dateOfLectureController,
-                      hintText: 'Select Submission Date',
-                      enable: false,
-                      suffix: Icon(
-                        Icons.calendar_month_rounded,
-                        size: Dimens.height32,
-                        color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(
+                          Dimens.radius16,
+                        ),
+                        border: Border.all(
+                          color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
+                          width: 0.5,
+                        ),
+                      ),
+                      child: LabeledTextFormField(
+                        controller: dateOfLectureController,
+                        hintText: 'Select Submission Date',
+                        enable: false,
+                        suffix: Icon(
+                          Icons.calendar_month_rounded,
+                          size: Dimens.height32,
+                          color: AppColors.lightTextColor.withAlpha((255 * 0.5).toInt()),
+                        ),
                       ),
                     ),
                   ),
@@ -606,7 +621,7 @@ class _AddEditAssignmentViewState extends State<AddEditAssignmentView> {
       return AssignmentType.assignment;
     } else if (assignmentType.toLowerCase() == 'journal') {
       return AssignmentType.journal;
-    } else if (assignmentType.toLowerCase() == 'homeWork') {
+    } else if (assignmentType.toLowerCase() == 'homework') {
       return AssignmentType.homeWork;
     }
     return AssignmentType.assignment;

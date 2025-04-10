@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:present_unit/helper-widgets/text-field/labled_textform_field.dar
 import 'package:present_unit/helpers/colors/app_color.dart';
 import 'package:present_unit/helpers/dimens/dimens.dart';
 import 'package:present_unit/helpers/extension/string_print.dart';
+import 'package:present_unit/helpers/get_new_id.dart';
 import 'package:present_unit/helpers/labels/label_strings.dart';
 import 'package:present_unit/helpers/text-style/text_style.dart';
 import 'package:present_unit/main.dart';
@@ -292,9 +294,21 @@ Future<dynamic> showAddEditStudentBottomSheet({
   Student? selectValueLocal = listOfItems.firstWhereOrNull(
     (element) => element.id == selectValue?.id && element.name.trim().toLowerCase() == selectValue?.name.trim().toLowerCase(),
   );
+  '${listOfItems.isNotEmpty}'.logOnString('listOfItems.isNotEmpty');
+  if (selectValueLocal != null) {
+    jsonEncode(selectValueLocal.toJson()).logOnString('message =>');
+  }
   bool isError = false;
   TextEditingController rollNumberController = TextEditingController(
-    text: selectValueLocal?.rollNumber,
+    text: selectValueLocal?.rollNumber ??
+        (listOfItems.isNotEmpty
+            ? getNewRollNumber(listOfItems
+                    .map(
+                      (e) => num.parse(e.rollNumber),
+                    )
+                    .toList())
+                .toString()
+            : ''),
   );
   TextEditingController studentNameController = TextEditingController(
     text: selectValueLocal?.name,
@@ -311,7 +325,11 @@ Future<dynamic> showAddEditStudentBottomSheet({
 
   String? selectedGender =
       selectValueLocal != null && selectValueLocal.gender.isNotEmpty && (selectValueLocal.gender.toLowerCase().trim() == 'male' || selectValueLocal.gender.toLowerCase().trim() == 'female')
-          ? selectValueLocal.gender.toLowerCase().trim() == 'male' ? 'Male' : selectValueLocal.gender.toLowerCase().trim() == 'female' ? 'Female' : ''
+          ? selectValueLocal.gender.toLowerCase().trim() == 'male'
+              ? 'Male'
+              : selectValueLocal.gender.toLowerCase().trim() == 'female'
+                  ? 'Female'
+                  : ''
           : '';
 
   bool validateFields() =>
@@ -363,6 +381,7 @@ Future<dynamic> showAddEditStudentBottomSheet({
                     controller: rollNumberController,
                     hintText: 'Student Roll No.',
                     isError: isError && rollNumberController.text.isEmpty,
+                    textInputType: TextInputType.number,
                   ),
                   SizedBox(height: Dimens.height18),
                   LabeledTextFormField(

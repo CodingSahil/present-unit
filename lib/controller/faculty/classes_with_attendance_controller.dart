@@ -121,6 +121,7 @@ class ClassesWithAttendanceController extends GetxController {
       newDocumentName: request.documentID,
       newMap: request.toJson(),
     );
+    await Future.delayed(const Duration(milliseconds: 500));
     submitLoader(false);
   }
 
